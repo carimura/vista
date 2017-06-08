@@ -1,0 +1,9 @@
+{
+  "id": "123",
+  "image_url": "https://s3.amazonaws.com/iron-faces-in/demo.png",
+  "rectangles": [{"endy": 236, "endx": 329, "startx": 162, "starty": 69}],
+  "session": "",
+  "aws_access": "AKIAJFFRXQSLDGC3EGAQ",
+  "aws_secret": "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",
+  "aws_s3_bucket_name": "iron-faces-out"
+}

@@ -1,0 +1,12 @@
+{
+  "Type": "Notification",
+  "MessageId": "d9a24374-97ea-5162-ab54-0c4fbcd0952e",
+  "TopicArn": "arn:aws:sns:us-east-1:909659216608:iron-faces-trigger",
+  "Subject": "Amazon S3 Notification",
+  "Message": "{\"Records\":[{\"eventVersion\":\"2.0\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2016-02-15T01:25:14.415Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"A3SSCYBJHGZIAQ\"},\"requestParameters\":{\"sourceIPAddress\":\"98.210.164.174\"},\"responseElements\":{\"x-amz-request-id\":\"C671BBDF0C1CB52A\",\"x-amz-id-2\":\"V+6rcYdSNCi31kaHR2iiDiwuj2x8C8EzyL0NDERUTbs89nmoYwAhuMGvyvh8asBk\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"snsNewImage\",\"bucket\":{\"name\":\"iron-faces-in\",\"ownerIdentity\":{\"principalId\":\"A3SSCYBJHGZIAQ\"},\"arn\":\"arn:aws:s3:::iron-faces-in\"},\"object\":{\"key\":\"demo.png\",\"size\":291397,\"eTag\":\"33e7ec023578c521c44698f4b318813f\",\"sequencer\":\"0056C128FA101022B6\"}}}]}",
+  "Timestamp": "2016-02-15T01:25:14.514Z",
+  "SignatureVersion": "1",
+  "Signature": "LuQJIyYVz/QEtzndVOMuanm407nIZIG6955uOPXcvtpfjgjTGk81D/BeX+tX5m1QqO2F9ZgIH73msvTTvpGZe3YRKmCUWDeXNLLqp6ifbWe59JIud9oyWpsvd6k7ECqL5blj34i1iGn2zXXGOlcMXtEIWSL1wRlTa6cJXAkHBXwtphBCBVGfIcKLhcDnl2IkLAsGlaR5hIgJrfTJUdAJA10RA9txRhayZayRplK8fbW0YWaGuX+ME+6jdXSi0Ucp9w0LUuHu1HGP66lXp9N9u2Brkou2w7y5ShfC+ynnj4yDnNUFyVtmQDLpqwppIFwdXAmAqlipaNqTkl7Vsub3gg==",
+  "SigningCertURL": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-bb750dd426d95ee9390147a5624348ee.pem",
+  "UnsubscribeURL": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:909659216608:iron-faces-trigger:b38bd191-13a1-4267-8a4d-c5aaa1506293"
+}

@@ -1,0 +1,2 @@
+pubnub>=4.0.12
+Algorithmia

@@ -1,0 +1,54 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    aws (2.10.2)
+      http_connection
+      uuidtools
+      xml-simple
+    celluloid (0.17.3)
+      celluloid-essentials
+      celluloid-extras
+      celluloid-fsm
+      celluloid-pool
+      celluloid-supervision
+      timers (>= 4.1.1)
+    celluloid-essentials (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-extras (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-fsm (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-pool (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-supervision (0.20.5)
+      timers (>= 4.1.1)
+    hitimes (1.2.3)
+    http_connection (1.4.4)
+    httpclient (2.7.1)
+    json (1.8.3)
+    mini_magick (4.5.1)
+    net-http-persistent (2.9.4)
+    netrc (0.11.0)
+    pubnub (3.8.0)
+      celluloid (~> 0.16)
+      httpclient (~> 2.6)
+      json (~> 1.8)
+    rest (3.0.6)
+      net-http-persistent (>= 2.9.1)
+      netrc
+    timers (4.1.1)
+      hitimes
+    uuidtools (2.1.5)
+    xml-simple (1.1.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  aws
+  mini_magick
+  pubnub
+  rest
+
+BUNDLED WITH
+   1.13.6

@@ -1,0 +1,6 @@
+name: carimura/scraper
+version: 0.0.4
+runtime: ruby
+entrypoint: ruby func.rb
+path: /scraper
+max_concurrency: 1
