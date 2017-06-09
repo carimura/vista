@@ -49,13 +49,13 @@ def downloadFile(url):
     return getTaskID()+'.jpg'
 
 def callback(message):
-     print message
+     print(message)
 
 def sendWorkerCount(bucket_name, image_key):
-    print "sendWorkerCount image_key: " + str(image_key)    
+    print("sendWorkerCount image_key: " + str(image_key))
     message = {'id': image_key}
     message_json = json.dumps(message)
-    print "sendWorkerCount message_json: " + str(message_json)
+    print("sendWorkerCount message_json: " + str(message_json))
 
     # push data onto pubnub channel
     pn = PubNub(pnconfig)
@@ -69,21 +69,21 @@ def isNude(url):
     algo = client.algo('sfw/NudityDetection/1.1.0')
 
     #url = test
-    print "is_nude url: " + url
+    print("is_nude url: " + url)
     
     response = algo.pipe(str(url))
-    print "is_nude response: " + str(response)
+    print("is_nude response: " + str(response))
     
     result = response.result
-    print "is_nude result: " + str(result)
-    print "is_nude true/false: " + result["nude"]
+    print("is_nude result: " + str(result))
+    print("is_nude true/false: " + result["nude"])
     
     return result["nude"]
     
 
 def main():
     payload = getPayload()
-    print "PAYLOAD: " + str(payload)
+    print("PAYLOAD: " + str(payload))
 
     # Notify the UI that a worker has started
     image_id = getTaskID()+".jpg"
@@ -91,26 +91,26 @@ def main():
 
     if "Message" in payload:
       message_json = json.loads(payload["Message"])
-      print "seems like SNS"
+      print("seems like SNS")
       bucket_name = message_json["Records"][0]["s3"]["bucket"]["name"]
-      print "Bucket: " + bucket_name
+      print("Bucket: " + bucket_name)
       image_key = message_json["Records"][0]["s3"]["object"]["key"]
-      print "image_key: " + image_key
+      print("image_key: " + image_key)
       image_url = "https://s3.amazonaws.com/"+bucket_name+"/" + image_key
     else:
-      print "seems like direct queue from image url"
+      print("seems like direct queue from image url")
       image_url = payload["image_url"]
 
-    print "image_url: " + image_url
+    print("image_url: " + image_url)
 
     f = downloadFile(image_url)
     image = cv.LoadImageM(image_id)
     #is_nude = "false"#isNude(image_url)
     rectangles = detectObjects(image)
 
-    print "rectangles: " + str(rectangles)
+    print("rectangles: " + str(rectangles))
 
-    print str(os.environ)
+    print(str(os.environ))
 
     #next_payload = {
     #  "image_url": image_url,

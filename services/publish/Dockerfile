@@ -1,4 +1,4 @@
-FROM iron/python:2.7.10
+FROM python:2.7.13-alpine
 
 WORKDIR /worker
 ADD . /worker
