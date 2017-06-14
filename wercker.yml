@@ -1,12 +1,100 @@
-source-dir: services/detect
-detect:
+# maybe-base is mostly a noop so that we can decide whether to
+# rebuild base boxes as a chain to this
+maybe-base:
+  box: alpine
+  steps:
+    - script:
+        name: noop
+        code: echo "hello world"
+
+# build is also a noop right now, mostly so that we get the
+# pretty looking fan out ui
+build:
+  box: alpine
+  steps:
+    - script:
+        name: picture me rollin
+        code: echo "i ain't mad atcha"
+
+
+# detect has a bunch of deps so we don't want to build them
+# very often
+detect-base:
   box: debian:jessie
-  # base-path: /func
   steps:
     - install-packages:
         packages: python python-dev python-pip libopencv-calib3d2.4 libopencv-core2.4 libopencv-features2d2.4 libopencv-flann2.4 libopencv-highgui2.4 libopencv-imgproc2.4 libopencv-legacy2.4 libopencv-ml2.4 libopencv-objdetect2.4  libopencv-video2.4 libv4l-0 libv4lconvert0 python-opencv libdc1394-22
     - pip-install:
+        cwd: services/detect
         packages: pubnub Algorithma
+    - script:
+        name: prune
+        code: rm -rf /pipeline
     - internal/docker-push:
-        repository: kewl.functions.io
+        repository: quay.io/wercker/carimura-detect
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        registry: https://quay.io
+        tag: master-base
+
+detect-push:
+  box:
+    id: quay.io/wercker/carimura-detect:master-base
+    registry: https://quay.io
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/detect /func
+    - internal/docker-push:
+        repository: quay.io/wercker/carimura-detect
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        registry: https://quay.io
+        working-dir: /func
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        entrypoint: python func.py
+
+# draw has a bunch of deps so we don't want to build them
+# very often
+draw-base:
+  box:
+    id: ruby:2.4.0-alpine
+    cmd: /bin/sh
+
+  steps:
+    - script:
+        name: install dependencies
+        code: |
+          apk add --update alpine-sdk ca-certificates imagemagick-dev imagemagick
+          rm -rf /var/cache/apk/*
+    - bundle-install:
+        cwd: services/draw
+    - script:
+        name: prune
+        code: rm -rf /pipeline
+    - internal/docker-push:
+        repository: quay.io/wercker/carimura-draw
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        registry: https://quay.io
+        tag: master-base
+
+draw-push:
+  box:
+    id: quay.io/wercker/carimura-draw:master-base
+    registry: https://quay.io
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/draw /func
+    - internal/docker-push:
+        repository: quay.io/wercker/carimura-draw
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        registry: https://quay.io
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        working-dir: /func
+        entrypoint: ruby func.rb
+
 
