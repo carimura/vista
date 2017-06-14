@@ -8,6 +8,14 @@ import requests
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
+payload = json.loads(sys.stdin.read())
+
+pnconfig = PNConfiguration()
+pnconfig.publish_key = payload["pubnub_publish_key"]
+pnconfig.subscribe_key = payload["pubnub_subscribe_key"]
+pnconfig.ssl = False
+pubnub = PubNub(pnconfig)
+
 def detectObjects(image):
     grayscale = cv.CreateImage(cv.GetSize(image), 8, 1)
     cv.CvtColor(image, grayscale, cv.CV_BGR2GRAY)
@@ -27,12 +35,9 @@ def detectObjects(image):
     return rectangles
 
 
-def getPayload():
-  return json.loads(sys.stdin.read())
-
-def downloadFile(url, payload_id):
+def downloadFile(url):
     u = urllib2.urlopen(url)
-    filename = payload_id + '.jpg'
+    filename = payload["id"] + '.jpg'
 
     localFile = open(filename, 'w')
     localFile.write(u.read())
@@ -52,7 +57,7 @@ def sendWorkerCount(bucket_name, image_key):
 # https://algorithmia.com/algorithms/sfw/NudityDetectionEnsemble
 def isNude(url):
     test = "http://www.isitnude.com.s3-website-us-east-1.amazonaws.com/assets/images/sample/young-man-by-the-sea.jpg"
-    client = Algorithmia.client('sim0b6hAy8ZVhgM4MAh6xfcbcjo1')
+    client = Algorithmia.client(payload["algorithmia_key"])
     algo = client.algo('sfw/NudityDetection/1.1.0')
 
     #url = test
@@ -69,15 +74,6 @@ def isNude(url):
     
 
 def main():
-    payload = getPayload()
-    print "PAYLOAD: " + str(payload)
-
-    pnconfig = PNConfiguration()
-    pnconfig.subscribe_key = payload["pubnub_subscribe_key"]
-    pnconfig.publish_key = payload["pubnub_publish_key"]
-    pnconfig.ssl = False
-    pubnub = PubNub(pnconfig)
-
     # Notify the UI that a function has started
     image_name = payload["id"] + ".jpg"
     sendWorkerCount("oracle-faces-out", image_name)
@@ -96,7 +92,7 @@ def main():
 
     print "image_url: " + image_url
 
-    f = downloadFile(image_url, payload["id"])
+    f = downloadFile(image_url)
     image = cv.LoadImageM(image_name)
 
     is_nude = "false"#isNude(image_url)

@@ -28,9 +28,14 @@ photos.each do |photo|
              :func_server_url => payload_in["func_server_url"],
              :aws_bucket => payload_in["aws_bucket"],
              :aws_access => payload_in["aws_access"],
-             :aws_secret => payload_in["aws_secret"]
+             :aws_secret => payload_in["aws_secret"],
+             :flickr_api_key => payload_in["flickr_api_key"],
+             :flickr_api_secret => payload_in["flickr_api_secret"],
+             :pubnub_subscribe_key => payload_in["pubnub_subscribe_key"],
+             :pubnub_publish_key => payload_in["pubnub_publish_key"],
+             :algorithmia_key => payload_in["algorithmia_key"]
   }
-
+  
   RestClient.post(payload_in["func_server_url"] + "/detect", payload.to_json, headers={content_type: :json, accept: :json})
 end
 
