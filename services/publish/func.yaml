@@ -1,0 +1,5 @@
+name: carimura/publish
+version: 0.0.9
+runtime: ""
+entrypoint: python2 func.py
+path: /publish

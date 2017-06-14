@@ -1,0 +1,9 @@
+.cache
+.gem
+.pip
+.sudo_as_admin_successful
+bundle
+.bundle
+Gemfile.lock
+payload.json
+payload_direct.json

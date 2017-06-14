@@ -1,0 +1,3 @@
+pubnub
+Algorithmia
+requests
