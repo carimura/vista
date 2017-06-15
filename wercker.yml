@@ -126,3 +126,5 @@ publish-push:
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: python func.py
+
+
