@@ -17,8 +17,7 @@ build:
         code: echo "i ain't mad atcha"
 
 
-# detect has a bunch of deps so we don't want to build them
-# very often
+# detect has a bunch of deps so we don't want to build them very often
 detect-base:
   box: debian:jessie
   steps:
@@ -26,30 +25,29 @@ detect-base:
         packages: python python-dev python-pip libopencv-calib3d2.4 libopencv-core2.4 libopencv-features2d2.4 libopencv-flann2.4 libopencv-highgui2.4 libopencv-imgproc2.4 libopencv-legacy2.4 libopencv-ml2.4 libopencv-objdetect2.4  libopencv-video2.4 libv4l-0 libv4lconvert0 python-opencv libdc1394-22
     - pip-install:
         cwd: services/detect
-        packages: pubnub Algorithma
+        packages: pubnub Algorithmia
     - script:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: quay.io/wercker/carimura-detect
+        repository: carimura/detect
+        registry: https://registry.hub.docker.com
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://quay.io
         tag: master-base
 
 detect-push:
   box:
-    id: quay.io/wercker/carimura-detect:master-base
-    registry: https://quay.io
+    id: carimura/detect:master-base
   steps:
     - script:
         name: move source
         code: cp -r services/detect /func
     - internal/docker-push:
-        repository: quay.io/wercker/carimura-detect
+        repository: carimura/detect
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://quay.io
+        registry: https://registry.hub.docker.com
         working-dir: /func
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
@@ -73,26 +71,26 @@ draw-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: quay.io/wercker/carimura-draw
+        repository: carimura/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://quay.io
+        registry: https://registry.hub.docker.com
         tag: master-base
 
 draw-push:
   box:
-    id: quay.io/wercker/carimura-draw:master-base
-    registry: https://quay.io
+    id: carimura/draw:master-base
+    registry: https://registry.hub.docker.com
     cmd: /bin/sh
   steps:
     - script:
         name: move source
         code: cp -r services/draw /func
     - internal/docker-push:
-        repository: quay.io/wercker/carimura-draw
+        repository: carimura/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://quay.io
+        registry: https://registry.hub.docker.com
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ruby func.rb

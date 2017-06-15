@@ -7,3 +7,5 @@ bundle
 Gemfile.lock
 payload.json
 payload_direct.json
+ENVIRONMENT
+.wercker

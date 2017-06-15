@@ -1,0 +1,155 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: functions-config
+data:
+  MQ_URL: redis://redis-master.default
+  DB_URL: postgres://postgres:postgres@postgresql-master.default/?sslmode=disable
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: functions-service
+  labels:
+    app: functions
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: functions
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: functions-api-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: functions
+    spec:
+      terminationGracePeriodSeconds: 1
+      imagePullSecrets:
+      - name: sre-reg-secret
+      containers:
+      - name: functions-api
+        image:  registry.oracledx.com/skeppare/functions:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DOCKER_HOST
+          value: unix:///var/run/docker.sock
+        - name: MQ_URL
+          valueFrom:
+            configMapKeyRef:
+              name: functions-config
+              key: MQ_URL
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: functions-config
+              key: DB_URL
+        volumeMounts:
+        - name: docker-socket
+          mountPath: "/var/run/docker.sock"
+      volumes:
+      - name: docker-socket
+        hostPath:
+          path: "/var/run/docker.sock"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresql-master
+  labels:
+    app: postgresql
+    role: datastore
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgresql
+    role: datastore
+---
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  name: postgresql-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        role: datastore
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: functions-postgresql
+        image: postgres
+        ports:
+        - containerPort: 5432
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    role: mq
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: mq
+---
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  name: redis-master
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: mq
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: functions-redis
+        image: redis
+        ports:
+        - containerPort: 6379
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: sre-reg-secret
+type: kubernetes.io/dockercfg
+data:
+  .dockercfg: eyJyZWdpc3RyeS5vcmFjbGVkeC5jb20iOnsidXNlcm5hbWUiOiJhZ2VudCIsInBhc3N3b3JkIjoiZ2YyMVx1MDAyNjU0RyIsImVtYWlsIjoiICIsImF1dGgiOiJZV2RsYm5RNloyWXlNU1kxTkVjPSJ9fQ==
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: functions-service-ingress
+spec:
+  rules:
+  - host: functions-service.adfe6f07b.obmc.wercker.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: functions-service
+          servicePort: 8080
