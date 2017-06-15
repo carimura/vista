@@ -31,7 +31,8 @@ detect-base:
         code: rm -rf /pipeline
     - script:
         name: debug
-        code: env
+        code: |
+            env
     - internal/docker-push:
         repository: carimura/detect
         username: $DOCKER_USERNAME
@@ -129,6 +130,3 @@ publish-push:
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: python func.py
-
-
-
