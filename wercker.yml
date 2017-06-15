@@ -51,12 +51,13 @@ detect-push:
         entrypoint: python func.py
 
 detect-deploy:
-  box: alpine
+  box:
+    id: alpine
+    cmd: /bin/sh
   steps:
-    - internal/shell:
-        cmd: /bin/sh
-        code: | 
-          ./fn routes update --images carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
+    - script:
+      name: fn routes update
+        code: ./fn routes update --images carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
 
 
 # draw has a bunch of deps so we don't want to build them very often
