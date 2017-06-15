@@ -56,7 +56,7 @@ detect-deploy:
     cmd: /bin/sh
   steps:
     - script:
-      name: fn routes update
+        name: fn routes update
         code: ./fn routes update --images carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
 
 
