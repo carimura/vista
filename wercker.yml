@@ -50,6 +50,16 @@ detect-push:
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
 
+detect-deploy:
+  box: alpine
+  steps:
+    - internal/shell
+        cmd: /bin/sh
+        code: | 
+          ./fn routes update myapp /detect
+
+
+
 # draw has a bunch of deps so we don't want to build them very often
 draw-base:
   box:
