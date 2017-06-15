@@ -31,7 +31,6 @@ detect-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/detect
-        registry: https://registry.hub.docker.com
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
@@ -47,7 +46,6 @@ detect-push:
         repository: carimura/detect
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://registry.hub.docker.com
         working-dir: /func
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
