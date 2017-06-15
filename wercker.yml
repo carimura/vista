@@ -33,7 +33,7 @@ detect-base:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         repository: carimura/detect
-        registry: https://registry.hub.docker.com
+        registry: https://registry.hub.docker.com/v2
         tag: master-base
 
 detect-push:
