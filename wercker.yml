@@ -50,8 +50,7 @@ detect-push:
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
 
-# draw has a bunch of deps so we don't want to build them
-# very often
+# draw has a bunch of deps so we don't want to build them very often
 draw-base:
   box:
     id: ruby:2.4.0-alpine
