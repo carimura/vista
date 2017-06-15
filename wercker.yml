@@ -29,14 +29,11 @@ detect-base:
     - script:
         name: prune
         code: rm -rf /pipeline
-    - script:
-        name: debug
-        code: |
-            env
     - internal/docker-push:
-        repository: carimura/detect
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
+        repository: carimura/detect
+        registry: https://registry.hub.docker.com
         tag: master-base
 
 detect-push:
