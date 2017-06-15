@@ -57,7 +57,9 @@ detect-deploy:
   steps:
     - script:
         name: fn routes update
-        code: ./fn routes update --images carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
+        code: |
+          cp fn services/detect
+          services/detect/fn routes update --images carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
 
 
 # draw has a bunch of deps so we don't want to build them very often
