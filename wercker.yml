@@ -53,7 +53,7 @@ detect-push:
 detect-deploy:
   box: alpine
   steps:
-    - internal/shell
+    - internal/shell:
         cmd: /bin/sh
         code: | 
           ./fn
