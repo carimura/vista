@@ -72,13 +72,11 @@ draw-base:
         repository: carimura/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://registry.hub.docker.com
         tag: master-base
 
 draw-push:
   box:
     id: carimura/draw:master-base
-    registry: https://registry.hub.docker.com
     cmd: /bin/sh
   steps:
     - script:
@@ -88,9 +86,46 @@ draw-push:
         repository: carimura/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
-        registry: https://registry.hub.docker.com
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ruby func.rb
+
+publish-base:
+  box:
+    id: python:2.7.13-alpine
+    cmd: /bin/sh
+
+  steps:
+    - script:
+        name: install dependencies
+        code: |
+          apk add --update python-dev py-pip alpine-sdk
+          rm -Rf /var/cache/apk/*
+          pip install 'pubnub>=4.0.12'
+    - script:
+        name: prune
+        code: rm -rf /pipeline
+    - internal/docker-push:
+        repository: carimura/publish
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: master-base
+
+publish-push:
+  box:
+    id: carimura/publish:master-base
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/publish /func
+    - internal/docker-push:
+        repository: carimura/publish
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        working-dir: /func
+        entrypoint: python func.py
+
 
 
