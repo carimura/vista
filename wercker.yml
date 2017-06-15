@@ -56,7 +56,7 @@ detect-deploy:
     - internal/shell
         cmd: /bin/sh
         code: | 
-          ./fn routes update myapp /detect
+          ./fn
 
 
 
