@@ -60,7 +60,7 @@ detect-deploy:
         code: |
           cp fn services/detect
           cd services/detect
-          ./fn routes update --type async --image carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
+          ./fn routes update --type sync --image carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
 
 
 # draw has a bunch of deps so we don't want to build them very often
