@@ -77,9 +77,9 @@ draw-base:
           rm -rf /var/cache/apk/*
     - bundle-install:
         cwd: services/draw
-    - script:
-        name: prune
-        code: rm -rf /pipeline
+# script:
+# name: prune
+# code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/draw
         username: $DOCKER_USERNAME
