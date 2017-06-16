@@ -10,7 +10,9 @@ pnconfig.ssl = False
 pn = PubNub(pnconfig)
 
 def getPayload():
-    return json.loads(sys.stdin.read())
+    std_in = sys.stdin.read()
+    sys.stderr.write(std_in)
+    return json.loads(std_in)
 
 def callback(message):
      print message
