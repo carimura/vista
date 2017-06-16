@@ -2,3 +2,4 @@ name: carimura/detect
 version: 0.0.40
 runtime: ""
 path: /detect
+type: async
