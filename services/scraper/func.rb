@@ -35,9 +35,12 @@ photos.each do |photo|
              :pubnub_publish_key => payload_in["pubnub_publish_key"],
              :algorithmia_key => payload_in["algorithmia_key"]
   }
-  
-  RestClient.post(payload_in["func_server_url"] + "/detect", payload.to_json, headers={content_type: :json, accept: :json})
-end
+
+  Thread.new {
+    RestClient.post(payload_in["func_server_url"] + "/detect", payload.to_json, headers={content_type: :json, accept: :json})
+  }
+
+ end
 
 puts "done"
 
