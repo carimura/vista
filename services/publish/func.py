@@ -11,7 +11,7 @@ pn = PubNub(pnconfig)
 
 def getPayload():
     std_in = sys.stdin.read()
-    sys.stderr.write(std_in)
+    sys.stderr.write("std_in -----------> " + std_in)
     return json.loads(std_in)
 
 def callback(message):

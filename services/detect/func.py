@@ -9,7 +9,7 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
 std_in = sys.stdin.read()
-sys.stderr.write(std_in)
+sys.stderr.write("STANDARD IN ------> " + std_in)
 payload = json.loads(std_in)
 
 pnconfig = PNConfiguration()
