@@ -8,7 +8,9 @@ import requests
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
-payload = json.loads(sys.stdin.read())
+std_in = sys.stdin.read()
+sys.stderr.write(std_in)
+payload = json.loads(std_in)
 
 pnconfig = PNConfiguration()
 pnconfig.publish_key = payload["pubnub_publish_key"]

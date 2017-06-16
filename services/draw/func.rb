@@ -38,7 +38,9 @@ def upload_file(image_name, payload_in)
 	link
 end
 
-payload = JSON.parse(STDIN.read)
+am_i_in = STDIN.read
+STDERR.puts "AM I IN DUDE --> " + am_i_in
+payload = JSON.parse(am_i_in)
 puts "payload: " + payload.inspect
 puts "Downloading image from " + payload['image_url']
 
