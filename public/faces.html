@@ -94,7 +94,7 @@
 		<div class="row">
 			<div class="faces-controls">
 				<div class="wrapper-form"><form class="navbar-form" id="faces" name="faces">
-				<input type="text" class="" id="bucket-name" name="bucket-name" placeholder="S3 Bucket Name">
+				<input type="text" class="" id="bucket-name" name="bucket-name" placeholder="Storage Drive">
 				<button type="submit" class="btn">Go</button>
 			</form></div>
 			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
@@ -206,7 +206,7 @@
 			var bucket = $("input#bucket-name").val();
 
 			if ( bucket == null || bucket == "" ){
-				alert("Please supply an S3 bucket name.");
+				alert("Storage name");
 			}
 			listenBucket(bucket);
 		});

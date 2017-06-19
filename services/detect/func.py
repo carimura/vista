@@ -60,7 +60,8 @@ def sendWorkerCount(bucket_name, image_key):
 def isNude(url):
     test = "http://www.isitnude.com.s3-website-us-east-1.amazonaws.com/assets/images/sample/young-man-by-the-sea.jpg"
     client = Algorithmia.client(payload["algorithmia_key"])
-    algo = client.algo('sfw/NudityDetection/1.1.0')
+    #algo = client.algo('sfw/NudityDetection/1.1.0')
+    algo = client.algo('sfw/NudityDetectionEnsemble/0.3.12')
 
     #url = test
     print "is_nude url: " + url
@@ -70,7 +71,7 @@ def isNude(url):
     
     result = response.result
     print "is_nude result: " + str(result)
-    print "is_nude true/false: " + result["nude"]
+    print "is_nude true/false: " + str(result["nude"])
     
     return result["nude"]
     
@@ -97,7 +98,15 @@ def main():
     f = downloadFile(image_url)
     image = cv.LoadImageM(image_name)
 
-    is_nude = "false"#isNude(image_url)
+    is_nude = isNude(image_url)
+    
+    cat_url = "http://random.cat/meow"
+    
+    if is_nude:
+       cat_req = requests.get(cat_url)
+       cat_json = cat_req.json()
+       print "cat_json: " + str(cat_json)
+       image_url = cat_json["file"]
 
     rectangles = detectObjects(image)
 
