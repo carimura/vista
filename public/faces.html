@@ -149,9 +149,7 @@
     console.log("incrementCounter for " + id);
     console.log("before: " + getWorkerCount());
     funcsRunning+=3;
-    totalFuncs+=3;
 		$("#worker-count").text(getWorkerCount());
-    $("#total-funcs-count").text(totalFuncs);
     console.log("after: " + getWorkerCount());
 	}
 
@@ -159,7 +157,9 @@
     console.log("decrementCounter for " + id);
     console.log("before: " + getWorkerCount());
     funcsRunning-=3;
+    totalFuncs+=3
 		$("#worker-count").text(getWorkerCount());
+    $("#total-funcs-count").text(totalFuncs);
     console.log("after: " + getWorkerCount());
 	}
 

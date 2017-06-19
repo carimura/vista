@@ -1,7 +1,7 @@
 name: carimura/scraper
-version: 0.0.29
+version: 0.0.30
 runtime: ruby
 entrypoint: ruby func.rb
-path: /scraper
 type: async
 timeout: 2m0s
+path: /scraper
