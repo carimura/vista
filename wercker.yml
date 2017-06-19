@@ -35,6 +35,19 @@ detect-base:
         repository: carimura/detect
         tag: master-base
 
+detect-test:
+  box:
+    id: carimura/detect:master-base
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/detect /func
+    - script:
+        name: run tests
+        code: |
+          cd services/detect
+          python func_test.py
+
 detect-push:
   box:
     id: carimura/detect:master-base
