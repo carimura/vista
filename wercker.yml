@@ -78,9 +78,9 @@ draw-base:
     - bundle-install:
         cwd: services/draw
         path: /usr/local/bundle
-# script:
-# name: prune
-# code: rm -rf /pipeline
+    - script:
+        name: prune
+        code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/draw
         username: $DOCKER_USERNAME
