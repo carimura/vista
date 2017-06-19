@@ -20,6 +20,8 @@ photos = flickr.photos.search(
 )
 
 puts "Found #{photos.size} images, posting to #{payload_in["func_server_url"]}/detect"
+
+threads = []
 photos.each do |photo|
 	image_url = FlickRaw.url_c(photo)
 
@@ -36,11 +38,15 @@ photos.each do |photo|
              :algorithmia_key => payload_in["algorithmia_key"]
   }
 
-  Thread.new {
+  threads <<  Thread.new(payload, payload_in) { |payload, payload_in| 
+    puts "I'm in a thread w #{payload}"
     RestClient.post(payload_in["func_server_url"] + "/detect", payload.to_json, headers={content_type: :json, accept: :json})
   }
+end
 
- end
+threads.each do |t|
+    t.join
+end
 
 puts "done"
 

@@ -1,5 +1,5 @@
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: functions-config
 data:
@@ -13,19 +13,20 @@ metadata:
   labels:
     app: functions
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
   - port: 8080
     targetPort: 8080
+    nodePort: 31000
   selector:
     app: functions
 ---
+apiVersion: apps/v1beta1
 kind: Deployment
-apiVersion: extensions/v1beta1
 metadata:
   name: functions-api-deployment
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -37,7 +38,7 @@ spec:
       containers:
       - name: functions-api
         image:  registry.oracledx.com/skeppare/functions:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         securityContext:
           privileged: true
         ports:
@@ -62,10 +63,31 @@ spec:
       - name: docker-socket
         hostPath:
           path: "/var/run/docker.sock"
-
 ---
-kind: Service
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: functions-ui-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: functions
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: functions-ui
+        image: iron/functions-ui:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: API_URL
+          value: "http://127.0.0.1:8080"
+        ports:
+        - containerPort: 4000
+---
 apiVersion: v1
+kind: Service
 metadata:
   name: postgresql-master
   labels:
@@ -79,8 +101,8 @@ spec:
     app: postgresql
     role: datastore
 ---
-kind: Deployment
 apiVersion: apps/v1beta1
+kind: Deployment
 metadata:
   name: postgresql-master
 spec:
@@ -98,8 +120,8 @@ spec:
         ports:
         - containerPort: 5432
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: redis-master
   labels:
@@ -113,8 +135,8 @@ spec:
     app: redis
     role: mq
 ---
-kind: Deployment
 apiVersion: apps/v1beta1
+kind: Deployment
 metadata:
   name: redis-master
 spec:
@@ -132,24 +154,10 @@ spec:
         ports:
         - containerPort: 6379
 ---
-kind: Secret
 apiVersion: v1
+kind: Secret
 metadata:
   name: sre-reg-secret
 type: kubernetes.io/dockercfg
 data:
   .dockercfg: eyJyZWdpc3RyeS5vcmFjbGVkeC5jb20iOnsidXNlcm5hbWUiOiJhZ2VudCIsInBhc3N3b3JkIjoiZ2YyMVx1MDAyNjU0RyIsImVtYWlsIjoiICIsImF1dGgiOiJZV2RsYm5RNloyWXlNU1kxTkVjPSJ9fQ==
----
-kind: Ingress
-apiVersion: extensions/v1beta1
-metadata:
-  name: functions-service-ingress
-spec:
-  rules:
-  - host: functions-service.adfe6f07b.obmc.wercker.com
-    http:
-      paths:
-      - path:
-        backend:
-          serviceName: functions-service
-          servicePort: 8080
