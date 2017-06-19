@@ -3,3 +3,4 @@ version: 0.0.10
 runtime: ""
 entrypoint: python2 func.py
 path: /publish
+type: async

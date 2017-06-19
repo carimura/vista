@@ -1,4 +1,5 @@
 name: carimura/draw
-version: 0.0.17
+version: 0.0.21
 runtime: ""
+type: async
 path: /draw

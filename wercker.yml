@@ -60,7 +60,7 @@ detect-deploy:
         code: |
           cp fn services/detect
           cd services/detect
-          ./fn routes update --image carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
+          ./fn routes update --type sync --image carimura/detect:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -113,7 +113,7 @@ draw-deploy:
         code: |
           cp fn services/draw
           cd services/draw
-          ./fn routes update --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
+          ./fn routes update --type sync --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
 
 
 publish-base:
@@ -163,6 +163,6 @@ publish-deploy:
         code: |
           cp fn services/publish
           cd services/publish
-          ./fn routes update --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
+          ./fn routes update --type sync --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
 
 
