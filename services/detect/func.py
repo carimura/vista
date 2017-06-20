@@ -99,11 +99,11 @@ def main():
     f = downloadFile(image_url)
     image = cv.LoadImageM(image_name)
 
-    is_nude = isNude(image_url)
+    is_nude = True #isNude(image_url)
     
     cat_url = "http://random.cat/meow"
     
-    if true:#is_nude:
+    if is_nude:
        cat_req = requests.get(cat_url)
        cat_json = cat_req.json()
        print "cat_json: " + str(cat_json)
