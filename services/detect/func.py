@@ -103,7 +103,7 @@ def main():
     
     cat_url = "http://random.cat/meow"
     
-    if true#is_nude:
+    if true:#is_nude:
        cat_req = requests.get(cat_url)
        cat_json = cat_req.json()
        print "cat_json: " + str(cat_json)
