@@ -99,7 +99,7 @@ def main():
     f = downloadFile(image_url)
     image = cv.LoadImageM(image_name)
 
-    is_nude = True #isNude(image_url)
+    is_nude = False #isNude(image_url)
     
     cat_url = "http://random.cat/meow"
     
