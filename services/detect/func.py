@@ -117,9 +117,9 @@ def main():
       "image_url": image_url,
       "is_nude": is_nude,
       "rectangles": rectangles,
-      "aws_access": payload["aws_access"],
-      "aws_secret": payload["aws_secret"],
-      "aws_s3_bucket_name": payload["aws_bucket"],
+      "access": payload["access"],
+      "secret": payload["secret"],
+      "bucket_name": payload["bucket"],
       "id": payload["id"]
     }
     

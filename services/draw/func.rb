@@ -24,13 +24,13 @@ def upload_file(image_name, payload_in)
   payload = payload_in
  
   s3 = Aws::S3::Resource.new(region: "us-east-1", 
-                             credentials: Aws::Credentials.new(payload["aws_access"], 
-                                                               payload["aws_secret"]))
+                             credentials: Aws::Credentials.new(payload["access"], 
+                                                               payload["secret"]))
   link = nil
   puts "\nUploading the file to s3..."
 
 	name = File.basename(image_name)
-  obj = s3.bucket(payload['aws_s3_bucket_name']).object(name)
+  obj = s3.bucket(payload['bucket_name']).object(name)
 	obj.upload_file(image_name)
 
 	link = obj.public_url()
