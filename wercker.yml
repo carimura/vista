@@ -100,6 +100,20 @@ draw-base:
         password: $DOCKER_PASSWORD
         tag: master-base
 
+draw-test:
+  box:
+    id: carimura/draw:master-base
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/detect /func
+    - script:
+        name: run tests
+        code: |
+          cd services/draw
+          ruby func_test.rb
+
+
 draw-push:
   box:
     id: carimura/draw:master-base
@@ -149,6 +163,20 @@ publish-base:
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
+
+publish-test:
+  box:
+    id: carimura/publish:master-base
+  steps:
+    - script:
+        name: move source
+        code: cp -r services/publish /func
+    - script:
+        name: run tests
+        code: |
+          cd services/publish
+          python func_test.py
+
 
 publish-push:
   box:
