@@ -8,8 +8,6 @@ import requests
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
-sys.stderr.write("STARTING DETECT FUNCTION")
-
 std_in = sys.stdin.read()
 sys.stderr.write("STANDARD IN ------> " + std_in)
 payload = json.loads(std_in)
@@ -26,6 +24,7 @@ def detectObjects(image):
 
     cv.EqualizeHist(grayscale, grayscale)
     cascade = cv.Load(os.getcwd() + '/haarcascade_frontalface_alt.xml')
+    # Haar feature-based cascade classifiers
     faces = cv.HaarDetectObjects(grayscale, cascade, cv.CreateMemStorage(), 1.2, 2, cv.CV_HAAR_DO_CANNY_PRUNING, (20,20))
     rectangles = []
     if faces:
