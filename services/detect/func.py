@@ -8,10 +8,10 @@ import requests
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
-#std_in = sys.stdin.read()
-#sys.stderr.write("STANDARD IN ------> " + std_in)
-payload = json.loads(sys.stdin.read())
-sys.stderr.write(str(payload))
+std_in = sys.stdin.read()
+sys.stderr.write("STANDARD IN ------> " + std_in)
+payload = json.loads(std_in)
+
 pnconfig = PNConfiguration()
 pnconfig.publish_key = payload["pubnub_publish_key"]
 pnconfig.subscribe_key = payload["pubnub_subscribe_key"]
