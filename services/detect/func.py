@@ -8,6 +8,8 @@ import requests
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
+sys.stderr.write("STARTING DETECT FUNCTION")
+
 std_in = sys.stdin.read()
 sys.stderr.write("STANDARD IN ------> " + std_in)
 payload = json.loads(std_in)
