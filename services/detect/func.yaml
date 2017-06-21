@@ -1,5 +1,5 @@
 name: carimura/detect
-version: 0.0.44
+version: 0.0.45
 runtime: ""
-type: sync
+type: async
 path: /detect
