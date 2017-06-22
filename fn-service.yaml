@@ -118,7 +118,7 @@ kind: Deployment
 metadata:
  name: redis-master
 spec:
- replicas: 1
+ replicas: 2
  template:
    metadata:
      labels:

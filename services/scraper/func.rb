@@ -21,9 +21,15 @@ photos = flickr.photos.search(
 
 puts "Found #{photos.size} images, posting to #{payload_in["func_server_url"]}/detect"
 threads = []
-photos.each do |photo|
-  image_url = FlickRaw.url_c(photo)
 
+blacklist_photos = ['35331390846']
+
+photos.each do |photo|
+  if blacklist_photos.include?(photo.id)
+    image_url = "https://farm3.staticflickr.com/2175/5714544755_e5dc8e6ede_b.jpg"
+  else
+    image_url = FlickRaw.url_c(photo)
+  end
   payload = {:id => photo.id, 
              :image_url => image_url, 
              :func_server_url => payload_in["func_server_url"],
