@@ -57,12 +57,10 @@ def sendWorkerCount(bucket_name, image_key):
     pn.publish().channel(bucket_name).message([message_json]).use_post(True).sync()
 
 # I'm told to use this one instead:
-# https://algorithmia.com/algorithms/sfw/NudityDetectionEnsemble
+# https://algorithmia.com/algorithms/sfw/NudityDetectioni2v
 def isNude(url):
     test = "http://www.isitnude.com.s3-website-us-east-1.amazonaws.com/assets/images/sample/young-man-by-the-sea.jpg"
     client = Algorithmia.client(payload["algorithmia_key"])
-    #algo = client.algo('sfw/NudityDetection/1.1.0')
-    #algo = client.algo('sfw/NudityDetectionEnsemble/0.3.12')
     algo = client.algo('sfw/NudityDetectioni2v/0.2.12')
 
     #url = test
