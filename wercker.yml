@@ -102,8 +102,8 @@ detect-plates-base:
 
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
-  cwd: /srv/openalpr
-  entrypoint: ./myapp
+  # cwd: /srv/openalpr
+  # entrypoint: ./myapp
   steps: 
     - script:
         name: go get
