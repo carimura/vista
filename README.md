@@ -10,3 +10,7 @@ Boom demo.....
 5. `mv payload.sample.json payload.json` 
 6. enter various creds into payload.json
 7. `cat payload.json | fn run`
+
+there will be no UI yet until I explain how to setup pubnub channel....
+
+but we can at least get started here.
