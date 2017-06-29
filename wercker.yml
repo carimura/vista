@@ -100,6 +100,20 @@ detect-plates-base:
         tag: master-base
 
 
+detect-plates-gobuild:
+  box: carimura/detect-plates:master-base
+  cwd: /srv/openalpr
+  entrypoint: ./myapp
+  steps: 
+    - script:
+        name: go get
+        cwd: /srv/openalpr
+        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+    - script:
+        name: go build
+        cwd: /srv/openalpr
+        code: go build -o myapp
+
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -132,7 +146,7 @@ draw-test:
   steps:
     - script:
         name: move source
-        code: cp -r services/detect /func
+        code: cp -r services/draw /func
     - script:
         name: run tests
         code: |
