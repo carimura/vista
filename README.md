@@ -1,6 +1,6 @@
 Oracle Faces
 
-Boom demo hello Bob.....
+Boom demo....
 
 
 1.  make sure $API_URL is set
@@ -10,3 +10,7 @@ Boom demo hello Bob.....
 5. `mv payload.sample.json payload.json` 
 6. enter various creds into payload.json
 7. `cat payload.json | fn run`
+
+there will be no UI yet until I explain how to setup pubnub channel....
+
+but we can at least get started here.
