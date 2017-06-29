@@ -1,6 +1,6 @@
 Oracle Faces
 
-Boom demo....
+Boom demo...
 
 
 1.  make sure $API_URL is set
