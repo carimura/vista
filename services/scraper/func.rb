@@ -9,6 +9,7 @@ FlickRaw.shared_secret = payload_in["flickr_api_secret"]
 
 search_text = payload_in["query"] || "baby smile"
 num_results = payload_in["num"] || 5
+service_to_call = payload_in["service_to_call"] || "detect-faces"
 
 puts "Querying Flickr for \"#{search_text}\" limiting results to #{num_results}"
 photos = flickr.photos.search(
@@ -19,7 +20,7 @@ photos = flickr.photos.search(
 	:content_type => 1
 )
 
-puts "Found #{photos.size} images, posting to #{payload_in["func_server_url"]}/detect"
+puts "Found #{photos.size} images, posting to #{payload_in["func_server_url"]}/#{service_to_call}"
 threads = []
 
 blacklist_photos = ['35331390846']
@@ -44,7 +45,7 @@ photos.each do |photo|
   }
 
   threads <<  Thread.new(payload, payload_in) { |payload, payload_in| 
-    RestClient.post(payload_in["func_server_url"] + "/detect", payload.to_json, headers={content_type: :json, accept: :json})
+    RestClient.post(payload_in["func_server_url"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
   }
 end
 
