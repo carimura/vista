@@ -1,47 +1,96 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
 
+type payloadIn struct {
+	ID          string `json:"id"`
+	URL         string `json:"image_url"`
+	CountryCode string `json:"countrycode"`
+	Access      string `json:"access"`
+	Secret      string `json:"secret"`
+	Bucket      string `json:"bucket"`
+}
+
+type payloadOut struct {
+	ID         string      `json:"id"`
+	ImageURL   string      `json:"image_url"`
+	Rectangles []rectangle `json:"rectangles"`
+	Access     string      `json:"access"`
+	Secret     string      `json:"secret"`
+	Bucket     string      `json:"bucket"`
+}
+
+type rectangle struct {
+	StartX int `json:"startx"`
+	StartY int `json:"starty"`
+	EndX   int `json:"endx"`
+	EndY   int `json:"endy"`
+}
+
 func main() {
-	alpr := openalpr.NewAlpr("us", "", "runtime_data")
+	p := new(payloadIn)
+	json.NewDecoder(os.Stdin).Decode(p)
+	outfile := "working.jpg"
+
+	fmt.Printf("PayloadIn ---> %+v\n", p)
+
+	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
 	defer alpr.Unload()
 
 	if !alpr.IsLoaded() {
-		fmt.Println("OpenAlpr failed to load!")
+		fmt.Println("OpenALPR failed to load!")
 		return
 	}
-	alpr.SetTopN(20)
+	alpr.SetTopN(10)
 
-	fmt.Println(alpr.IsLoaded())
-	fmt.Println(openalpr.GetVersion())
+	fmt.Println("IsLoaded: " + strconv.FormatBool(alpr.IsLoaded()))
+	fmt.Println("OpenALPR Version: " + openalpr.GetVersion())
 
-	url := "http://wallpaper.pickywallpapers.com/1920x1080/red-alfa-romeo-4c-us-spec-in-the-city-back-view.jpg"
-	downloadFile("sample.jpg", url)
+	downloadFile(outfile, p.URL)
 
-	resultFromFilePath, err := alpr.RecognizeByFilePath("sample.jpg")
+	imageBytes, err := ioutil.ReadFile(outfile)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("%+v\n", resultFromFilePath)
-	fmt.Printf("\n\n\n")
+	results, err := alpr.RecognizeByBlob(imageBytes)
+	fmt.Println("--- Results ---")
+	fmt.Printf("%T -- %+v", results, results)
+	if len(results.Plates) > 0 {
+		plate := results.Plates[0]
+		fmt.Printf("\n\nPLATE --> %+v", plate)
 
-	imageBytes, err := ioutil.ReadFile("sample.jpg")
-	if err != nil {
-		fmt.Println(err)
+		pout := &payloadOut{
+			ID:         p.ID,
+			ImageURL:   p.URL,
+			Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
+			Access:     p.Access,
+			Secret:     p.Secret,
+			Bucket:     p.Bucket,
+		}
+
+		fmt.Printf("\n\npout ---> %+v", pout)
+		b := new(bytes.Buffer)
+		json.NewEncoder(b).Encode(pout)
+
+		res, _ := http.Post("http://oracle.ngrok.io/r/myapp/draw", "application/json", b)
+		fmt.Println(res.Body)
+	} else {
+		fmt.Println("NO PLATES FOUND!!!")
 	}
-	resultFromBlob, err := alpr.RecognizeByBlob(imageBytes)
-	fmt.Printf("%+v\n", resultFromBlob)
+
 }
 
-//stackoverflow.com/questions/33845770/how-do-i-download-a-file-with-a-http-request-in-go-language
 func downloadFile(filepath string, url string) (err error) {
 	// Create the file
 	out, err := os.Create(filepath)

@@ -32,7 +32,8 @@ photos.each do |photo|
     image_url = FlickRaw.url_c(photo)
   end
   payload = {:id => photo.id, 
-             :image_url => image_url, 
+             :image_url => image_url,
+             :countrycode => payload_in["countrycode"],
              :func_server_url => payload_in["func_server_url"],
              :bucket => payload_in["bucket"],
              :access => payload_in["access"],

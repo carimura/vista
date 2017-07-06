@@ -1,5 +1,5 @@
 name: carimura/publish
-version: 0.0.13
+version: 0.0.15
 runtime: ""
 entrypoint: python2 func.py
 type: sync

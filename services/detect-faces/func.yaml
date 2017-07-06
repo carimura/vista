@@ -1,5 +1,5 @@
 name: carimura/detect-faces
-version: 0.0.45
+version: 0.0.47
 runtime: ""
 type: async
 path: /detect-faces
