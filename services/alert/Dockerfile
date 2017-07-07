@@ -1,7 +1,5 @@
 FROM golang:latest as build-stage
 WORKDIR /src
-#RUN go get github.com/dghubble/go-twitter/twitter
-#RUN go get github.com/dghubble/oauth1
 RUN go get github.com/ChimeraCoder/anaconda
 ADD . /src
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func .
