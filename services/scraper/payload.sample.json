@@ -1,8 +1,8 @@
 {
-  "query": "infant smile",
-  "num": "25",
+  "query": "smile",
+  "num": "20",
   "func_server_url": "",
-  "bucket": "oracle-faces-out",
+  "bucket": "my bucket",
   "access": "",
   "secret": "",
   "flickr_api_key": "",

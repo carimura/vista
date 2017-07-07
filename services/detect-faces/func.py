@@ -79,7 +79,7 @@ def isNude(url):
 def main():
     # Notify the UI that a function has started
     image_name = payload["id"] + ".jpg"
-    sendWorkerCount("oracle-faces-out", image_name)
+    sendWorkerCount("oracle-vista-out", image_name)
 
     if "Message" in payload:
       print "feels like SNS"
@@ -118,7 +118,7 @@ def main():
       "rectangles": rectangles,
       "access": payload["access"],
       "secret": payload["secret"],
-      "bucket_name": payload["bucket"],
+      "bucket": payload["bucket"],
       "id": payload["id"]
     }
     

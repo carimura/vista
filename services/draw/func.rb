@@ -30,7 +30,7 @@ def upload_file(image_name, payload_in)
   puts "\nUploading the file to s3..."
 
 	name = File.basename(image_name)
-  obj = s3.bucket(payload['bucket_name']).object(name)
+  obj = s3.bucket(payload['bucket']).object(name)
 	obj.upload_file(image_name)
 
 	link = obj.public_url()

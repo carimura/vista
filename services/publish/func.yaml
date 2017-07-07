@@ -1,6 +1,6 @@
 name: carimura/publish
-version: 0.0.13
+version: 0.0.24
 runtime: ""
 entrypoint: python2 func.py
-type: sync
+type: async
 path: /publish

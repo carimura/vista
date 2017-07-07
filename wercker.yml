@@ -102,8 +102,6 @@ detect-plates-base:
 
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
-  cwd: /srv/openalpr
-  entrypoint: ./myapp
   steps: 
     - script:
         name: go get
@@ -112,7 +110,27 @@ detect-plates-gobuild:
     - script:
         name: go build
         cwd: /srv/openalpr
-        code: go build -o myapp
+        code: go build -o func
+    - internal/docker-push:
+        repository: carimura/detect-plates
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        working-dir: /srv/openalpr
+        entrypoint: ./func
+
+
+detect-plates-deploy:
+  box:
+    id: alpine
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: fn routes update
+        code: |
+          cp fn services/detect-plates
+          cd services/detect-plates
+          ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
 
 
 
