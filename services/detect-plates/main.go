@@ -14,12 +14,13 @@ import (
 )
 
 type payloadIn struct {
-	ID          string `json:"id"`
-	URL         string `json:"image_url"`
-	CountryCode string `json:"countrycode"`
-	Access      string `json:"access"`
-	Secret      string `json:"secret"`
-	Bucket      string `json:"bucket"`
+	ID            string `json:"id"`
+	URL           string `json:"image_url"`
+	CountryCode   string `json:"countrycode"`
+	Access        string `json:"access"`
+	Secret        string `json:"secret"`
+	Bucket        string `json:"bucket"`
+	FuncServerURL string `json:"func_server_url"`
 }
 
 type payloadOut struct {
@@ -29,6 +30,7 @@ type payloadOut struct {
 	Access     string      `json:"access"`
 	Secret     string      `json:"secret"`
 	Bucket     string      `json:"bucket"`
+	Plate      string      `json:"plate"`
 }
 
 type rectangle struct {
@@ -66,6 +68,7 @@ func main() {
 	results, err := alpr.RecognizeByBlob(imageBytes)
 	fmt.Println("--- Results ---")
 	fmt.Printf("%T -- %+v", results, results)
+
 	if len(results.Plates) > 0 {
 		plate := results.Plates[0]
 		fmt.Printf("\n\nPLATE --> %+v", plate)
@@ -77,16 +80,28 @@ func main() {
 			Access:     p.Access,
 			Secret:     p.Secret,
 			Bucket:     p.Bucket,
+			Plate:      plate.BestPlate,
 		}
 
 		fmt.Printf("\n\npout ---> %+v", pout)
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
 
-		res, _ := http.Post("http://oracle.ngrok.io/r/myapp/draw", "application/json", b)
+		b2 := new(bytes.Buffer)
+		json.NewEncoder(b2).Encode(pout)
+
+		postURL := p.FuncServerURL + "/draw"
+		res, _ := http.Post(postURL, "application/json", b)
 		fmt.Println(res.Body)
+
+		fmt.Printf("\n\nbuffer to alert ----> %+v", b2)
+		alertPostURL := p.FuncServerURL + "/alert"
+		resAlert, _ := http.Post(alertPostURL, "application/json", b2)
+		fmt.Println(resAlert.Body)
 	} else {
-		fmt.Println("NO PLATES FOUND!!!")
+
+		fmt.Println("No Plates Found!")
+
 	}
 
 }
