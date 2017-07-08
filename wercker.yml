@@ -179,11 +179,7 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
-        code: |
-          pwd; ls;
-          cp fn services/alert
-          cd services/alert
-          ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
+        code: ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
 
 
 # draw has a bunch of deps so we don't want to build them very often
