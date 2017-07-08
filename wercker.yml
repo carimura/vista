@@ -159,7 +159,7 @@ alert-push:
   steps:
     - script:
         name: move source
-        code: cp * /func; cd /func; ls;
+        code: mkdir /func; cp * /func; cd /func; ls;
     - script:
         name: add certificates
         code: apk --no-cache add ca-certificates
