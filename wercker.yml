@@ -137,7 +137,7 @@ alert-gobuild:
   steps: 
     - script:
         name: move code over
-        code: mkdir /src; cp services/alert/* /src
+        code: mkdir /src; cp services/alert/* /src; cp fn /src
     - script:
         name: go get
         cwd: /src
@@ -147,9 +147,9 @@ alert-gobuild:
         cwd: /src
         code: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func
     - script:
-        name: copy source
+        name: cp all to next step
         cwd: /src
-        code: cp func $WERCKER_OUTPUT_DIR
+        code: cp * $WERCKER_OUTPUT_DIR
 
 
 alert-push:
@@ -180,6 +180,7 @@ alert-deploy:
     - script:
         name: fn routes update
         code: |
+          pwd; ls;
           cp fn services/alert
           cd services/alert
           ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
@@ -247,6 +248,7 @@ draw-deploy:
     - script:
         name: fn routes update
         code: |
+          pwd; ls;
           cp fn services/draw
           cd services/draw
           ./fn routes update --type async --timeout 60s --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
