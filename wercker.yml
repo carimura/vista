@@ -157,9 +157,11 @@ alert-push:
     id: alpine
     cmd: /bin/sh
   steps:
+    - script: find stuff
+        code: pwd; ls; cd $WERCKER_OUTPUT_DIR; pwd; ls;
     - script:
         name: move source
-        code: cp -r $WERCKER_OUTPUT_DIR /func
+        code: cp -r $WERCKER_OUTPUT_DIR /func; cd /func; ls;
     - script:
         name: add certificates
         code: apk --no-cache add ca-certificates
