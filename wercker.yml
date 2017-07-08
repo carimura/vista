@@ -162,7 +162,7 @@ alert-push:
         code: cp -r $WERCKER_OUTPUT_DIR /func
     - script:
         name: add certificates
-        code: RUN apk --no-cache add ca-certificates
+        code: apk --no-cache add ca-certificates
     - internal/docker-push:
         repository: carimura/alert
         username: $DOCKER_USERNAME
