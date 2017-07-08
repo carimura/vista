@@ -136,6 +136,9 @@ alert-gobuild:
   box: golang:latest
   steps: 
     - script:
+        name: mk src dir
+        code: mkdir /src
+    - script:
         name: go get
         cwd: /src
         code: go get github.com/ChimeraCoder/anaconda
