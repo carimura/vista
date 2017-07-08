@@ -136,8 +136,8 @@ alert-gobuild:
   box: golang:latest
   steps: 
     - script:
-        name: mk src dir
-        code: mkdir /src
+        name: move code over
+        code: mkdir /src; cp services/alert/* /src
     - script:
         name: go get
         cwd: /src
