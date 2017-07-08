@@ -134,16 +134,18 @@ detect-plates-deploy:
 
 alert-gobuild:
   box: golang:latest
-  base-path: /src
   steps: 
     - script:
         name: go get
+        cwd: /src
         code: go get github.com/ChimeraCoder/anaconda
     - script:
         name: go build
+        cwd: /src
         code: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func
     - script:
         name: copy source
+        cwd: /src
         code: cp func $WERCKER_OUTPUT_DIR
 
 
