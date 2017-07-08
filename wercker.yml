@@ -132,6 +132,52 @@ detect-plates-deploy:
           cd services/detect-plates
           ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
 
+alert-gobuild:
+  box: golang:latest
+  base-path: /src
+  steps: 
+    - script:
+        name: go get
+        code: go get github.com/ChimeraCoder/anaconda
+    - script:
+        name: go build
+        code: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func
+    - script:
+        name: copy source
+        code: cp func $WERCKER_OUTPUT_DIR
+
+
+alert-push:
+  box:
+    id: alpine
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: move source
+        code: cp -r $WERCKER_OUTPUT_DIR /func
+    - script:
+        name: add certificates
+        code: RUN apk --no-cache add ca-certificates
+    - internal/docker-push:
+        repository: carimura/alert
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+        working-dir: /func
+        entrypoint: ./func
+
+
+alert-deploy:
+  box:
+    id: alpine
+    cmd: /bin/sh
+  steps:
+    - script:
+        name: fn routes update
+        code: |
+          cp fn services/alert
+          cd services/alert
+          ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
 
 
 # draw has a bunch of deps so we don't want to build them very often

@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
@@ -45,8 +44,6 @@ func main() {
 	json.NewDecoder(os.Stdin).Decode(p)
 	outfile := "working.jpg"
 
-	fmt.Printf("PayloadIn ---> %+v\n", p)
-
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
 	defer alpr.Unload()
 
@@ -56,9 +53,6 @@ func main() {
 	}
 	alpr.SetTopN(10)
 
-	fmt.Println("IsLoaded: " + strconv.FormatBool(alpr.IsLoaded()))
-	fmt.Println("OpenALPR Version: " + openalpr.GetVersion())
-
 	downloadFile(outfile, p.URL)
 
 	imageBytes, err := ioutil.ReadFile(outfile)
@@ -66,12 +60,10 @@ func main() {
 		fmt.Println(err)
 	}
 	results, err := alpr.RecognizeByBlob(imageBytes)
-	fmt.Println("--- Results ---")
-	fmt.Printf("%T -- %+v", results, results)
 
 	if len(results.Plates) > 0 {
 		plate := results.Plates[0]
-		fmt.Printf("\n\nPLATE --> %+v", plate)
+		fmt.Printf("\n\n FOUND PLATE ------> %+v", plate)
 
 		pout := &payloadOut{
 			ID:         p.ID,
@@ -83,7 +75,6 @@ func main() {
 			Plate:      plate.BestPlate,
 		}
 
-		fmt.Printf("\n\npout ---> %+v", pout)
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
 
@@ -94,7 +85,6 @@ func main() {
 		res, _ := http.Post(postURL, "application/json", b)
 		fmt.Println(res.Body)
 
-		fmt.Printf("\n\nbuffer to alert ----> %+v", b2)
 		alertPostURL := p.FuncServerURL + "/alert"
 		resAlert, _ := http.Post(alertPostURL, "application/json", b2)
 		fmt.Println(resAlert.Body)
