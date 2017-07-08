@@ -158,11 +158,8 @@ alert-push:
     cmd: /bin/sh
   steps:
     - script:
-        name: find stuff
-        code: pwd; ls; cd $WERCKER_OUTPUT_DIR; pwd; ls;
-    - script:
         name: move source
-        code: cp -r $WERCKER_OUTPUT_DIR /func; cd /func; ls;
+        code: cp * /func; cd /func; ls;
     - script:
         name: add certificates
         code: apk --no-cache add ca-certificates
@@ -182,6 +179,7 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
+        cwd: /func
         code: ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
 
 
