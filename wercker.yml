@@ -157,7 +157,8 @@ alert-push:
     id: alpine
     cmd: /bin/sh
   steps:
-    - script: find stuff
+    - script:
+        name: find stuff
         code: pwd; ls; cd $WERCKER_OUTPUT_DIR; pwd; ls;
     - script:
         name: move source
