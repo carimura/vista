@@ -178,9 +178,6 @@ alert-deploy:
     cmd: /bin/sh
   steps:
     - script:
-        name: where is shit
-        code: cd $WERCKER_OUTPUT_DIR; ls
-    - script:
         name: fn routes update
         code: ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
 

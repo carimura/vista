@@ -31,6 +31,8 @@ photos.each do |photo|
   else
     image_url = FlickRaw.url_c(photo)
   end
+
+  # TODO: Change all of these to ENV variables (most already set as app vars in functions)
   payload = {:id => photo.id, 
              :image_url => image_url,
              :countrycode => payload_in["countrycode"],
