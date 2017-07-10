@@ -1,0 +1,7 @@
+{
+  "query": "license plate car usa",
+  "num": "30",
+  "countrycode": "us",
+  "service_to_call": "detect-plates",
+  "bucket": "oracle-vista-out"
+}
