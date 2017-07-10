@@ -11,7 +11,7 @@ Boom demo...
 1. `cd public; open vista.html`
 1. Enter "oracle-vista-out" into the box (this subscribes to pubnub channel)
 1. `cd scraper`
-1. `cat payload.json | fn run`
+1. `cat payload.json | fn call myapp /scraper`
 
 there will be no UI yet until I explain how to setup pubnub channel....
 
