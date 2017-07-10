@@ -4,8 +4,8 @@ require 'rest-client'
 
 payload_in = JSON.parse(STDIN.read)
 
-FlickRaw.api_key = payload_in["flickr_api_key"]
-FlickRaw.shared_secret = payload_in["flickr_api_secret"]
+FlickRaw.api_key = ENV["FLICKR_API_KEY"]
+FlickRaw.shared_secret = ENV["FLICKR_API_SECRET"]
 
 search_text = payload_in["query"] || "baby smile"
 num_results = payload_in["num"] || 5
@@ -20,7 +20,7 @@ photos = flickr.photos.search(
 	:content_type => 1
 )
 
-puts "Found #{photos.size} images, posting to #{payload_in["func_server_url"]}/#{service_to_call}"
+puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
 threads = []
 
 blacklist_photos = ['35331390846']
@@ -32,23 +32,21 @@ photos.each do |photo|
     image_url = FlickRaw.url_c(photo)
   end
 
-  # TODO: Change all of these to ENV variables (most already set as app vars in functions)
   payload = {:id => photo.id, 
              :image_url => image_url,
              :countrycode => payload_in["countrycode"],
-             :func_server_url => payload_in["func_server_url"],
+             :func_server_url => ENV["FUNC_SERVER_URL"],
              :bucket => payload_in["bucket"],
-             :access => payload_in["access"],
-             :secret => payload_in["secret"],
-             :flickr_api_key => payload_in["flickr_api_key"],
-             :flickr_api_secret => payload_in["flickr_api_secret"],
-             :pubnub_subscribe_key => payload_in["pubnub_subscribe_key"],
-             :pubnub_publish_key => payload_in["pubnub_publish_key"],
-             :algorithmia_key => payload_in["algorithmia_key"]
+             :access => ENV["ACCESS"],
+             :secret => ENV["SECRET"],
+             :flickr_api_key => ENV["FLICKR_API_KEY"],
+             :flickr_api_secret => ENV["FLICKR_API_SECRET"],
+             :pubnub_subscribe_key => ENV["PUBNUB_SUBSCRIBE_KEY"],
+             :pubnub_publish_key => ENV["PUBNUB_PUBLISH_KEY"]
   }
 
   threads <<  Thread.new(payload, payload_in) { |payload, payload_in| 
-    RestClient.post(payload_in["func_server_url"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
+    RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
   }
 end
 
