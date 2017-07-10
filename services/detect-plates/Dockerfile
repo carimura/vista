@@ -35,7 +35,7 @@ WORKDIR /srv/openalpr
 COPY . /srv/openalpr
 
 RUN go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+RUN go get github.com/pubnub/go/messaging
 
 RUN go build -o myapp
 ENTRYPOINT ["./myapp"]
-

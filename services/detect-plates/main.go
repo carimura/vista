@@ -8,9 +8,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
+	"github.com/pubnub/go/messaging"
 )
+
+// "github.com/openalpr/openalpr/src/bindings/go/openalpr"
 
 type payloadIn struct {
 	ID            string `json:"id"`
@@ -42,6 +46,9 @@ type rectangle struct {
 func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
+
+	fnStart(p.Bucket, p.ID)
+	defer fnFinish(p.Bucket, p.ID)
 	outfile := "working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
@@ -118,4 +125,35 @@ func downloadFile(filepath string, url string) (err error) {
 	}
 
 	return nil
+}
+
+var (
+	pubKey, subKey, ran string
+	pn                  *messaging.Pubnub
+	cbChannel           = make(chan []byte)
+	errChan             = make(chan []byte)
+)
+
+func fnStart(bucket, id string) {
+	pubKey = os.Getenv("PUBNUB_PUBLISH_KEY")
+	subKey = os.Getenv("PUBNUB_SUBSCRIBE_KEY")
+
+	pn = messaging.NewPubnub(pubKey, subKey, "", "", false, "", nil)
+	go func() {
+		for {
+			select {
+			case msg := <-cbChannel:
+				fmt.Println(time.Now().Second(), ": ", string(msg))
+			case msg := <-errChan:
+				fmt.Println(string(msg))
+			default:
+			}
+		}
+	}()
+	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates","running":true, "id":"%s"}`, id), cbChannel, errChan)
+}
+
+func fnFinish(bucket, id string) {
+	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates", "running":false, "id":"%s"}`, id), cbChannel, errChan)
+	time.Sleep(time.Second * 2)
 }

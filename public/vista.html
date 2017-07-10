@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>OracleFaces</title>
+    <title>OraclePlates</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -133,7 +133,7 @@
 		imgLink.html(newimg);
 		$('#results-container-'+column).prepend(imgLink);
 		newimg.slideDown("fast");
-		
+
 		console.log("done adding image "+id+" to page")
 	}
 
@@ -148,7 +148,7 @@
 	function incrementCounter(id) {
     console.log("incrementCounter for " + id);
     console.log("before: " + getWorkerCount());
-    funcsRunning+=3;
+    funcsRunning+=1;
 		$("#worker-count").text(getWorkerCount());
     console.log("after: " + getWorkerCount());
 	}
@@ -156,8 +156,8 @@
 	function decrementCounter(id) {
     console.log("decrementCounter for " + id);
     console.log("before: " + getWorkerCount());
-    funcsRunning-=3;
-    totalFuncs+=3
+    funcsRunning-=1;
+    totalFuncs+=1
 		$("#worker-count").text(getWorkerCount());
     $("#total-funcs-count").text(totalFuncs);
     console.log("after: " + getWorkerCount());
@@ -180,8 +180,9 @@
 			$(".listening b").append(bucket);
 			$(".listening").fadeIn();
 		});
-		
-		var pubnub = PUBNUB.init({ subscribe_key : 'sub-1e453968-bc05-11e0-9cf9-cbaf6932e4b8'});
+        var pubnub = PUBNUB.init({ subscribe_key : 'sub-1e453968-bc05-11e0-9cf9-cbaf6932e4b8'});
+
+        $("#worker-count-wrapper").fadeIn();
 		pubnub.subscribe({
 			channel: bucket,
 			message: function(m){
@@ -191,10 +192,18 @@
 
 				if("url" in m) {
 					addImg(m["url"], m["id"]);
-					decrementCounter(m["id"]);
+					// decrementCounter(m["id"]);
 				} else {
-					$("#worker-count-wrapper").fadeIn();
-					incrementCounter(m["id"]);
+                    if("type" in m) {
+                        if(m["running"]) {
+                            incrementCounter(m["id"])
+                        } else {
+                            decrementCounter(m["id"])
+                        }
+                    } else {
+                        // $("#worker-count-wrapper").fadeIn();
+                        // incrementCounter(m["id"]);
+                    }
 				}
 			}
 		});
