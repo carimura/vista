@@ -106,7 +106,7 @@ detect-plates-gobuild:
     - script:
         name: go get
         cwd: /srv/openalpr
-        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
     - script:
         name: go build
         cwd: /srv/openalpr
