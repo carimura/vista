@@ -1,5 +1,6 @@
 Oracle Faces
 
+Demo!
 
 1.  make sure $API_URL is set
 1. `cd services`
