@@ -98,7 +98,10 @@
 				<button type="submit" class="btn">Go</button>
 			</form></div>
 			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
-      <div class="lead" id="worker-count-wrapper"><span id="worker-count">0</span> functions running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.</div>
+      <div class="lead" id="worker-count-wrapper">
+          <span id="worker-count">0</span> functions running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
+          <div id="functions-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
 			</div>
 		</div>
 	</div>
@@ -121,6 +124,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.js"></script>
 	<script src="https://cdn.pubnub.com/pubnub-3.9.2.js" type="text/javascript"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
 <script>
 	function addImg(url, id) {
 		column = (totalImgs % 4) + 1;
@@ -137,30 +144,108 @@
 		console.log("done adding image "+id+" to page")
 	}
 
-	var funcsRunning = 0;
 	var totalImgs = 0;
-  var totalFuncs = 0;
+    var totalFuncs = 0;
+    var counters = {}
 
-	function getWorkerCount() {
-		return funcsRunning;
+	function getCounter(id) {
+		return counters[id];
 	}
 
+    randData = function() {
+        // generate an array of random data
+        var data = [],
+            time = (new Date()).getTime(),
+            i;
+
+            for (i = -30; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y: 0
+                });
+            }
+        return data;
+    }
+
+    $(document).ready(function () {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+    });
+
+    var chart = Highcharts.chart('functions-graph', {
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function () {
+                    // set up the updating of the chart each second
+                    var theseries = this.series
+                    setInterval(function () {
+                        var x = (new Date()).getTime();
+                        for(i = 0; i< theseries.length;i++) {
+                            if (theseries[i] !== undefined) {
+                                y = getCounter(theseries[i].name);
+                                theseries[i].addPoint([x, y], true, true);
+                            }
+                        }
+                    }, 1000);
+                }
+            }
+        },
+        title: {
+            text: 'Functions Running'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: 'Functions'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                    Highcharts.numberFormat(this.y, 1);
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        exporting: {
+            enabled: false
+        },
+        series: []
+    });
+
 	function incrementCounter(id) {
-    console.log("incrementCounter for " + id);
-    console.log("before: " + getWorkerCount());
-    funcsRunning+=1;
-		$("#worker-count").text(getWorkerCount());
-    console.log("after: " + getWorkerCount());
+        if (counters[id] === undefined) {
+            counters[id] = 0;
+            chart.addSeries({
+                name: id,
+                data: randData()
+            });
+        }
+        counters[id] += 1;
+		$("#worker-count").text(getCounter(id));
 	}
 
 	function decrementCounter(id) {
-    console.log("decrementCounter for " + id);
-    console.log("before: " + getWorkerCount());
-    funcsRunning-=1;
-    totalFuncs+=1
-		$("#worker-count").text(getWorkerCount());
-    $("#total-funcs-count").text(totalFuncs);
-    console.log("after: " + getWorkerCount());
+        counters[id] -= 1;
+        totalFuncs+=1
+		$("#worker-count").text(getCounter(id));
+        $("#total-funcs-count").text(totalFuncs);
 	}
 
 	var dots = window.setInterval( function() {
@@ -192,15 +277,15 @@
 
 				if("url" in m) {
 					addImg(m["url"], m["id"]);
-					// decrementCounter(m["id"]);
 				} else {
                     if("type" in m) {
                         if(m["running"]) {
-                            incrementCounter(m["id"])
+                            incrementCounter(m["type"])
                         } else {
-                            decrementCounter(m["id"])
+                            decrementCounter(m["type"])
                         }
                     } else {
+                        alert("This shouldnt happen")
                         // $("#worker-count-wrapper").fadeIn();
                         // incrementCounter(m["id"]);
                     }
@@ -219,6 +304,8 @@
 			}
 			listenBucket(bucket);
 		});
-    })();</script>
+    })();
+
+    </script>
   </body>
 </html>
