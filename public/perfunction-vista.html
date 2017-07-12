@@ -65,6 +65,17 @@
 		.faces-controls {
 			min-height: 110px;
 		}
+
+        #graphs {
+            display: flex;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .functions-graphs{
+            min-width: 350px;
+            width: 50%;
+            height: 300px;
+        }
     </style>
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -81,7 +92,7 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/vista.html">Home</a></li>
+          <li><a href="/vista.html">Home</a></li>
           <li><a href="">Code</a></li>
         </ul>
         <h3 class="muted">Oracle Vista</h3>
@@ -90,7 +101,7 @@
       <hr>
 
 	<div class="jumbotron">
-		<h2>Oracle Vista</h2>
+		<h2>Oracle Vista Detailed Functions View</h2>
 		<br>
 		<div class="row">
 			<div class="faces-controls">
@@ -100,8 +111,9 @@
 			</form></div>
 			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
       <div class="lead" id="worker-count-wrapper">
-          <span id="worker-count">0</span> <a href="/detailed-vista.html">functions</a> running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
-          <div id="functions-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+          <span id="worker-count">0</span> functions running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
+          <div id="graphs">
+          </div>
       </div>
 			</div>
 		</div>
@@ -147,24 +159,22 @@
 
 	var totalImgs = 0;
     var totalFuncs = 0;
-    var counters = {}
+    var counters = {};
+    var allSeries = {};
 
-	function getCounter(id) {
-		return counters[id];
+	function getCounter(type) {
+        if (counters[type] === undefined) {
+            return 0
+        }
+		return counters[type]["counter"];
 	}
 
-    randData = function() {
-        // generate an array of random data
-        var data = [],
-            time = (new Date()).getTime(),
-            i;
-            for (i = -30; i <= 0; i += 1) {
-                data.push({
-                    x: time + i * 1000,
-                    y: 0
-                });
-            }
-        return data;
+    function totalAllRunning() {
+        var total = 0;
+        Object.keys(counters).forEach(function(type) {
+            total += getCounter(type)
+        });
+        return total;
     }
 
     $(document).ready(function () {
@@ -175,88 +185,106 @@
         });
     });
 
-    var chart = Highcharts.chart('functions-graph', {
-        chart: {
-            type: 'spline',
-            animation: Highcharts.svg, // don't animate in old IE
-            marginRight: 10,
-            events: {
-                load: function () {
-                    // set up the updating of the chart each second
-                    var theseries = this.series
-                    setInterval(function () {
-                        var x = (new Date()).getTime();
-                        for(i = 0; i< theseries.length;i++) {
-                            if (theseries[i] !== undefined) {
-                                y = getCounter(theseries[i].name);
-                                theseries[i].addPoint([x, y], true, true);
-                            }
-                        }
-                    }, 1000);
+    setInterval(function () {
+        var x = (new Date()).getTime();
+        Object.keys(allSeries).forEach(function(key) {
+            var theseries = allSeries[key];
+                if (theseries[0] !== undefined) {
+                    theseries[0].addPoint([x, getCounter(key)], true, true);
                 }
             }
-        },
-        title: {
-            text: 'Functions Running'
-        },
-        xAxis: {
-            type: 'datetime',
-            tickPixelInterval: 150
-        },
-        yAxis: {
-            title: {
-                text: 'Functions'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            formatter: function () {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                    Highcharts.numberFormat(this.y, 1);
-            }
-        },
-        legend: {
-            enabled: true
-        },
-        exporting: {
-            enabled: false
-        },
-        series: []
-    });
+        );
+    }, 1000);
 
-	function fireCounter(id, running) {
-        if (counters[id] === undefined) {
-            counters[id] = 0;
-            chart.addSeries({
-                name: id,
-                data: randData()
+    var newChart = function(type) {
+        newDiv = function (type) {
+            return '<div id="functions-graph-' + type + '" class="functions-graphs"></div>'
+        }
+        $(newDiv(type)).appendTo( "#graphs" );
+
+        var chart = Highcharts.chart('functions-graph-' + type, {
+            chart: {
+                type: 'spline',
+                animation: Highcharts.svg, // don't animate in old IE
+                marginRight: 10,
+                events: {
+                    load: function () {
+                        // add the series for this type to the list of series.
+                        allSeries[type] = this.series
+                    }
+                }
+            },
+            title: {
+                text: 'Running ' + type
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of ' + type + ' running'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' +
+                        Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                        Highcharts.numberFormat(this.y, 1);
+                }
+            },
+            legend: {
+                enabled: true
+            },
+            exporting: {
+                enabled: false
+            },
+            series: []
+        });
+
+        return chart
+    }
+
+    function countGraph(type, id, running) {
+        if (counters[type] === undefined) {
+            counters[type] = {};
+            counters[type]["counter"] = 0;
+            counters[type]["chart"] = newChart(type);
+            counters[type]["chart"].addSeries({
+                name: type+'-functions',
+                data: (function() {
+                    // generate an array of random data
+                    var data = [],
+                    time = (new Date()).getTime(),
+                    i;
+
+                    for (i = -10; i <= 0; i += 1) {
+                        data.push({
+                            x: time,
+                            y: 0
+                        });
+                    }
+                    return data;
+                }())
             });
         }
         if (running) {
-            counters[id] += 1;
-            $("#worker-count").text(getCounter(id));
+            counters[type]["counter"] += 1;
         } else {
-            counters[id] -= 1;
-            if (counters[id] < 0) {
-                counters[id] = 0
+            counters[type]["counter"] -= 1;
+            totalFuncs += 1;
+            if (counters[type]["counter"] < 0) {
+                counters[type]["counter"] = 0
             }
-            totalFuncs+=1
-            $("#worker-count").text(getCounter(id));
             $("#total-funcs-count").text(totalFuncs);
         }
-	}
-
-	function decrementCounter(id) {
-        counters[id] -= 1;
-        totalFuncs+=1
-		$("#worker-count").text(getCounter(id));
-        $("#total-funcs-count").text(totalFuncs);
-	}
+        $("#worker-count").text(totalAllRunning());
+    }
 
 	var dots = window.setInterval( function() {
 		var wait = document.getElementById("listening-dots");
@@ -283,12 +311,14 @@
 			message: function(m){
 				m = JSON.parse(m)
 				if("url" in m) {
-					addImg(m["url"], m["id"]);
+					// addImg(m["url"], m["id"]);
 				} else {
                     if("type" in m) {
-                        fireCounter(m["type"],m["running"])
+                            countGraph(m["type"], m["runner"], m["running"])
                     } else {
-                        alert("This shouldnt happen, hope you're not demoing. :(")
+                        alert("Something broke :( Hope this isn't during a demo.")
+                        // $("#worker-count-wrapper").fadeIn();
+                        // incrementCounter(m["id"]);
                     }
 				}
 			}

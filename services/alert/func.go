@@ -118,10 +118,19 @@ func fnStart(bucket, id string) {
 			}
 		}
 	}()
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"alert","running":true, "id":"%s"}`, id), cbChannel, errChan)
+	pn.Publish(bucket, fmt.Sprintf(`{"type":"alert","running":true, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
 }
 
 func fnFinish(bucket, id string) {
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"alert", "running":false, "id":"%s"}`, id), cbChannel, errChan)
+	pn.Publish(bucket, fmt.Sprintf(`{"type":"alert","running":false, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
 	time.Sleep(time.Second * 2)
+}
+
+func init() {
+	if os.Getenv("HOSTNAME") == "" {
+		h, err := os.Hostname()
+		if err == nil {
+			os.Setenv("HOSTNAME", h)
+		}
+	}
 }
