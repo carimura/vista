@@ -47,6 +47,14 @@ pubnub = Pubnub.new(
 std_in = STDIN.read
 STDERR.puts "std_in --------> " + std_in
 payload = JSON.parse(std_in)
+
+pubnub.publish(
+    channel: 'oracle-vista-out',
+    message: { type: 'draw', running: true, id: payload["id"], runner: ENV["HOSTNAME"] }
+) do |envelope|
+    puts envelope.status
+end
+
 puts "payload: " + payload.inspect
 puts "Downloading image from " + payload['image_url']
 
@@ -81,3 +89,12 @@ img.write(image_name)
 link = upload_file(image_name, payload)
 
 puts "link: #{link}"
+
+pubnub.publish(
+    channel: 'oracle-vista-out',
+    message: { type: 'draw', running: false, id: payload["id"], runner: ENV["HOSTNAME"] }
+) do |envelope|
+    puts envelope.status
+end
+
+
