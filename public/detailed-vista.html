@@ -92,7 +92,7 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/vista.html">Home</a></li>
           <li><a href="">Code</a></li>
         </ul>
         <h3 class="muted">Oracle Vista</h3>
@@ -101,7 +101,7 @@
       <hr>
 
 	<div class="jumbotron">
-		<h2>Oracle Vista</h2>
+		<h2>Oracle Vista Detailed Functions View</h2>
 		<br>
 		<div class="row">
 			<div class="faces-controls">
@@ -160,6 +160,7 @@
 	var totalImgs = 0;
     var totalFuncs = 0;
     var counters = {};
+    var allSeries = {};
 
 	function getCounter(type, id) {
         if (counters[type] === undefined) {
@@ -174,7 +175,6 @@
     function totalAllRunning() {
         var total = 0;
         Object.keys(counters).forEach(function(type) {
-            console.log("type is: "+ type)
             Object.keys(counters[type]).forEach(function(key) {
                 if (key !== "chart") {
                     total += counters[type][key]
@@ -192,6 +192,19 @@
         });
     });
 
+    setInterval(function () {
+        var x = (new Date()).getTime();
+        Object.keys(allSeries).forEach(function(key) {
+            var theseries = allSeries[key]
+            for(i = 0; i< theseries.length;i++) {
+                if (theseries[i] !== undefined) {
+                    y = getCounter(key, theseries[i].name);
+                    theseries[i].addPoint([x, y], true, true);
+                }
+            }
+        });
+    }, 1000);
+
     var newChart = function(type) {
         newDiv = function (type) {
             return '<div id="functions-graph-' + type + '" class="functions-graphs"></div>'
@@ -205,17 +218,8 @@
                 marginRight: 10,
                 events: {
                     load: function () {
-                        // set up the updating of the chart each second
-                        var theseries = this.series
-                        setInterval(function () {
-                            var x = (new Date()).getTime();
-                            for(i = 0; i< theseries.length;i++) {
-                                if (theseries[i] !== undefined) {
-                                    y = getCounter(type, theseries[i].name);
-                                    theseries[i].addPoint([x, y], true, true);
-                                }
-                            }
-                        }, 1000);
+                        // add the series for this type to the list of series.
+                        allSeries[type] = this.series
                     }
                 }
             },
@@ -317,21 +321,17 @@
 			channel: bucket,
 			message: function(m){
 				m = JSON.parse(m)
-				console.log("Received message: ");
-				console.log(m);
-
 				if("url" in m) {
 					addImg(m["url"], m["id"]);
 				} else {
                     if("type" in m) {
                             countGraph(m["type"], m["runner"], m["running"])
                     } else {
-                        alert("This shouldn't happen")
+                        alert("Something broke :( Hope this isn't during a demo.")
                         // $("#worker-count-wrapper").fadeIn();
                         // incrementCounter(m["id"]);
                     }
 				}
-                // console.log(counters);
 			}
 		});
 	}
@@ -343,8 +343,9 @@
 
 			if ( bucket == null || bucket == "" ){
 				alert("Enter Channel Name");
-			}
-			listenBucket(bucket);
+			} else {
+                listenBucket(bucket);
+            }
 		});
     })();
 
