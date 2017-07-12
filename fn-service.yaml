@@ -37,7 +37,7 @@ spec:
       - name: sre-reg-secret
       containers:
       - name: fn-api
-        image:  registry.oracledx.com/skeppare/functions-service
+        image:  registry.oracledx.com/skeppare/functions-service:0.1.13
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
@@ -54,7 +54,8 @@ spec:
         - name: DB_URL
           valueFrom:
             configMapKeyRef:
-            key: DB_URL
+              name: functions-config
+              key: DB_URL
         volumeMounts:
         - name: docker-socket
           mountPath: "/var/run/docker.sock"
