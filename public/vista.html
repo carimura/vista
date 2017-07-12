@@ -158,7 +158,6 @@
         var data = [],
             time = (new Date()).getTime(),
             i;
-
             for (i = -30; i <= 0; i += 1) {
                 data.push({
                     x: time + i * 1000,
@@ -230,7 +229,7 @@
         series: []
     });
 
-	function incrementCounter(id) {
+	function fireCounter(id, running) {
         if (counters[id] === undefined) {
             counters[id] = 0;
             chart.addSeries({
@@ -238,8 +237,18 @@
                 data: randData()
             });
         }
-        counters[id] += 1;
-		$("#worker-count").text(getCounter(id));
+        if (running) {
+            counters[id] += 1;
+            $("#worker-count").text(getCounter(id));
+        } else {
+            counters[id] -= 1;
+            if (counters[id] < 0) {
+                counters[id] = 0
+            }
+            totalFuncs+=1
+            $("#worker-count").text(getCounter(id));
+            $("#total-funcs-count").text(totalFuncs);
+        }
 	}
 
 	function decrementCounter(id) {
@@ -273,22 +282,13 @@
 			channel: bucket,
 			message: function(m){
 				m = JSON.parse(m)
-				console.log("Received message: ");
-				console.log(m);
-
 				if("url" in m) {
 					addImg(m["url"], m["id"]);
 				} else {
                     if("type" in m) {
-                        if(m["running"]) {
-                            incrementCounter(m["type"])
-                        } else {
-                            decrementCounter(m["type"])
-                        }
+                        fireCounter(m["type"],m["running"])
                     } else {
-                        alert("This shouldnt happen")
-                        // $("#worker-count-wrapper").fadeIn();
-                        // incrementCounter(m["id"]);
+                        alert("This shouldnt happen, hope you're not demoing. :(")
                     }
 				}
 			}
@@ -302,8 +302,9 @@
 
 			if ( bucket == null || bucket == "" ){
 				alert("Enter Channel Name");
-			}
-			listenBucket(bucket);
+			} else {
+                listenBucket(bucket);
+            }
 		});
     })();
 
