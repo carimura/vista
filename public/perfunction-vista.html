@@ -311,7 +311,7 @@
 			message: function(m){
 				m = JSON.parse(m)
 				if("url" in m) {
-					addImg(m["url"], m["id"]);
+					// addImg(m["url"], m["id"]);
 				} else {
                     if("type" in m) {
                             countGraph(m["type"], m["runner"], m["running"])
