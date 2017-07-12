@@ -3,6 +3,7 @@ require 'rubygems'
 require 'open-uri'
 require 'aws-sdk'
 require 'mini_magick'
+require 'pubnub'
 
 def download_image(payload_in)
   payload = payload_in
@@ -37,6 +38,11 @@ def upload_file(image_name, payload_in)
 
 	link
 end
+
+pubnub = Pubnub.new(
+    subscribe_key: ENV["PUBNUB_SUBSCRIBE_KEY"],
+    publish_key: ENV["PUBNUB_PUBLISH_KEY"]
+)
 
 std_in = STDIN.read
 STDERR.puts "std_in --------> " + std_in
