@@ -110,7 +110,7 @@ detect-plates-test:
         name: go build
         cwd: /srv/openalpr
         code: go build -o func
-    - internal/docker-push:
+    - script:
         name: go test
         cwd: /srv/openalpr
         code: go test
