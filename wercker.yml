@@ -99,6 +99,21 @@ detect-plates-base:
         repository: carimura/detect-plates
         tag: master-base
 
+detect-plates-test:
+  box: carimura/detect-plates:master-base
+  steps: 
+    - script:
+        name: go get
+        cwd: /srv/openalpr
+        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
+    - script:
+        name: go build
+        cwd: /srv/openalpr
+        code: go build -o func
+    - internal/docker-push:
+        name: go test
+        cwd: /srv/openalpr
+        code: go test
 
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
