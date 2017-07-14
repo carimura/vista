@@ -10,14 +10,12 @@ def download_image(payload_in)
 
   temp_image_name = "temp_image_#{payload["id"]}.jpg"
 
-  unless payload['disable_network']
-    File.open(temp_image_name, "wb") do |fout|
-      open(payload["image_url"]) do |fin|
-        IO.copy_stream(fin, fout)
-      end
+  File.open(temp_image_name, "wb") do |fout|
+    open(payload["image_url"]) do |fin|
+      IO.copy_stream(fin, fout)
     end
   end
-  
+
   temp_image_name
 end
 
@@ -25,8 +23,8 @@ def upload_file(image_name, payload_in)
   payload = payload_in
  
   s3 = Aws::S3::Resource.new(region: "us-east-1", 
-                             credentials: Aws::Credentials.new(payload["access"], 
-                                                               payload["secret"]))
+                             credentials: Aws::Credentials.new(ENV["ACCESS"], 
+                                                               ENV["SECRET"]))
   link = nil
   puts "\nUploading the file to s3..."
 
@@ -48,12 +46,11 @@ std_in = STDIN.read
 STDERR.puts "std_in --------> " + std_in
 payload = JSON.parse(std_in)
 
+msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
-    channel: 'oracle-vista-out',
-    message: { type: 'draw', running: true, id: payload["id"], runner: ENV["HOSTNAME"] }
-) do |envelope|
-    puts envelope.status
-end
+  message: msg,
+  channel: payload["bucket"]
+)
 
 puts "payload: " + payload.inspect
 puts "Downloading image from " + payload['image_url']
@@ -90,11 +87,8 @@ link = upload_file(image_name, payload)
 
 puts "link: #{link}"
 
+msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
-    channel: 'oracle-vista-out',
-    message: { type: 'draw', running: false, id: payload["id"], runner: ENV["HOSTNAME"] }
-) do |envelope|
-    puts envelope.status
-end
-
-
+  message: msg,
+  channel: payload["bucket"]
+)

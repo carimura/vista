@@ -281,16 +281,20 @@
 		pubnub.subscribe({
 			channel: bucket,
 			message: function(m){
-				m = JSON.parse(m)
-				if("url" in m) {
-					addImg(m["url"], m["id"]);
-				} else {
-                    if("type" in m) {
-                        fireCounter(m["type"],m["running"])
-                    } else {
-                        alert("This shouldnt happen, hope you're not demoing. :(")
-                    }
-				}
+        try {
+          m = JSON.parse(m)
+          if("url" in m) {
+					  addImg(m["url"], m["id"]);
+				  } else {
+            if("type" in m) {
+                 fireCounter(m["type"],m["running"])
+             } else {
+                 alert("This shouldnt happen, hope you're not demoing. :(")
+             }
+				  }
+        } catch (e) {
+          console.log("Problem parsing m, val is"); console.log(m);
+        }
 			}
 		});
 	}
