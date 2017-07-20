@@ -13,8 +13,8 @@ sys.stderr.write("STANDARD IN ------> " + std_in)
 payload = json.loads(std_in)
 
 pnconfig = PNConfiguration()
-pnconfig.publish_key = payload["pubnub_publish_key"]
-pnconfig.subscribe_key = payload["pubnub_subscribe_key"]
+pnconfig.publish_key = os.environ["PUBNUB_PUBLISH_KEY"]
+pnconfig.subscribe_key = payload["PUBNUB_SUBSCRIBE_KEY"]
 pnconfig.ssl = False
 pubnub = PubNub(pnconfig)
 
@@ -116,13 +116,11 @@ def main():
       "image_url": image_url,
       "is_nude": is_nude,
       "rectangles": rectangles,
-      "access": payload["access"],
-      "secret": payload["secret"],
       "bucket": payload["bucket"],
       "id": payload["id"]
     }
     
-    post_url = payload["func_server_url"] + "/draw"
+    post_url = os.environ["FUNC_SERVER_URL"] + "/draw"
 
     r = requests.post(post_url, data=json.dumps(next_payload))
 

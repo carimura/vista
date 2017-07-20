@@ -17,21 +17,16 @@ import (
 // "github.com/openalpr/openalpr/src/bindings/go/openalpr"
 
 type payloadIn struct {
-	ID            string `json:"id"`
-	URL           string `json:"image_url"`
-	CountryCode   string `json:"countrycode"`
-	Access        string `json:"access"`
-	Secret        string `json:"secret"`
-	Bucket        string `json:"bucket"`
-	FuncServerURL string `json:"func_server_url"`
+	ID          string `json:"id"`
+	URL         string `json:"image_url"`
+	CountryCode string `json:"countrycode"`
+	Bucket      string `json:"bucket"`
 }
 
 type payloadOut struct {
 	ID         string      `json:"id"`
 	ImageURL   string      `json:"image_url"`
 	Rectangles []rectangle `json:"rectangles"`
-	Access     string      `json:"access"`
-	Secret     string      `json:"secret"`
 	Bucket     string      `json:"bucket"`
 	Plate      string      `json:"plate"`
 }
@@ -76,8 +71,6 @@ func main() {
 			ID:         p.ID,
 			ImageURL:   p.URL,
 			Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
-			Access:     p.Access,
-			Secret:     p.Secret,
 			Bucket:     p.Bucket,
 			Plate:      plate.BestPlate,
 		}
@@ -88,11 +81,11 @@ func main() {
 		b2 := new(bytes.Buffer)
 		json.NewEncoder(b2).Encode(pout)
 
-		postURL := p.FuncServerURL + "/draw"
+		postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
 		res, _ := http.Post(postURL, "application/json", b)
 		fmt.Println(res.Body)
 
-		alertPostURL := p.FuncServerURL + "/alert"
+		alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
 		resAlert, _ := http.Post(alertPostURL, "application/json", b2)
 		fmt.Println(resAlert.Body)
 	} else {
