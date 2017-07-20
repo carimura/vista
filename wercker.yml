@@ -127,9 +127,6 @@ detect-plates-gobuild:
   box: carimura/detect-plates:master-base
   steps:
     - script:
-        name: move source
-        code: cp -r services/detect-plates /srv/openalpr
-    - script:
         name: go get
         cwd: services/detect-plates
         code: |
@@ -141,10 +138,10 @@ detect-plates-gobuild:
         code: go build -o func
     - script:
         name: move source
-        code: mv services/detect-plates /srv/detect-plates
+        code: mkdir -p /srv && mv services/detect-plates /srv/detect-plates
     - script:
         name: prune
-        code: rm -rf /pipeline 
+        code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/detect-plates
         username: $DOCKER_USERNAME
