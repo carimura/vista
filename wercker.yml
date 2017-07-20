@@ -122,6 +122,7 @@ detect-plates-test:
         cwd: services/detect-plates
         code: go test
 
+
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
   steps:
@@ -135,19 +136,22 @@ detect-plates-gobuild:
           go get github.com/openalpr/openalpr/src/bindings/go/openalpr
           go get github.com/pubnub/go/messaging
     - script:
-        name: peep code
-        cwd: /srv/openalpr
-        code: cat main.go
-    - script:
         name: go build
         cwd: services/detect-plates
-        code: go build -o /func
+        code: go build -o func
+    - script:
+        name: move source
+        code: mv services/detect-plates /srv/detect-plates
+    - script:
+        name: prune
+        code: rm -rf /pipeline 
     - internal/docker-push:
         repository: carimura/detect-plates
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        entrypoint: /func
+        working-dir: /srv/detect-plates
+        entrypoint: ./func
 
 
 detect-plates-deploy:
