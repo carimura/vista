@@ -86,7 +86,7 @@ detect-plates-base:
         # code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: mkdir
-        code: mkdir /srv/openalpr/src/build
+        code: mkdir -p /srv/openalpr/src/build
     - script:
         name: build all
         code: cd /srv/openalpr/src/build; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && make -j2 && make install
