@@ -138,10 +138,7 @@ detect-plates-gobuild:
         code: go build -o func
     - script:
         name: move source
-        code: mkdir -p /srv && mv services/detect-plates /srv/detect-plates
-        #- script:
-        # name: prune
-        # code: rm -rf /pipeline
+        code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
     - internal/docker-push:
         repository: carimura/detect-plates
         username: $DOCKER_USERNAME
@@ -160,7 +157,6 @@ detect-plates-deploy:
         name: fn routes update
         code: |
           cp fn services/detect-plates
-          ls -R
           cd services/detect-plates
           ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
 
