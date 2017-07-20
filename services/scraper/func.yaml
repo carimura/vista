@@ -1,5 +1,5 @@
 name: carimura/scraper
-version: 0.0.62
+version: 0.0.63
 runtime: ruby
 entrypoint: ruby func.rb
 type: sync
