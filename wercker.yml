@@ -123,6 +123,10 @@ detect-plates-gobuild:
         cwd: /srv/openalpr
         code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
     - script:
+        name: peep code
+        cwd: /srv/openalpr
+        code: cat main.go
+    - script:
         name: go build
         cwd: /srv/openalpr
         code: go build -o func
