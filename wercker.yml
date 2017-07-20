@@ -81,9 +81,9 @@ detect-plates-base:
   steps:
     - install-packages:
         packages: build-essential cmake curl git libcurl3-dev libleptonica-dev liblog4cplus-dev libopencv-dev libtesseract-dev wget
-    - script:
-        name: move source
-        code: cp -r services/detect-plates /srv/openalpr
+        #- script:
+        # name: move source
+        # code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: mkdir
         code: mkdir /srv/openalpr/src/build
@@ -103,6 +103,9 @@ detect-plates-test:
   box: carimura/detect-plates:master-base
   steps: 
     - script:
+        name: move source
+        code: cp -r services/detect-plates /srv/openalpr
+    - script:
         name: go get
         cwd: /srv/openalpr
         code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
@@ -118,6 +121,9 @@ detect-plates-test:
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
   steps: 
+    - script:
+        name: move source
+        code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: go get
         cwd: /srv/openalpr
