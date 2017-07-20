@@ -86,10 +86,12 @@ detect-plates-base:
         # code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: mkdir
-        code: mkdir -p /srv/openalpr/src/build
+        cwd: services/detect-plates
+        code: mkdir ./src/build
     - script:
         name: build all
-        code: cd /srv/openalpr/src/build; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && make -j2 && make install
+        cwd: services/detect-plates
+        code: cd ./src/build; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && make -j2 && make install
     - script:
         name: prune
         code: rm -rf /pipeline
@@ -101,48 +103,51 @@ detect-plates-base:
 
 detect-plates-test:
   box: carimura/detect-plates:master-base
-  steps: 
+  steps:
     - script:
         name: move source
         code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: go get
-        cwd: /srv/openalpr
-        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
+        cwd: services/detect-plates
+        code: |
+          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+          go get github.com/pubnub/go/messaging
     - script:
         name: go build
-        cwd: /srv/openalpr
+        cwd: services/detect-plates
         code: go build -o func
     - script:
         name: go test
-        cwd: /srv/openalpr
+        cwd: services/detect-plates
         code: go test
 
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
-  steps: 
+  steps:
     - script:
         name: move source
         code: cp -r services/detect-plates /srv/openalpr
     - script:
         name: go get
-        cwd: /srv/openalpr
-        code: go get github.com/openalpr/openalpr/src/bindings/go/openalpr; go get github.com/pubnub/go/messaging
+        cwd: services/detect-plates
+        code: |
+          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+          go get github.com/pubnub/go/messaging
     - script:
         name: peep code
         cwd: /srv/openalpr
         code: cat main.go
     - script:
         name: go build
-        cwd: /srv/openalpr
-        code: go build -o func
+        cwd: services/detect-plates
+        code: go build -o /func
     - internal/docker-push:
         repository: carimura/detect-plates
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        working-dir: /srv/openalpr
-        entrypoint: ./func
+        entrypoint: /func
 
 
 detect-plates-deploy:
@@ -159,7 +164,7 @@ detect-plates-deploy:
 
 alert-gobuild:
   box: golang:latest
-  steps: 
+  steps:
     - script:
         name: move code over
         code: mkdir /src; cp services/alert/* /src; cp fn /src
