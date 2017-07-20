@@ -65,7 +65,7 @@ func main() {
 
 	if len(results.Plates) > 0 {
 		plate := results.Plates[0]
-		fmt.Printf("\n\n FOUND PLATE ------> %+v", plate)
+		fmt.Printf("\n\n FOUND PLATE ------>> %+v", plate)
 
 		pout := &payloadOut{
 			ID:         p.ID,
@@ -74,6 +74,8 @@ func main() {
 			Bucket:     p.Bucket,
 			Plate:      plate.BestPlate,
 		}
+
+		fmt.Printf("pout! --> %+v ", pout)
 
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
