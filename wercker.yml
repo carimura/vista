@@ -139,9 +139,9 @@ detect-plates-gobuild:
     - script:
         name: move source
         code: mkdir -p /srv && mv services/detect-plates /srv/detect-plates
-    - script:
-        name: prune
-        code: rm -rf /pipeline
+        #- script:
+        # name: prune
+        # code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/detect-plates
         username: $DOCKER_USERNAME
