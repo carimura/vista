@@ -122,6 +122,7 @@ detect-plates-test:
         cwd: services/detect-plates
         code: go test
 
+
 detect-plates-gobuild:
   box: carimura/detect-plates:master-base
   steps:
