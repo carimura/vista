@@ -159,8 +159,8 @@ detect-plates-deploy:
     - script:
         name: fn routes update
         code: |
-          cp fn services/detect-plates
-          cd services/detect-plates
+          cp fn /srv/detect-plates
+          cd /srv/detect-plates
           ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
 
 alert-gobuild:
