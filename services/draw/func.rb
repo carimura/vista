@@ -26,7 +26,6 @@ def upload_file(image_name, payload_in)
                              credentials: Aws::Credentials.new(ENV["ACCESS"], 
                                                                ENV["SECRET"]))
   link = nil
-  puts "\nUploading the file to s3..."
 
 	name = File.basename(image_name)
   obj = s3.bucket(payload['bucket']).object(name)
@@ -43,7 +42,6 @@ pubnub = Pubnub.new(
 )
 
 std_in = STDIN.read
-STDERR.puts "std_in --------> " + std_in
 payload = JSON.parse(std_in)
 
 msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
@@ -53,7 +51,6 @@ pubnub.publish(
 )
 
 puts "payload: " + payload.inspect
-puts "Downloading image from " + payload['image_url']
 
 temp_image_name = download_image(payload)
 
@@ -62,14 +59,12 @@ img = MiniMagick::Image.new(temp_image_name)
 payload["rectangles"].each do |coords|
   img.combine_options do |c|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
-    puts "draw string: " + draw_string
     c.fill('none')
 
     is_nude = payload["is_nude"] || "false"
-    puts "is_nude: " + is_nude
     
-    c.stroke('yellow')
-    c.strokewidth(8)
+    c.stroke('blue')
+    c.strokewidth(10)
     c.draw draw_string
   end 
 end
@@ -78,8 +73,6 @@ image_name = "image_#{payload["id"]}.jpg"
 img.write(image_name)
 
 link = upload_file(image_name, payload)
-
-puts "link: #{link}"
 
 msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
