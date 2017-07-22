@@ -3,6 +3,5 @@
   "num": "50",
   "countrycode": "us",
   "service_to_call": "detect-plates",
-  "page": 23,
   "bucket": "oracle-vista-out"
 }
