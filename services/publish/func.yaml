@@ -1,5 +1,5 @@
 name: carimura/publish
-version: 0.0.31
+version: 0.0.32
 runtime: ""
 entrypoint: python2 func.py
 type: async
