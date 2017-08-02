@@ -14,7 +14,7 @@ payload = json.loads(std_in)
 
 pnconfig = PNConfiguration()
 pnconfig.publish_key = os.environ["PUBNUB_PUBLISH_KEY"]
-pnconfig.subscribe_key = payload["PUBNUB_SUBSCRIBE_KEY"]
+pnconfig.subscribe_key = os.environ["PUBNUB_SUBSCRIBE_KEY"]
 pnconfig.ssl = False
 pubnub = PubNub(pnconfig)
 

@@ -1,11 +1,11 @@
 import json
-import sys
+import sys, os
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
 pnconfig = PNConfiguration()
-pnconfig.subscribe_key = "sub-1e453968-bc05-11e0-9cf9-cbaf6932e4b8"
-pnconfig.publish_key = "pub-025536de-c773-415a-9961-3d5c2bec5f26"
+pnconfig.subscribe_key = os.environ["PUBNUB_SUBSCRIBE_KEY"]
+pnconfig.publish_key = os.environ["PUBNUB_PUBLISH_KEY"]
 pnconfig.ssl = False
 pn = PubNub(pnconfig)
 

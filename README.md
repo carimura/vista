@@ -3,8 +3,8 @@ Oracle Vista
 1.  make sure $API_URL is set
 1. `cd services`
 1. `make deploy` (this should deploy both detects, draw, publish, and alert to FN server)
-1. cd ..; ./setenv.sh (this will set all the proper function secrets, get from
-   Chad)
+1. cd ..; 
+1. fill out setenv.sh then run ./setenv.sh (this will set all the proper function secrets)
 1. `cd public; open vista.html`
 1. Enter "oracle-vista-out" into the box (this subscribes to pubnub channel)
 1. `cd scraper`
