@@ -1,7 +1,5 @@
 Oracle Vista App
 
-Demo.
-
 1.  make sure $API_URL is set
 1. `cd services`
 1. `make deploy` (this should deploy both detects, draw, publish, and alert to FN server)
