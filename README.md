@@ -44,8 +44,10 @@ docker run -p 9000:9000 --name minio1 \
 
 ### Step 6: Run the demo!
 1. `cd scraper`
-1. `cat payload.json | fn call myapp /scraper`
+1. Plate detection: `cat payload.json | fn call myapp /scraper`
+1. Facial detection: `cat payload_faces.json | fn call myapp /scraper`
 
+You should see activity in the ngrok logs, server logs, and output to the vista.html screen. As they finish the final images will push to the screen. Plate detection will also Tweet out from the alert function.
 
 
 ## Known Issues
