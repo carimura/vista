@@ -34,7 +34,7 @@ def upload_file(image_name, payload_in)
   link = nil
 
 	name = File.basename(image_name)
-  obj = s3.bucket(payload['bucket']).object(name)
+  obj = s3.bucket(ENV['BUCKET']).object(name)
 	obj.upload_file(image_name)
 
 	link = obj.public_url()
@@ -53,7 +53,7 @@ payload = JSON.parse(std_in)
 msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
   message: msg,
-  channel: payload["bucket"]
+  channel: ENV["BUCKET"]
 )
 
 temp_image_name = download_image(payload)
@@ -79,5 +79,5 @@ link = upload_file(image_name, payload)
 msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
   message: msg,
-  channel: payload["bucket"]
+  channel: ENV["BUCKET"]
 )
