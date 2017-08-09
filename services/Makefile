@@ -5,3 +5,4 @@ deploy:
 	cd detect-plates; fn deploy myapp
 	cd detect-faces; fn deploy myapp
 	cd alert; fn deploy myapp
+	cd scraper; fn deploy myapp

@@ -21,10 +21,16 @@ end
 
 def upload_file(image_name, payload_in)
   payload = payload_in
- 
-  s3 = Aws::S3::Resource.new(region: "us-east-1", 
-                             credentials: Aws::Credentials.new(ENV["ACCESS"], 
-                                                               ENV["SECRET"]))
+  
+  Aws.config.update({
+    endpoint: ENV["MINIO_SERVER_URL"],
+    credentials: Aws::Credentials.new(ENV["ACCESS"], ENV["SECRET"]),
+    force_path_style: true,
+    region: 'us-east-1'
+  })
+
+  s3 = Aws::S3::Resource.new
+
   link = nil
 
 	name = File.basename(image_name)
@@ -49,8 +55,6 @@ pubnub.publish(
   message: msg,
   channel: payload["bucket"]
 )
-
-puts "payload: " + payload.inspect
 
 temp_image_name = download_image(payload)
 
