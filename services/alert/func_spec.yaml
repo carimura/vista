@@ -1,0 +1,17 @@
+Name: Alert Service
+Purpose: Currently posts messages to Twitter
+Expects:
+  Input:
+    ImageURL: http://path_to_image
+    Plate: abc123
+  Environment:
+    TWITTER_CONF_KEY: ABC
+    TWITTER_CONF_SECRET: 123
+    TWITTER_TOKEN_KEY: DEF
+    TWITTER_TOKEN_SECRET: 456
+    PUBNUB_PUBLISH_KEY: GHI
+    PUBNUB_SUBSCRIBE_KEY: 789
+    HOSTNAME: MYHOST
+Output:
+  Description: Tweets!
+

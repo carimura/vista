@@ -11,29 +11,20 @@ pn = PubNub(pnconfig)
 
 def getPayload():
     std_in = sys.stdin.read()
-    sys.stderr.write("std_in -----------> " + std_in)
     return json.loads(std_in)
 
 def callback(message):
      print message
 
 def main():
-    # get payload
     payload = getPayload()
 
-    # extract data
     bucket_name = payload["Records"][0]["s3"]["bucket"]["name"]
-    print "Bucket: " + bucket_name
-
     image_key = payload["Records"][0]["s3"]["object"]["key"]
-    print "Image Key: " + image_key
-
-    url = "http://stage.fnservice.io:9000/"+bucket_name+"/" + image_key;
+    url = os.environ["MINIO_SERVER_URL"] + "/" + bucket_name + "/" + image_key
 
     message = {'url': url, 'id': image_key}
     message_json = json.dumps(message)
-
-    print "message: " + str(message_json)
 
     pn.publish().channel(bucket_name).message([message_json]).use_post(True).sync()
 
