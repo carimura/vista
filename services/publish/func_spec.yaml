@@ -1,0 +1,9 @@
+Name: Publish Service
+Purpose: Receives webhook and publishes content to a pubnub channel
+Expects:
+  Input:
+    Message: "{\"Records\":[{\"eventVersion\":\"2.0\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2017-06-13T04:13:45.889Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AQCXAFEC7QITK\"},\"requestParameters\":{\"sourceIPAddress\":\"98.210.164.174\"},\"responseElements\":{\"x-amz-request-id\":\"1B259A172ABC37F2\",\"x-amz-id-2\":\"RHJOeu0nN95e20TIoV9UtHTN7JrZS3LdGMe9PZx/jTdVQkLC5K1oqekZ0Ar7jlBub8ubFqXKrNk=\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"change-event\",\"bucket\":{\"name\":\"oracle-faces-out\",\"ownerIdentity\":{\"principalId\":\"AQCXAFEC7QITK\"},\"arn\":\"arn:aws:s3:::oracle-faces-out\"},\"object\":{\"key\":\"image_35276558995.jpg\",\"size\":111600,\"eTag\":\"ee8d9f256c24be80014470d09efbb297\",\"sequencer\":\"00593F66760856B7F8\"}}}]}"
+  Environment:
+Output:
+  Description: posts pubnub message
+

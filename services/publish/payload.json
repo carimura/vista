@@ -1,12 +1,2 @@
-{
-  "Type" : "Notification",
-  "MessageId" : "186a83ab-997e-5efb-a74d-d212f1c7e949",
-  "TopicArn" : "arn:aws:sns:us-east-1:810535167127:oracle-faces-out-change",
-  "Subject" : "Amazon S3 Notification",
-  "Message" : "{\"Records\":[{\"eventVersion\":\"2.0\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2017-06-13T04:13:45.889Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AQCXAFEC7QITK\"},\"requestParameters\":{\"sourceIPAddress\":\"98.210.164.174\"},\"responseElements\":{\"x-amz-request-id\":\"1B259A172ABC37F2\",\"x-amz-id-2\":\"RHJOeu0nN95e20TIoV9UtHTN7JrZS3LdGMe9PZx/jTdVQkLC5K1oqekZ0Ar7jlBub8ubFqXKrNk=\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"change-event\",\"bucket\":{\"name\":\"oracle-faces-out\",\"ownerIdentity\":{\"principalId\":\"AQCXAFEC7QITK\"},\"arn\":\"arn:aws:s3:::oracle-faces-out\"},\"object\":{\"key\":\"image_35276558995.jpg\",\"size\":111600,\"eTag\":\"ee8d9f256c24be80014470d09efbb297\",\"sequencer\":\"00593F66760856B7F8\"}}}]}",
-  "Timestamp" : "2017-06-13T04:13:45.956Z",
-  "SignatureVersion" : "1",
-  "Signature" : "fTfD4dGD16xYpAArQKjevKMvhN7nlxdiR6dxK3u5IMS7ST97BIZ84pNsQ7cOSpDuVn9VxGn845kBHoVVWb4Av5g87oEHx0w9BKp0x6MoPH1RE9gBv6Fxa2vmh0DnQHAIePdGeZPZX8dRsi65dE9SQnZkp7geBkW8XLYA8Mab39ZAoFpTL3yKXrZw+mOiUH7BBecT9eydw0YYXGvyXrDWXV+rd9JgsgEkSRIp5+MS1ziX5eqDE/mfuJFh02oE6tnXWHQRIV6EJvhT/OIN85HQ5Wm/ywuUsFzZLHUAtADdAHTdK589l9RjYJB31ueHdC5JKdk8bMMCFnRwNfsJes+3MA==",
-  "SigningCertURL" : "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-b95095beb82e8f6a046b3aafc7f4149a.pem",
-  "UnsubscribeURL" : "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:810535167127:oracle-faces-out-change:609865ff-1c66-406a-8d75-e1fa931eaa56"
-}
+{"EventType":"s3:ObjectCreated:Put","Key":"oracle-vista-out/image_123.jpg","Records":[{"eventVersion":"2.0","eventSource":"minio:s3","awsRegion":"us-east-1","eventTime":"2017-08-08T23:07:52Z","eventName":"s3:ObjectCreated:Put","userIdentity":{"principalId":"AKIAIOSFODNN7EXAMPLE"},"requestParameters":{"sourceIPAddress":"10.99.98.0:25566"},"responseElements":{"x-amz-request-id":"14D90190DC002685","x-minio-origin-endpoint":"http://10.99.6.93:9000"},"s3":{"s3SchemaVersion":"1.0","configurationId":"Config","bucket":{"name":"oracle-vista-out","ownerIdentity":{"principalId":"AKIAIOSFODNN7EXAMPLE"},"arn":"arn:aws:s3:::oracle-vista-out"},"object":{"key":"image_123.jpg","size":461025,"eTag":"cf5d884388a9f7d2af1d767c15a26b12","contentType":"image/jpeg","userDefined":{"content-type":"image/jpeg"},"versionId":"1","sequencer":"14D90190DC002685"}},"source":{"host":"10.99.98.0","port":"25566","userAgent":"aws-sdk-ruby2/2.10.21 ruby/2.4.0 x86_64-linux resources"}}],"level":"info","msg":"","time":"2017-08-08T23:07:52Z"}
+

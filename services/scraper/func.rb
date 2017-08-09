@@ -10,7 +10,7 @@ FlickRaw.shared_secret = ENV["FLICKR_API_SECRET"]
 search_text = payload_in["query"] || "baby smile"
 num_results = payload_in["num"] || 5
 service_to_call = payload_in["service_to_call"] || "detect-faces"
-page = payload_in["page"] || rand(100)
+page = payload_in["page"] || rand(50)
 
 puts "Querying Flickr for \"#{search_text}\" grabbing from page #{page} limiting results to #{num_results}"
 

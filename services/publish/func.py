@@ -20,16 +20,15 @@ def callback(message):
 def main():
     # get payload
     payload = getPayload()
-    message_json = json.loads(payload["Message"])
 
     # extract data
-    bucket_name = message_json["Records"][0]["s3"]["bucket"]["name"]
+    bucket_name = payload["Records"][0]["s3"]["bucket"]["name"]
     print "Bucket: " + bucket_name
 
-    image_key = message_json["Records"][0]["s3"]["object"]["key"]
+    image_key = payload["Records"][0]["s3"]["object"]["key"]
     print "Image Key: " + image_key
 
-    url = "https://s3.amazonaws.com/"+bucket_name+"/" + image_key;
+    url = "http://stage.fnservice.io:9000/"+bucket_name+"/" + image_key;
 
     message = {'url': url, 'id': image_key}
     message_json = json.dumps(message)

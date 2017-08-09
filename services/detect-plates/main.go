@@ -1,7 +1,5 @@
 package main
 
-// "FIND ME ANDY! --Said a bug somewhere"
-
 import (
 	"bytes"
 	"encoding/json"
@@ -15,8 +13,6 @@ import (
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 	"github.com/pubnub/go/messaging"
 )
-
-// "github.com/openalpr/openalpr/src/bindings/go/openalpr"
 
 type payloadIn struct {
 	ID          string `json:"id"`
