@@ -1,6 +1,6 @@
 {
   "query": "license plate car california",
-  "num": "50",
+  "num": "5",
   "countrycode": "us",
   "service_to_call": "detect-plates",
   "bucket": "oracle-vista-out"
