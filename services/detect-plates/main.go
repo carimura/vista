@@ -18,14 +18,12 @@ type payloadIn struct {
 	ID          string `json:"id"`
 	URL         string `json:"image_url"`
 	CountryCode string `json:"countrycode"`
-	Bucket      string `json:"bucket"`
 }
 
 type payloadOut struct {
 	ID         string      `json:"id"`
 	ImageURL   string      `json:"image_url"`
 	Rectangles []rectangle `json:"rectangles"`
-	Bucket     string      `json:"bucket"`
 	Plate      string      `json:"plate"`
 }
 
@@ -40,8 +38,8 @@ func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
 
-	fnStart(p.Bucket, p.ID)
-	defer fnFinish(p.Bucket, p.ID)
+	fnStart(os.Getenv("BUCKET"), p.ID)
+	defer fnFinish(os.Getenv("BUCKET"), p.ID)
 	outfile := "working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
@@ -69,7 +67,6 @@ func main() {
 			ID:         p.ID,
 			ImageURL:   p.URL,
 			Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
-			Bucket:     p.Bucket,
 			Plate:      plate.BestPlate,
 		}
 

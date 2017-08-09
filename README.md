@@ -14,7 +14,6 @@
 1. `cat payload.json | fn call myapp /scraper`
 
 
-
 ## minio
 
 The app needs Minio to run somewhere since that is the S3-compliant storage
@@ -22,9 +21,13 @@ engine. Also the webhooks need to be configured so that they can push out the
 results to the publish function which pushes the images to the
 public/vista.html front end.
 
-1. Make sure Minio is setup
-1. The minio config must have webhooks setup per [this blog post](https://blog.minio.io/introducing-webhooks-for-minio-e2c3ad26deb2)
+### using stage.fnservice.io:9090 (no guarantees)
+
+1. install the [mc minio client](https://github.com/minio/mc)
 1. services/setup_minio.sh
 1. That should be it for Minio.
 
+### using your own minio
+1. install and setup minio
+1. The minio config must have webhooks setup per [this blog post](https://blog.minio.io/introducing-webhooks-for-minio-e2c3ad26deb2)
 

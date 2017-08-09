@@ -23,8 +23,8 @@ type payloadIn struct {
 func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
-	fnStart("oracle-vista-out", p.Plate)
-	defer fnFinish("oracle-vista-out", p.Plate)
+	fnStart(os.Getenv("BUCKET"), p.Plate)
+	defer fnFinish(os.Getenv("BUCKET"), p.Plate)
 
 	outfile := "working.jpg"
 

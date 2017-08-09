@@ -76,7 +76,7 @@ def isNude(url):
 def main():
     # Notify the UI that a function has started
     image_name = payload["id"] + ".jpg"
-    sendWorkerCount("oracle-vista-out", image_name)
+    sendWorkerCount(os.environ("BUCKET"), image_name)
 
     image_url = payload["image_url"]
     print "image_url: " + image_url

@@ -3,5 +3,4 @@
   "num": "20",
   "countrycode": "us",
   "service_to_call": "detect-faces",
-  "bucket": "oracle-vista-out"
 }
