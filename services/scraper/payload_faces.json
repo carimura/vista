@@ -1,7 +1,7 @@
 {
-  "query": "license plate car california",
-  "num": "30",
+  "query": "infant smile",
+  "num": "20",
   "countrycode": "us",
-  "service_to_call": "detect-plates",
+  "service_to_call": "detect-faces",
   "bucket": "oracle-vista-out"
 }
