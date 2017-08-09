@@ -64,10 +64,8 @@ payload["rectangles"].each do |coords|
   img.combine_options do |c|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
     c.fill('none')
-
     is_nude = payload["is_nude"] || "false"
-    
-    c.stroke('blue')
+    c.stroke('red')
     c.strokewidth(10)
     c.draw draw_string
   end 

@@ -1,0 +1,13 @@
+Name: Face Detect Service
+Purpose: Detects face objects in images and outputs the coords of those faces
+Expects:
+  Input:
+    id: 123
+    image_url: http://path_to_image.png
+  Environment:
+    PUBNUB_PUBLISH_KEY: GHI
+    PUBNUB_SUBSCRIBE_KEY: 789
+    FUNC_SERVER_URL: http://path_to_func_server:8080
+Output:
+  Description: Tweets!
+

@@ -9,7 +9,6 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
 std_in = sys.stdin.read()
-sys.stderr.write("STANDARD IN ------> " + std_in)
 payload = json.loads(std_in)
 
 pnconfig = PNConfiguration()
@@ -48,11 +47,9 @@ def downloadFile(url):
     return filename
 
 def sendWorkerCount(bucket_name, image_key):
-    print "sendWorkerCount image_key: " + str(image_key)    
     fixed_image_key = "image_" + image_key
     message = {'id': fixed_image_key}
     message_json = json.dumps(message)
-    print "sendWorkerCount message_json: " + str(message_json)
     pn = PubNub(pnconfig)
     pn.publish().channel(bucket_name).message([message_json]).use_post(True).sync()
 
@@ -81,18 +78,7 @@ def main():
     image_name = payload["id"] + ".jpg"
     sendWorkerCount("oracle-vista-out", image_name)
 
-    if "Message" in payload:
-      print "feels like SNS"
-      message_json = json.loads(payload["Message"])
-      bucket_name = message_json["Records"][0]["s3"]["bucket"]["name"]
-      print "Bucket: " + bucket_name
-      image_key = message_json["Records"][0]["s3"]["object"]["key"]
-      print "image_key: " + image_key
-      image_url = "https://s3.amazonaws.com/"+bucket_name+"/" + image_key
-    else:
-      print "seems like direct queue from image url"
-      image_url = payload["image_url"]
-
+    image_url = payload["image_url"]
     print "image_url: " + image_url
 
     f = downloadFile(image_url)
