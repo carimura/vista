@@ -8,19 +8,21 @@
 - Twitter [developer account](https://apps.twitter.com/)
 - Flickr [developer account](https://www.flickr.com/services/apps/create/apply/)
 
-### Step 2: Install the CLI and start Fn
+### Step 2: Install Fn CLI and start Fn server
 `curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh`
 
 `fn start`
+
+(Easy huh?)
 
 ### Step 3: Setup ngrok
 1. install [ngrok](https://ngrok.com/)
 1. `ngrok http 8080` (for Fn)
 1. `ngrok http 9000` (for minio)
-1. `export API_URL=<ngrok_url_from_last_step>`
+1. `export API_URL=<ngrok_url_for_http_8080>`
 
 
-### Step 4: Deploy/configure the functions
+### Step 4: Deploy/configure the Vista functions
 1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
 1. `cp scripts/setenv_sample.sh setenv.sh`, fill out all "yourvalue" values (the other ones should work) then `./setenv.sh`
 1. `open public/vista.html`
@@ -48,11 +50,12 @@ docker run -p 9000:9000 --name minio1 \
 
 ## Known Issues
 
-- Minio gives a 429 Too Many Requests when firing the webhook under load. WTF Minio.
-
+- Minio gives a 429 Too Many Requests when firing the webhook under a tiny amount of load. WTF Minio.
 
 ## Future Work Ideas
 
-- Add the function count stuff to publish function
+- Add the function count stuff to the publish function
 - Add video stream as source for detect-plates, not just the flickr scraper
-- lots of dependencies still. Could reduce Flickr by pulling straight from Google images
+- lots of dependencies still. Could eliminate Flickr by pulling straight from Google images?
+
+Other ideas: Feel free to create GitHub issues or contact Chad
