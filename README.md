@@ -61,5 +61,6 @@ You should see activity in the ngrok logs, server logs, and output to the vista.
 - Add the function count stuff to the publish function
 - Add video stream as source for detect-plates, not just the flickr scraper
 - lots of dependencies still. Could eliminate Flickr by pulling straight from Google images?
+- if BMC has anything S3-compat, could use that as well to avoid Minio
 
 Other ideas: Feel free to create GitHub issues or contact Chad
