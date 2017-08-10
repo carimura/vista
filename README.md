@@ -1,5 +1,7 @@
 # Vista App
 
+![logo](https://lh6.googleusercontent.com/FpQ8rvAZPqZnkgYgELcByTPo4GbvoWOv9gMX2CRkVy8cf54ekxxwWWKcyKj83L7HQQXDR8pm5IYqJaw=w1280-h1343)
+
 ## Running Locally
 
 ### Step 1: Get prerequisite accounts
