@@ -1,6 +1,6 @@
 # Vista App
 
-![logo](https://lh6.googleusercontent.com/FpQ8rvAZPqZnkgYgELcByTPo4GbvoWOv9gMX2CRkVy8cf54ekxxwWWKcyKj83L7HQQXDR8pm5IYqJaw=w1280-h1343)
+![logo](https://drive.google.com/uc?export=view&id=0BzyYzhn6bht-Sm1VaFdKY2hKYXc)
 
 ## Running Locally
 
