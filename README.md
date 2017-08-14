@@ -54,7 +54,7 @@ You should see activity in the ngrok logs, server logs, and output to the vista.
 
 ## Known Issues
 
-- Ngrok gives a 429 Too Many Requests when running this at any scale (ie > 5 images). Upgrading Ngrok fixes this, but we shouldn't force all users of this demo to upgrade ngrok. Maybe future work idea is to get rid of ngrok somehow...
+- [Issue 13](https://github.com/carimura/vista/issues/13) Ngrok gives a 429 Too Many Requests when running this at any scale (ie > 5 images). Upgrading Ngrok fixes this, but we shouldn't force all users of this demo to upgrade ngrok. Maybe future work idea is to get rid of ngrok somehow..
 
 ## Future Work Ideas
 
