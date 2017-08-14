@@ -91,7 +91,7 @@
       "webhook":{
          "1":{
             "enable":true,
-            "endpoint":"http://2f618bd9.ngrok.io/r/myapp/publish"
+            "endpoint":"http://e98940a6.ngrok.io/r/myapp/publish"
          }
       },
       "mysql":{

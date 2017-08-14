@@ -7,4 +7,3 @@ bundle
 Gemfile.lock
 ENVIRONMENT
 .wercker
-func.yaml

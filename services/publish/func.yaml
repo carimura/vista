@@ -1,0 +1,5 @@
+name: carimura/publish
+version: 0.0.1
+runtime: ""
+type: async
+path: /publish
