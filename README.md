@@ -19,8 +19,7 @@
 
 ### Step 3: Setup ngrok
 1. install [ngrok](https://ngrok.com/)
-1. `ngrok http 8080` (for Fn)
-1. `ngrok http 9000` (for minio)
+1. `ngrok start --config ./ngrok_tunnels.yml fn minio` (for Fn and Minio Tunnels)
 1. `export API_URL=<ngrok_url_for_http_8080>`
 
 
