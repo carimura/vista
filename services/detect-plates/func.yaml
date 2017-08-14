@@ -1,5 +1,0 @@
-name: carimura/detect-plates
-version: 0.0.48
-runtime: ""
-type: async
-path: /detect-plates

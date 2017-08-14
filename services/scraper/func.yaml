@@ -1,7 +1,0 @@
-name: carimura/scraper
-version: 0.0.77
-runtime: ruby
-entrypoint: ruby func.rb
-type: sync
-timeout: 2m0s
-path: /scraper

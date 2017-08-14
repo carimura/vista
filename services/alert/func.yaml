@@ -1,6 +1,0 @@
-name: carimura/alert
-version: 0.0.17
-runtime: go
-entrypoint: ./func
-type: async
-path: /alert
