@@ -34,7 +34,7 @@ def upload_file(image_name, payload_in)
   link = nil
 
 	name = File.basename(image_name)
-  obj = s3.bucket(ENV['BUCKET']).object(name)
+  obj = s3.bucket(ENV["BUCKET"]).object(name)
 	obj.upload_file(image_name)
 
 	link = obj.public_url()
@@ -51,6 +51,7 @@ std_in = STDIN.read
 payload = JSON.parse(std_in)
 
 msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
+#puts ENV.to_h
 pubnub.publish(
   message: msg,
   channel: ENV["BUCKET"]
@@ -65,7 +66,7 @@ payload["rectangles"].each do |coords|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
     c.fill('none')
     is_nude = payload["is_nude"] || "false"
-    c.stroke('red')
+    c.stroke('blue')
     c.strokewidth(10)
     c.draw draw_string
   end 

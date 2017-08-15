@@ -2,5 +2,5 @@
   "query": "infant smile",
   "num": "20",
   "countrycode": "us",
-  "service_to_call": "detect-faces",
+  "service_to_call": "detect-faces"
 }

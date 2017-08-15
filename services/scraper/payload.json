@@ -1,6 +1,6 @@
 {
-  "query": "license plate car california",
-  "num": "10",
+  "query": "license plate car usa",
+  "num": "20",
   "countrycode": "us",
   "service_to_call": "detect-plates"
 }

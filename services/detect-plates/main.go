@@ -51,6 +51,7 @@ func main() {
 	}
 	alpr.SetTopN(10)
 
+	fmt.Println("Checking Plate URL ---> " + p.URL)
 	downloadFile(outfile, p.URL)
 
 	imageBytes, err := ioutil.ReadFile(outfile)
@@ -70,7 +71,7 @@ func main() {
 			Plate:      plate.BestPlate,
 		}
 
-		fmt.Printf("pout! --> %+v ", pout)
+		fmt.Printf("\n\npout! --> %+v ", pout)
 
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)

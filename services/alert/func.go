@@ -28,10 +28,9 @@ func main() {
 
 	outfile := "working.jpg"
 
-	fmt.Println("------- ALERT STANDARD IN -------")
-	fmt.Println(p)
-
-	fmt.Println(os.Environ())
+	//fmt.Println("------- ALERT STANDARD IN -------")
+	//fmt.Println(p)
+	//fmt.Println(os.Environ())
 
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONF_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONF_SECRET"))

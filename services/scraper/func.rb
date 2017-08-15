@@ -42,7 +42,6 @@ photos.each do |photo|
   }
 
   RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
-  
 end
 
 puts "done"
