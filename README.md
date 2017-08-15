@@ -26,7 +26,7 @@
 
 ### Step 4: Deploy/configure the Vista functions
 1. `cd services; make dockerid=<your_dockerid> init; make deploy` (this should deploy all demo funcs to the Fn server) 
-1. `cp scripts/setenv_sample.sh setenv.sh`, fill out all "yourvalue" values (the other ones should work) then `./setenv.sh`
+1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. `open public/vista.html`
 1. Enter the value you're using for your BUCKET (default: oracle-vista-out) environment variable into the box (this subscribes to pubnub channel)
 
