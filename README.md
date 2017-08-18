@@ -25,7 +25,9 @@
 
 
 ### Step 4: Deploy/configure the Vista functions
-1. `cd services; make dockerid=<your_dockerid> init; make deploy` (this should deploy all demo funcs to the Fn server) 
+1. modify every func.yaml in /services/\* to change carimura to your docker id
+   (working on a better way to manage this)
+1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
 1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. `open public/vista.html`
 1. Enter the value you're using for your BUCKET (default: oracle-vista-out) environment variable into the box (this subscribes to pubnub channel)
@@ -41,7 +43,7 @@ docker run -p 9000:9000 --name minio1 \
    -v /tmp/config/minio1:/root/.minio \
    minio/minio server /export
 ```
-1. `mc config host add myminio <insert ngrok url for port 9000> DEMOACCESSKEY DEMOSECRETKEY`
+1. `mc config host add local <insert ngrok url for port 9000> DEMOACCESSKEY DEMOSECRETKEY` (local is an alias, can be anything but below script assumes local)
 1. Make sure the bucket in scripts/setup_minio.sh is the same as set in step 5, then execute `./setup_minio.sh`. This sets up the bucket and webhooks.
 
 ### Step 6: Run the demo!
