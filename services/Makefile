@@ -5,3 +5,4 @@ deploy:
 	cd detect-faces; fn deploy myapp
 	cd alert; fn deploy myapp
 	cd scraper; fn deploy myapp
+	cd split-video; fn deploy myapp

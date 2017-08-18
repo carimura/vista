@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -13,6 +14,18 @@ import (
 
 	"github.com/minio/minio-go"
 )
+
+type payloadIn struct {
+	ID          string `json:"id"`
+	URL         string `json:"image_url"`
+	CountryCode string `json:"countrycode"`
+}
+
+type payloadOut struct {
+	ID          string `json:"id"`
+	ImageURL    string `json:"image_url"`
+	CountryCode string `json:"countrycode"`
+}
 
 func main() {
 	fmt.Println("Starting...")
@@ -26,7 +39,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cmd := exec.Command("ffmpeg", "-i", "plate_ss.mpg", "-vf", "fps=1", "out%3d.png")
+	cmd := exec.Command("ffmpeg", "-i", "traffic.mp4", "-vf", "fps=1", "out%3d.png")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
@@ -39,13 +52,33 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("------ Out files after split ------")
+	url := ""
 	for _, file := range files {
 		if !strings.Contains(file.Name(), "out") {
 			continue
 		}
 		uploadFile(minioClient, file.Name())
+		url = "http://minio.ngrok.io/videoimages/" + file.Name()
+		callDetectPlates(file.Name(), url)
 	}
 	fmt.Println("-------------------------------------")
+}
+
+func callDetectPlates(f string, url string) {
+	pout := &payloadOut{
+		ID:          f,
+		ImageURL:    url,
+		CountryCode: "eu",
+	}
+	fmt.Printf("\n\npout! --> %+v ", pout)
+
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(pout)
+
+	//postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
+	postURL := "http://fnlocal.ngrok.io/r/myapp/detect-plates"
+	res, _ := http.Post(postURL, "application/json", b)
+	fmt.Println(res.Body)
 }
 
 func uploadFile(m *minio.Client, filename string) {
@@ -57,7 +90,7 @@ func uploadFile(m *minio.Client, filename string) {
 	defer file.Close()
 
 	fmt.Printf("Uploading...\n")
-	n, err := m.FPutObject("oracle-vista-out", filename, filename, "image/png")
+	n, err := m.FPutObject("videoimages", filename, filename, "image/png")
 	if err != nil {
 		log.Fatal(err)
 	}

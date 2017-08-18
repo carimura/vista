@@ -1,5 +1,5 @@
 name: carimura/scraper
-version: 0.1.8
+version: 0.1.9
 runtime: ruby
 entrypoint: ruby func.rb
 timeout: 2m0s
