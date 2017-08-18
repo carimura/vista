@@ -4,14 +4,23 @@
 
 ## Running Locally
 
+This demo is designed to be run outside of a corporate firewall.  The
+moving parts have not been instrumented to run with proxies.
+
 ### Step 1: Get prerequisite accounts
 
+- Docker ID [docker id docs](https://docs.docker.com/docker-id/)
 - Pubnub free account
 - Twitter [developer account](https://apps.twitter.com/)
 - Flickr [developer account](https://www.flickr.com/services/apps/create/apply/)
 
 ### Step 2: Install Fn CLI and start Fn server
+
+Ensure Docker is running.  Ensure you are logged in with docker login.
+
 `curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh`
+
+Installs to /usr/local/bin/fn.
 
 `fn start`
 
@@ -25,8 +34,10 @@
 
 
 ### Step 4: Deploy/configure the Vista functions
+Ensure you have a GNU compatible make.
+
 1. modify every func.yaml in /services/\* to change carimura to your docker id
-   (working on a better way to manage this)
+   (working on a better way to manage this, but in the meantime `find . -name func.yaml -exec perl -pi.bak -e "s/carimura/<yourdockerid>/g" {} \; -print`)
 1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
 1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. `open public/vista.html`
