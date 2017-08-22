@@ -41,7 +41,7 @@ Ensure you have a GNU compatible make.
 1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
 1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. `open public/vista.html`
-1. Enter the value you're using for your BUCKET (default: oracle-vista-out) environment variable into the box (this subscribes to pubnub channel)
+1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).
 
 ### Step 5: Local minio setup
 1. install the [mc minio client](https://github.com/minio/mc)
