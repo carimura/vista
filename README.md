@@ -77,3 +77,116 @@ You should see activity in the ngrok logs, server logs, and output to the vista.
 - if BMC has anything S3-compat, could use that as well to avoid Minio
 
 Other ideas: Feel free to create GitHub issues or contact Chad
+
+## Understanding How This Works
+
+### Services
+
+#### scraper
+
+This Ruby based service service uses the Flickr API, as exposed to Ruby
+by
+<[https://github.com/hanklords/flickraw](https://github.com/hanklords/flickraw)>.
+The service is built from the Dockerfile, which includes a Gemfile that
+pulls in the required dependencies flickraw, json, and rest-client.  The
+Dockerfile lists func.rb as the entrypoint.
+
+Looking at func.rb, it pulls in the "payload" from stdin, expecting it
+to be JSON that looks like
+
+    {
+      "query": "license plate car usa",
+      "num": "20",
+      "countrycode": "us",
+      "service_to_call": "detect-plates"
+      }
+
+The function does the secret sauce call here:
+
+    photos = flickr.photos.search(
+        :text => search_text,
+        :per_page => num_results,
+      :page => page,
+        :extras => 'original_format',
+        :safe_search => 1,
+        :content_type => 1
+    )
+
+For each photo in the result set, do a POST to
+FUNC_SERVER_URL/detect-plates.  Post data is the following:
+
+    payload = {:id => photo.id, 
+               :image_url => image_url,
+               :countrycode => payload_in["countrycode"],
+               :bucket => payload_in["bucket"]
+    }
+
+
+#### detect-plates
+
+This service is a go based service that uses two dependencies, as well
+as a whole passel of standard go packages.
+
+* The OpenALPR (Automatic License Plate Recognition), with the go
+language binding.
+[https://github.com/openalpr/openalpr](https://github.com/openalpr/openalpr)
+
+* The pubnub messaging service, with the go language binding [https://github.com/pubnub/go](https://github.com/pubnub/go)
+
+Looking at the main.go, it looks like this service reads the POST
+payload, calls fnstart(), passing the BUCKET env var and the photo id.
+Simply appears to fob the request off to pubnub.  I think this may be a
+way to allow other services to asynchronously consume the result of this
+service's plate detection.  The secret sauce function is here:
+
+    results, err := alpr.RecognizeByBlob(imageBytes)
+
+For each entry in results, build another payload, adding a "rectangles"
+array and the text of the plate number.  The payload looks like:
+
+    pout := &payloadOut{
+        ID:         p.ID,
+        ImageURL:   p.URL,
+        Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
+        Plate:      plate.BestPlate,
+    }
+
+This is posted further downstream to the draw function at
+
+    postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+
+and also a copy of the same payload is posted to the alert service.
+
+    alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
+
+#### Draw service
+
+We're back in Ruby for this one.  But the runtime of the func.yaml is ""
+instead of ruby.  Not sure why that is.  Some defaults thing?  This ruby
+service uses alpine-sdk and imagemagick.  Upon receipt of a payload,
+first we send a message to pubnub saying we are running an image.  The
+image is downloaded from the payload.  We use ImageMagick to draw the
+rectangles in the payload on the image.  We then upload the new image to
+MINIO, which looks like it is acting as a standin to Amazon S3.  Finally
+we send a message to pubnub saying this run is done.
+
+#### Alert service
+
+This one is in go again.  Runtime is the empty string.  Again, is this
+picked up from the func.go?  This uses the Anaconda go twitter client
+library
+[https://github.com/ChimeraCoder/anaconda](https://github.com/ChimeraCoder/anaconda).  It also uses pubnub.
+
+Recall that the payload coming to us is the same one sent to the image
+service.  It downloads the image from the URL, converts it to base64,
+and composes a tweet including the image and the plate text.  As with
+detect-plates, this uses pubnub to update the status.
+
+#### vista.html
+
+It looks like this entirely relies on pubnub to draw the fancy
+dynamically updating line chart and the images as they come along.
+
+This uses the pubnub javascript API, as well as highcharts.
+
+
