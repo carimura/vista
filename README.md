@@ -5,7 +5,9 @@
 ## Running Locally
 
 This demo is designed to be run outside of a corporate firewall.  The
-moving parts have not been instrumented to run with proxies.
+moving parts have not been instrumented to run with proxies.  This demo
+does not work on the clear-guest WiFi because a key enabler of the demo
+does not run there.
 
 ### Step 1: Get prerequisite accounts
 
@@ -45,7 +47,7 @@ Ensure you have a GNU compatible make.
 
 ### Step 5: Local minio setup
 1. install the [mc minio client](https://github.com/minio/mc)
-1. Edit scripts/minio_config.json to change the webhook URL to the API_URL from step 4 above
+1. Edit scripts/minio_config.json to change the webhook URL to the API_URL from step 4 above  *Note, leave the `/r/myapp/publish` on the end!*  For example, 
 1. `mkdir -p /tmp/config/minio1; cp minio_config.json /tmp/config/minio1/config.json`
 1. start the minio server 
 ```
@@ -79,6 +81,71 @@ You should see activity in the ngrok logs, server logs, and output to the vista.
 Other ideas: Feel free to create GitHub issues or contact Chad
 
 ## Understanding How This Works
+
+In this sort of mashup, the most important thing to understand are the
+boxes and the lines.  The boxes are the services and the lines are the
+wiring between the services.  Let's look at the wiring first.
+
+### Wiring
+
+The wiring for the demo uses a few enablers: ngrok and minio.
+
+ngrok is an insanely useful tool that essentially opens up a big
+security hole in your home router for as long as ngrok runs.  This is
+why the demo cannot run on clear-guest WiFi.  This is deemed an
+acceptable risk because the so-called "ngrok URL" is ephemeral and
+somewhat hard to guess.
+[This thread on ycombinator](https://news.ycombinator.com/item?id=14279142)
+lists some risks of using ngrok, stating, "If your users have to resort
+to this they are not getting the appropriate support they need."
+
+ngrok will create a publically accessible and DNS discoverable endpoint
+to an arbitrary local port running on your localhost.  This demo starts
+up the `fn` server on port 8080, and then uses ngrok to make that
+service accessible to the public Internet.
+
+The demo uses minio as a stand-in for Amazon S3 storage.  This enables
+the demo to be written for the S3 API, yet not have to actually use S3
+for the storage.  Once again, ngrok is used to expose access to a
+locally running minio docker container.
+
+The functions themselves are set up and "routed" when the `make deploy`
+happens.  This is the output in the ngrok 8080 window when doing `make
+deploy`.
+
+    PUT /v1/apps/myapp/routes/scraper       200 OK
+    PUT /v1/apps/myapp/routes/alert         200 OK
+    PUT /v1/apps/myapp/routes/detect-faces  200 OK
+    PUT /v1/apps/myapp/routes/detect-plates 200 OK
+    PUT /v1/apps/myapp/routes/publish       200 OK
+    PUT /v1/apps/myapp/routes/draw          200 OK
+
+The act of running the `setenv.sh` script pushes the current set of env
+vars into the function runtimes.  This includes mashup keys, tokens, and
+secrets vital to the success of the demo.  This also sets up the routes.
+
+    PATCH /v1/apps/myapp/routes/scraper 200 OK
+    PATCH /v1/apps/myapp/routes/scraper 200 OK
+    PATCH /v1/apps/myapp/routes/alert   200 OK
+    PATCH /v1/apps/myapp/routes/alert   200 OK
+    PATCH /v1/apps/myapp/routes/alert   200 OK
+    PATCH /v1/apps/myapp/routes/alert   200 OK
+    PATCH /v1/apps/myapp                200 OK
+    PATCH /v1/apps/myapp                200 OK
+    PATCH /v1/apps/myapp                200 OK
+
+After this completes, you can do
+
+    fn routes list myapp
+    path  image     endpoint
+    /alert  edburns0docker/alert:0.1.18  f8cb781a.ngrok.io/r/myapp/alert
+    /detect-faces edburns0docker/detect-faces:0.1.12 f8cb781a.ngrok.io/r/myapp/detect-faces
+    /detect-plates edburns0docker/detect-plates:0.1.15 f8cb781a.ngrok.io/r/myapp/detect-plates
+    /draw  edburns0docker/draw:0.1.20  f8cb781a.ngrok.io/r/myapp/draw
+    /publish edburns0docker/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
+    /scraper edburns0docker/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
+
+
 
 ### Services
 
