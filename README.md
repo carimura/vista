@@ -5,9 +5,9 @@
 ## Running Locally
 
 This demo is designed to be run outside of a corporate firewall.  The
-moving parts have not been instrumented to run with proxies.  This demo
-does not work on the clear-guest WiFi because a key enabler of the demo
-does not run there.
+moving parts have not been instrumented to run with proxies.  Due to the
+dependency on ngrok, the demo may not work even on a corporate "guest" WiFi
+that provides web access to the public Internet.
 
 ### Step 1: Get prerequisite accounts
 
