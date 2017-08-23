@@ -4,8 +4,8 @@
 
 ## Running Locally
 
-This demo is designed to be run outside of a corporate firewall.  The
-moving parts have not been instrumented to run with proxies.  Due to the
+This demo is designed to be run outside of a corporate firewall. The
+moving parts have not been instrumented to run with proxies. Due to the
 dependency on ngrok, the demo may not work even on a corporate "guest" WiFi
 that provides web access to the public Internet.
 
@@ -18,7 +18,7 @@ that provides web access to the public Internet.
 
 ### Step 2: Install Fn CLI and start Fn server
 
-Ensure Docker is running.  Ensure you are logged in with docker login.
+Ensure Docker is running. Ensure you are logged in with docker login.
 
 `curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh`
 
@@ -85,16 +85,16 @@ Other ideas: Feel free to create GitHub issues or contact Chad
 ## Understanding How This Works
 
 In this sort of mashup, the most important thing to understand are the
-boxes and the lines.  The boxes are the services and the lines are the
-wiring between the services.  Let's look at the wiring first.
+boxes and the lines. The boxes are the services and the lines are the
+wiring between the services. Let's look at the wiring first.
 
 ### Wiring
 
 The wiring for the demo uses a few enablers: ngrok and minio.
 
 ngrok is an insanely useful tool that essentially opens up a big
-security hole in your home router for as long as ngrok runs.  This is
-why the demo cannot run on a corporate guest WiFi.  This is deemed an
+security hole in your home router for as long as ngrok runs. This is
+why the demo cannot run on a corporate guest WiFi. This is deemed an
 acceptable risk because the so-called "ngrok URL" is ephemeral and
 somewhat hard to guess.
 [This thread on ycombinator](https://news.ycombinator.com/item?id=14279142)
@@ -102,17 +102,17 @@ lists some risks of using ngrok, stating, "If your users have to resort
 to this they are not getting the appropriate support they need."
 
 ngrok will create a publically accessible and DNS discoverable endpoint
-to an arbitrary local port running on your localhost.  This demo starts
+to an arbitrary local port running on your localhost. This demo starts
 up the `fn` server on port 8080, and then uses ngrok to make that
 service accessible to the public Internet.
 
-The demo uses minio as a stand-in for Amazon S3 storage.  This enables
+The demo uses minio as a stand-in for Amazon S3 storage. This enables
 the demo to be written for the S3 API, yet not have to actually use S3
-for the storage.  Once again, ngrok is used to expose access to a
+for the storage. Once again, ngrok is used to expose access to a
 locally running minio docker container.
 
 The functions themselves are set up and "routed" when the `make deploy`
-happens.  This is the output in the ngrok 8080 window when doing `make
+happens. This is the output in the ngrok 8080 window when doing `make
 deploy`.
 
     PUT /v1/apps/myapp/routes/scraper       200 OK
@@ -123,8 +123,8 @@ deploy`.
     PUT /v1/apps/myapp/routes/draw          200 OK
 
 The act of running the `setenv.sh` script pushes the current set of env
-vars into the function runtimes.  This includes mashup keys, tokens, and
-secrets vital to the success of the demo.  This also sets up the routes.
+vars into the function runtimes. This includes mashup keys, tokens, and
+secrets vital to the success of the demo. This also sets up the routes.
 
     PATCH /v1/apps/myapp/routes/scraper 200 OK
     PATCH /v1/apps/myapp/routes/scraper 200 OK
@@ -147,8 +147,8 @@ After this completes, you can do
     /publish <dockerid>/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
     /scraper <dockerid>/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
 
-Finally, the minio wiring.  I'm a bit foggy on this, but it basically
-sets up something that looks like an Amazon S3 bucket.  This gets wired,
+Finally, the minio wiring. I'm a bit foggy on this, but it basically
+sets up something that looks like an Amazon S3 bucket. This gets wired,
 again, through ngrok 9000.
 
 ### Services
@@ -159,7 +159,7 @@ This Ruby based service service uses the Flickr API, as exposed to Ruby
 by
 <[https://github.com/hanklords/flickraw](https://github.com/hanklords/flickraw)>.
 The service is built from the Dockerfile, which includes a Gemfile that
-pulls in the required dependencies flickraw, json, and rest-client.  The
+pulls in the required dependencies flickraw, json, and rest-client. The
 Dockerfile lists func.rb as the entrypoint.
 
 Looking at func.rb, it pulls in the "payload" from stdin, expecting it
@@ -184,7 +184,7 @@ The function does the secret sauce call here:
     )
 
 For each photo in the result set, do a POST to
-FUNC_SERVER_URL/detect-plates.  Post data is the following:
+FUNC_SERVER_URL/detect-plates. Post data is the following:
 
     payload = {:id => photo.id, 
                :image_url => image_url,
@@ -206,14 +206,14 @@ language binding.
 
 Looking at the main.go, it looks like this service reads the POST
 payload, calls fnstart(), passing the BUCKET env var and the photo id.
-Simply appears to fob the request off to pubnub.  I think this may be a
+Simply appears to fob the request off to pubnub. I think this may be a
 way to allow other services to asynchronously consume the result of this
-service's plate detection.  The secret sauce function is here:
+service's plate detection. The secret sauce function is here:
 
     results, err := alpr.RecognizeByBlob(imageBytes)
 
 For each entry in results, build another payload, adding a "rectangles"
-array and the text of the plate number.  The payload looks like:
+array and the text of the plate number. The payload looks like:
 
     pout := &payloadOut{
         ID:         p.ID,
@@ -232,26 +232,26 @@ and also a copy of the same payload is posted to the alert service.
 
 #### Draw service
 
-We're back in Ruby for this one.  But the runtime of the func.yaml is ""
-instead of ruby.  This means to use the Dockerfile to build the
-function.  This ruby service uses alpine-sdk and imagemagick.  Upon
+We're back in Ruby for this one. But the runtime of the func.yaml is ""
+instead of ruby. This means to use the Dockerfile to build the
+function. This ruby service uses alpine-sdk and imagemagick. Upon
 receipt of a payload, first we send a message to pubnub saying we are
-running an image.  The image is downloaded from the payload.  We use
-ImageMagick to draw the rectangles in the payload on the image.  We then
+running an image. The image is downloaded from the payload. We use
+ImageMagick to draw the rectangles in the payload on the image. We then
 upload the new image to MINIO, which looks like it is acting as a
-standin to Amazon S3.  Finally we send a message to pubnub saying this
+standin to Amazon S3. Finally we send a message to pubnub saying this
 run is done.
 
 #### Alert service
 
-This one is in Go again.  Runtime is the empty string.  Again, is this
+This one is in Go again. Runtime is the empty string. Again, is this
 picked up from the func.go?  This uses the Anaconda go twitter client
 library
-[https://github.com/ChimeraCoder/anaconda](https://github.com/ChimeraCoder/anaconda).  It also uses pubnub.
+[https://github.com/ChimeraCoder/anaconda](https://github.com/ChimeraCoder/anaconda). It also uses pubnub.
 
 Recall that the payload coming to us is the same one sent to the image
-service.  It downloads the image from the URL, converts it to base64,
-and composes a tweet including the image and the plate text.  As with
+service. It downloads the image from the URL, converts it to base64,
+and composes a tweet including the image and the plate text. As with
 detect-plates, this uses pubnub to update the status.
 
 #### vista.html
