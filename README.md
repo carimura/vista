@@ -42,12 +42,14 @@ Ensure you have a GNU compatible make.
    (working on a better way to manage this, but in the meantime `find . -name func.yaml -exec perl -pi.bak -e "s/carimura/<yourdockerid>/g" {} \; -print`)
 1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
 1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
+1. Edit public/vista.html and replace the hard coded pubnub subscribe_key with your actual key from pubnub.  
 1. `open public/vista.html`
 1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).
 
 ### Step 5: Local minio setup
 1. install the [mc minio client](https://github.com/minio/mc)
-1. Edit scripts/minio_config.json to change the webhook URL to the API_URL from step 4 above  *Note, leave the `/r/myapp/publish` on the end!*  For example, 
+1. Edit scripts/minio_config.json to change the webhook URL to the API_URL from step 4 above  *Note, leave the `/r/myapp/publish` on the end!*  For example,
+`"endpoint":"http://bb45728acf.ngrok.io/r/myapp/publish"`
 1. `mkdir -p /tmp/config/minio1; cp minio_config.json /tmp/config/minio1/config.json`
 1. start the minio server 
 ```
@@ -92,7 +94,7 @@ The wiring for the demo uses a few enablers: ngrok and minio.
 
 ngrok is an insanely useful tool that essentially opens up a big
 security hole in your home router for as long as ngrok runs.  This is
-why the demo cannot run on clear-guest WiFi.  This is deemed an
+why the demo cannot run on a corporate guest WiFi.  This is deemed an
 acceptable risk because the so-called "ngrok URL" is ephemeral and
 somewhat hard to guess.
 [This thread on ycombinator](https://news.ycombinator.com/item?id=14279142)
@@ -138,12 +140,12 @@ After this completes, you can do
 
     fn routes list myapp
     path  image     endpoint
-    /alert  edburns0docker/alert:0.1.18  f8cb781a.ngrok.io/r/myapp/alert
-    /detect-faces edburns0docker/detect-faces:0.1.12 f8cb781a.ngrok.io/r/myapp/detect-faces
-    /detect-plates edburns0docker/detect-plates:0.1.15 f8cb781a.ngrok.io/r/myapp/detect-plates
-    /draw  edburns0docker/draw:0.1.20  f8cb781a.ngrok.io/r/myapp/draw
-    /publish edburns0docker/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
-    /scraper edburns0docker/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
+    /alert  <dockerid>/alert:0.1.18  f8cb781a.ngrok.io/r/myapp/alert
+    /detect-faces <dockerid>/detect-faces:0.1.12 f8cb781a.ngrok.io/r/myapp/detect-faces
+    /detect-plates <dockerid>/detect-plates:0.1.15 f8cb781a.ngrok.io/r/myapp/detect-plates
+    /draw  <dockerid>/draw:0.1.20  f8cb781a.ngrok.io/r/myapp/draw
+    /publish <dockerid>/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
+    /scraper <dockerid>/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
 
 Finally, the minio wiring.  I'm a bit foggy on this, but it basically
 sets up something that looks like an Amazon S3 bucket.  This gets wired,
@@ -231,17 +233,18 @@ and also a copy of the same payload is posted to the alert service.
 #### Draw service
 
 We're back in Ruby for this one.  But the runtime of the func.yaml is ""
-instead of ruby.  Not sure why that is.  Some defaults thing?  This ruby
-service uses alpine-sdk and imagemagick.  Upon receipt of a payload,
-first we send a message to pubnub saying we are running an image.  The
-image is downloaded from the payload.  We use ImageMagick to draw the
-rectangles in the payload on the image.  We then upload the new image to
-MINIO, which looks like it is acting as a standin to Amazon S3.  Finally
-we send a message to pubnub saying this run is done.
+instead of ruby.  This means to use the Dockerfile to build the
+function.  This ruby service uses alpine-sdk and imagemagick.  Upon
+receipt of a payload, first we send a message to pubnub saying we are
+running an image.  The image is downloaded from the payload.  We use
+ImageMagick to draw the rectangles in the payload on the image.  We then
+upload the new image to MINIO, which looks like it is acting as a
+standin to Amazon S3.  Finally we send a message to pubnub saying this
+run is done.
 
 #### Alert service
 
-This one is in go again.  Runtime is the empty string.  Again, is this
+This one is in Go again.  Runtime is the empty string.  Again, is this
 picked up from the func.go?  This uses the Anaconda go twitter client
 library
 [https://github.com/ChimeraCoder/anaconda](https://github.com/ChimeraCoder/anaconda).  It also uses pubnub.
