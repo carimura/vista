@@ -145,7 +145,9 @@ After this completes, you can do
     /publish edburns0docker/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
     /scraper edburns0docker/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
 
-
+Finally, the minio wiring.  I'm a bit foggy on this, but it basically
+sets up something that looks like an Amazon S3 bucket.  This gets wired,
+again, through ngrok 9000.
 
 ### Services
 
