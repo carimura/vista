@@ -30,11 +30,11 @@ type payloadOut struct {
 func main() {
 	fmt.Println("Starting...")
 
-	endpoint := "minio.ngrok.io"
+	minio_endpoint := "stage.fnservice.io:9000"
 	accessKeyID := "DEMOACCESSKEY"
 	secretKeyID := "DEMOSECRETKEY"
 
-	minioClient, err := minio.New(endpoint, accessKeyID, secretKeyID, false)
+	minioClient, err := minio.New(minio_endpoint, accessKeyID, secretKeyID, false)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +58,7 @@ func main() {
 			continue
 		}
 		uploadFile(minioClient, file.Name())
-		url = "http://minio.ngrok.io/videoimages/" + file.Name()
+		url = minio_endpoint + "/videoimages/" + file.Name()
 		callDetectPlates(file.Name(), url)
 	}
 	fmt.Println("-------------------------------------")
@@ -70,13 +70,12 @@ func callDetectPlates(f string, url string) {
 		ImageURL:    url,
 		CountryCode: "eu",
 	}
-	fmt.Printf("\n\npout! --> %+v ", pout)
+	fmt.Printf("\n\npout! --> %+v \n", pout)
 
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(pout)
-
-	//postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
-	postURL := "http://fnlocal.ngrok.io/r/myapp/detect-plates"
+	postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
+	//postURL := "http://fnlocal.ngrok.io/r/myapp/detect-plates"
 	res, _ := http.Post(postURL, "application/json", b)
 	fmt.Println(res.Body)
 }

@@ -1,6 +1,6 @@
 name: carimura/detect-plates
-version: 0.1.10
+version: 0.1.11
 runtime: ""
 type: async
-timeout: 2m0s
+timeout: 120
 path: /detect-plates
