@@ -1,0 +1,1 @@
+fn run -e FUNC_SERVER_URL=$FUNC_SERVER_URL

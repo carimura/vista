@@ -51,7 +51,6 @@ std_in = STDIN.read
 payload = JSON.parse(std_in)
 
 msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
-#puts ENV.to_h
 pubnub.publish(
   message: msg,
   channel: ENV["BUCKET"]
@@ -66,7 +65,7 @@ payload["rectangles"].each do |coords|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
     c.fill('none')
     is_nude = payload["is_nude"] || "false"
-    c.stroke('yellow')
+    c.stroke('red')
     c.strokewidth(10)
     c.draw draw_string
   end 
