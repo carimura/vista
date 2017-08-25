@@ -93,8 +93,8 @@ wiring between the services. Let's look at the wiring first.
 The wiring for the demo uses a few enablers: ngrok and minio.
 
 ngrok is an insanely useful tool that essentially opens up a big
-security hole in your home router for as long as ngrok runs. This is
-why the demo cannot run on a corporate guest WiFi. This is deemed an
+security hole in your home router for as long as ngrok runs. This is 
+why the demo may not run on corporate networks or guest WiFis. This is deemed an
 acceptable risk because the so-called "ngrok URL" is ephemeral and
 somewhat hard to guess.
 [This thread on ycombinator](https://news.ycombinator.com/item?id=14279142)
