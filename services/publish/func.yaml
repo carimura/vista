@@ -1,5 +1,4 @@
-name: carimura/publish
-version: 0.1.9
-runtime: ""
+name: publish
+version: 0.1.13
 type: async
 path: /publish

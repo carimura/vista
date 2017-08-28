@@ -1,5 +1,5 @@
-name: carimura/scraper
-version: 0.1.10
+name: scraper
+version: 0.1.12
 runtime: ruby
 entrypoint: ruby func.rb
 timeout: 120

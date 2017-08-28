@@ -7,3 +7,5 @@ bundle
 Gemfile.lock
 ENVIRONMENT
 .wercker
+my-envs.sh
+tmp/

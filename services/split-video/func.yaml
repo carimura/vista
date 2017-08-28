@@ -1,4 +1,3 @@
-name: carimura/split-video
-version: 0.0.3
-runtime: ""
+name: split-video
+version: 0.0.5
 path: /split-video

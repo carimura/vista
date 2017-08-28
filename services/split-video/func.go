@@ -11,8 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/minio/minio-go"
 )
 
 type payloadIn struct {
@@ -75,7 +73,6 @@ func callDetectPlates(f string, url string) {
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(pout)
 	postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
-	//postURL := "http://fnlocal.ngrok.io/r/myapp/detect-plates"
 	res, _ := http.Post(postURL, "application/json", b)
 	fmt.Println(res.Body)
 }
