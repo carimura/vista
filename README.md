@@ -49,7 +49,7 @@ fn start
 First open the UI:
 
 ```sh
-open vista.html
+open public/vista.html
 ```
 
 Now run the demo:
