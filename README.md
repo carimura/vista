@@ -15,6 +15,11 @@ moving parts have not been instrumented to run with proxies.
   - NOTE: MAKE A NEW ACCOUNT! Otherwise this will tweet a bunch of things to your Twitter.
 - Flickr [developer account](https://www.flickr.com/services/apps/create/apply/)
 
+### Step 2: Set required env vars
+
+1. Copy `envs-example.sh` to `envs.sh` and fill in all the required values.
+1. Run: `. ./envs.sh` - NOTE: You NEED the initial `.`
+
 ### Step 2: Install Fn CLI and start Fn server
 
 Ensure Docker is running. Ensure you are logged in with docker login.
@@ -49,8 +54,6 @@ Ensure you have a GNU compatible make.
 TODO: put the my-envs.sh example in here, make it easier to set. Or maybe `fn` can support a .env file like Docker, that contains all this crap.
 and maybe `fn run` will prompt to create such a file if the required vars don't exist.
 
-1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server)
-1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. Edit `public/vista.html` and replace the hard coded pubnub subscribe_key with your actual key from pubnub.
 1. `open public/vista.html`
 1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).

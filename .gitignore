@@ -9,3 +9,4 @@ ENVIRONMENT
 .wercker
 my-envs.sh
 tmp/
+/envs.sh
