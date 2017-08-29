@@ -1,0 +1,8 @@
+{
+  "id": "123",
+  "image_url": "http://wallpaper.pickywallpapers.com/1920x1080/red-alfa-romeo-4c-us-spec-in-the-city-back-view.jpg",
+  "countrycode": "us",
+  "rectangles": [
+    { "startx":"834", "starty":"702","endx":"1022","endy":"783"}
+  ]
+}
