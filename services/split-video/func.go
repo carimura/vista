@@ -28,8 +28,8 @@ func main() {
 	fmt.Println("Starting...")
 
 	minio_endpoint := os.Getenv("MINIO_SERVER_URL")
-	accessKeyID := os.Getenv("ACCESS")
-	secretKeyID := os.Getenv("SECRET")
+	accessKeyID := os.Getenv("S3_ACCESS_KEY")
+	secretKeyID := os.Getenv("S3_SECRET_KEY")
 
 	fmt.Println(minio_endpoint)
 
