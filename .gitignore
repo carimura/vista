@@ -10,3 +10,4 @@ ENVIRONMENT
 my-envs.sh
 tmp/
 /envs.sh
+/fn
