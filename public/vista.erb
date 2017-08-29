@@ -275,7 +275,7 @@
 			$(".listening b").append(bucket);
 			$(".listening").fadeIn();
 		});
-        var pubnub = PUBNUB.init({ subscribe_key : '<%=pubnub_subscribe_key%>');
+        var pubnub = PUBNUB.init({ subscribe_key : '<%=pubnub_subscribe_key%>'});
 
         $("#worker-count-wrapper").fadeIn();
 		pubnub.subscribe({

@@ -10,6 +10,4 @@ cd scripts
 ./setenv.sh
 cd ..
 
-cd public
-docker run --rm -v $PWD:/tmp -w /tmp -e PUBNUB_SUBSCRIBE_KEY treeder/temple vista.erb vista.html
-cd ..
+docker run --rm -v $PWD:/tmp -w /tmp -e PUBNUB_SUBSCRIBE_KEY treeder/temple public/vista.erb vista.html

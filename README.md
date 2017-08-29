@@ -38,33 +38,24 @@ fn start
 
 (Easy huh?)
 
-### Step 3: Start minio server
-
-TODO: move all these scripts into root dir, or make one that does all of this stuff in one go.
-Could even generate the vista.html instead of having to edit it. Or pass it in via URL. Maybe also
-set the oracle-vista-out automatically as default so don't have to type it.
+### Step 3: Set everything up
 
 1. Start minio server: `docker run --rm -d -it -p 9000:9000 --name minio1 -v /tmp/export/minio1:/export -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio server /export`
-1. Setup minio buckets and webhooks: `./setup.sh`
+1. Configure everything: `./setup.sh`
 
-### Step 4: Deploy/configure the Vista functions
+### Step 4: Run the demo!
 
-Ensure you have a GNU compatible make.
+First open the UI:
 
-TODO: put the my-envs.sh example in here, make it easier to set. Or maybe `fn` can support a .env file like Docker, that contains all this crap.
-and maybe `fn run` will prompt to create such a file if the required vars don't exist.
+```sh
+open vista.html
+```
 
-1. Edit `public/vista.html` and replace the hard coded pubnub subscribe_key with your actual key from pubnub.
-1. `open public/vista.html`
-1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).
+Now run the demo:
 
-### Step 5: Run the demo!
-
-TODO: ./run-plate.sh and ./run-facial.sh
-
-1. `cd scraper`
-1. Plate detection: `cat payload.json | fn call myapp /scraper`
-1. Facial detection: `cat payload_faces.json | fn call myapp /scraper`
+```sh
+./run.sh
+```
 
 You should see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
 
