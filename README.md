@@ -40,9 +40,7 @@ Could even generate the vista.html instead of having to edit it. Or pass it in v
 set the oracle-vista-out automatically as default so don't have to type it.
 
 1. Start minio server: `docker run --rm -d -it -p 9000:9000 --name minio1 -v /tmp/export/minio1:/export -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio server /export`
-1. Setup minio buckets and webhooks: `docker run -it -v $PWD:/mc -w /mc --entrypoint=/bin/sh minio/mc`
-    1. Run: `mc config host add local http://docker.for.mac.localhost:9000 DEMOACCESSKEY DEMOSECRETKEY`
-    1. Run: `cd scripts && ./setup_minio.sh`
+1. Setup minio buckets and webhooks: `./setup.sh`
 
 ### Step 4: Deploy/configure the Vista functions
 
