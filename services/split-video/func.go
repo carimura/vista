@@ -14,9 +14,8 @@ import (
 )
 
 type payloadIn struct {
-	ID          string `json:"id"`
-	URL         string `json:"image_url"`
-	CountryCode string `json:"countrycode"`
+	VideoFile     string `json:"video_file"`
+	ServiceToCall string `json:"service_to_call"`
 }
 
 type payloadOut struct {
@@ -28,16 +27,23 @@ type payloadOut struct {
 func main() {
 	fmt.Println("Starting...")
 
-	minio_endpoint := "stage.fnservice.io:9000"
-	accessKeyID := "DEMOACCESSKEY"
-	secretKeyID := "DEMOSECRETKEY"
+	minio_endpoint := os.Getenv("MINIO_SERVER_URL")
+	accessKeyID := os.Getenv("ACCESS")
+	secretKeyID := os.Getenv("SECRET")
 
-	minioClient, err := minio.New(minio_endpoint, accessKeyID, secretKeyID, false)
+	fmt.Println(minio_endpoint)
+
+	minioClient, err := minio.New(strings.Replace(minio_endpoint, "http://", "", 1), accessKeyID, secretKeyID, false)
 	if err != nil {
 		log.Fatal(err)
 	}
+	p := new(payloadIn)
+	json.NewDecoder(os.Stdin).Decode(p)
 
-	cmd := exec.Command("ffmpeg", "-i", "traffic.mp4", "-vf", "fps=1", "out%3d.png")
+	fmt.Println(p.VideoFile)
+	downloadFile("working.mp4", p.VideoFile)
+
+	cmd := exec.Command("ffmpeg", "-i", "working.mp4", "-vf", "fps=1", "out%3d.png")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err = cmd.Run()
@@ -68,13 +74,15 @@ func callDetectPlates(f string, url string) {
 		ImageURL:    url,
 		CountryCode: "eu",
 	}
-	fmt.Printf("\n\npout! --> %+v \n", pout)
+	fmt.Printf("\npout: %+v \n", pout)
 
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(pout)
 	postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
-	res, _ := http.Post(postURL, "application/json", b)
-	fmt.Println(res.Body)
+	_, err := http.Post(postURL, "application/json", b)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func uploadFile(m *minio.Client, filename string) {
@@ -85,7 +93,7 @@ func uploadFile(m *minio.Client, filename string) {
 	}
 	defer file.Close()
 
-	fmt.Printf("Uploading...\n")
+	fmt.Printf("Uploading...")
 	n, err := m.FPutObject("videoimages", filename, filename, "image/png")
 	if err != nil {
 		log.Fatal(err)
