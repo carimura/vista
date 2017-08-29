@@ -40,8 +40,9 @@ fn start
 
 ### Step 3: Set everything up
 
-1. Start minio server: `docker run --rm -d -it -p 9000:9000 --name minio1 -v /tmp/export/minio1:/export -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio server /export`
-1. Configure everything: `./setup.sh`
+```sh
+./setup.sh
+```
 
 ### Step 4: Run the demo!
 

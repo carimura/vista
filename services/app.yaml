@@ -1,0 +1,16 @@
+name: vista
+input:
+  Input:
+    id: 123
+    image_url: http://wallpaper.pickywallpapers.com/1920x1080/red-alfa-romeo-4c-us-spec-in-the-city-back-view.jpg
+    countrycode: us
+    bucket: my-bucket
+    rectangles: [{startx:0, starty:100, endx: 200, endy:200}]
+  Environment:
+    ACCESS: SOMESTORAGEACCESSKEY
+    SECRET: SOMESTORAGESECRETKEY
+    PUBNUB_SUBSCRIBE_KEY: ASD-123
+    PUBNUB_PUBLISH_KEY: QWE-456
+    HOSTNAME: MYHOST
+Output:
+  Description: Outputs image to bucket
