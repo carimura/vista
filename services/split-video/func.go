@@ -81,6 +81,7 @@ func callDetectPlates(f string, url string) {
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(pout)
 	postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
+	fmt.Println(postURL)
 	_, err := http.Post(postURL, "application/json", b)
 	if err != nil {
 		log.Fatal(err)
