@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Oracle Vista</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        min-width: 700px;
+        max-width: 75%;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+		  margin-top: 5px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+			}
+		.result-img {
+			padding: 10px 0px;
+		}
+		#listening-dots {
+			width: 40px;
+			display: inline-block;
+			text-align: left;
+		}
+		.wrapper-form {
+			margin-bottom: 20px;
+		}
+		.listening, #worker-count-wrapper {
+			min-height: 35px;
+		}
+		#worker-count-wrapper {
+			display: none;
+		}
+		.faces-controls {
+			min-height: 110px;
+		}
+    </style>
+	<link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	  <script src="js/html5shiv.js"></script>
+	<![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="/vista.html">Home</a></li>
+          <li><a href="">Code</a></li>
+        </ul>
+        <h3 class="muted">Oracle Vista</h3>
+      </div>
+
+      <hr>
+
+	<div class="jumbotron">
+		<h2>Oracle Vista</h2>
+		<br>
+		<div class="row">
+			<div class="faces-controls">
+				<div class="wrapper-form"><form class="navbar-form" id="faces" name="faces">
+				<input type="text" class="" id="bucket-name" name="bucket-name" placeholder="Channel Name">
+				<button type="submit" class="btn">Go</button>
+			</form></div>
+			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
+      <div class="lead" id="worker-count-wrapper">
+          <span id="worker-count">0</span> <a href="/detailed-vista.html">functions</a> running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
+          <div id="functions-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+			</div>
+		</div>
+	</div>
+
+      <hr id="results">
+
+			<div class="row-fluid marketing">
+				<div class="span3" id="results-container-1"></div>
+				<div class="span3" id="results-container-2"></div>
+				<div class="span3" id="results-container-3"></div>
+				<div class="span3" id="results-container-4"></div>
+				</div>
+
+      <hr>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+	<script src="https://cdn.pubnub.com/pubnub-3.9.2.js" type="text/javascript"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<script>
+	function addImg(url, id) {
+		column = (totalImgs % 4) + 1;
+		totalImgs++;
+		$("#img-count").text(totalImgs);
+		imgLink = $('<a href="'+url+'" target="_blank">');
+		newimg = $('<img src="'+url+'" id="img-'+id+'" class="result-img" />');
+		console.log("newimg: " + newimg);
+		newimg.hide();
+		imgLink.html(newimg);
+		$('#results-container-'+column).prepend(imgLink);
+		newimg.slideDown("fast");
+
+		console.log("done adding image "+id+" to page")
+	}
+
+	var totalImgs = 0;
+    var totalFuncs = 0;
+    var counters = {}
+
+	function getCounter(id) {
+		return counters[id];
+	}
+
+    randData = function() {
+        // generate an array of random data
+        var data = [],
+            time = (new Date()).getTime(),
+            i;
+            for (i = -30; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y: 0
+                });
+            }
+        return data;
+    }
+
+    $(document).ready(function () {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+    });
+
+    var chart = Highcharts.chart('functions-graph', {
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function () {
+                    // set up the updating of the chart each second
+                    var theseries = this.series
+                    setInterval(function () {
+                        var x = (new Date()).getTime();
+                        for(i = 0; i< theseries.length;i++) {
+                            if (theseries[i] !== undefined) {
+                                y = getCounter(theseries[i].name);
+                                theseries[i].addPoint([x, y], true, true);
+                            }
+                        }
+                    }, 1000);
+                }
+            }
+        },
+        title: {
+            text: 'Functions Running'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: 'Functions'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                    Highcharts.numberFormat(this.y, 1);
+            }
+        },
+        legend: {
+            enabled: true
+        },
+        exporting: {
+            enabled: false
+        },
+        series: []
+    });
+
+	function fireCounter(id, running) {
+        if (counters[id] === undefined) {
+            counters[id] = 0;
+            chart.addSeries({
+                name: id,
+                data: randData()
+            });
+        }
+        if (running) {
+            counters[id] += 1;
+            $("#worker-count").text(getCounter(id));
+        } else {
+            counters[id] -= 1;
+            if (counters[id] < 0) {
+                counters[id] = 0
+            }
+            totalFuncs+=1
+            $("#worker-count").text(getCounter(id));
+            $("#total-funcs-count").text(totalFuncs);
+        }
+	}
+
+	function decrementCounter(id) {
+        counters[id] -= 1;
+        totalFuncs+=1
+		$("#worker-count").text(getCounter(id));
+        $("#total-funcs-count").text(totalFuncs);
+	}
+
+	var dots = window.setInterval( function() {
+		var wait = document.getElementById("listening-dots");
+		if ( wait.innerHTML.length > 3 ) {
+			wait.innerHTML = "";
+		} else {
+			wait.innerHTML += ".";
+		}
+    }, 250);
+
+
+	function listenBucket(bucket){
+		console.log("Listening to bucket: " + bucket)
+
+		$(".wrapper-form").fadeOut(350, function(){
+			$(".listening b").append(bucket);
+			$(".listening").fadeIn();
+		});
+        var pubnub = PUBNUB.init({ subscribe_key : '<%=pubnub_subscribe_key%>'});
+
+        $("#worker-count-wrapper").fadeIn();
+		pubnub.subscribe({
+			channel: bucket,
+			message: function(m){
+        try {
+          m = JSON.parse(m)
+          if("url" in m) {
+					  addImg(m["url"], m["id"]);
+				  } else {
+            if("type" in m) {
+                 fireCounter(m["type"],m["running"])
+             } else {
+                //  alert("This shouldnt happen, hope you're not demoing. :(")
+             }
+				  }
+        } catch (e) {
+          console.log("Problem parsing m, val is"); console.log(m);
+        }
+			}
+		});
+	}
+
+	(function(){
+		$("#faces").submit(function(e){
+			e.preventDefault();
+			var bucket = $("input#bucket-name").val();
+
+			if ( bucket == null || bucket == "" ){
+				alert("Enter Channel Name");
+			} else {
+                listenBucket(bucket);
+            }
+		});
+    })();
+
+    </script>
+  </body>
+</html>

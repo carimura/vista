@@ -12,7 +12,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/minio/minio-go"
+	minio "github.com/minio/minio-go"
 )
 
 type payloadIn struct {
@@ -30,8 +30,8 @@ func main() {
 	fmt.Println("Starting...")
 
 	minio_endpoint := os.Getenv("MINIO_SERVER_URL")
-	accessKeyID := os.Getenv("ACCESS")
-	secretKeyID := os.Getenv("SECRET")
+	accessKeyID := os.Getenv("S3_ACCESS_KEY")
+	secretKeyID := os.Getenv("S3_SECRET_KEY")
 
 	fmt.Println(minio_endpoint)
 
@@ -81,7 +81,7 @@ func callDetectPlates(f string, url string) {
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(pout)
 	postURL := os.Getenv("FUNC_SERVER_URL") + "/detect-plates"
-	fmt.Println("postURL: " + postURL)
+	fmt.Println(postURL)
 	_, err := http.Post(postURL, "application/json", b)
 	if err != nil {
 		log.Fatal(err)

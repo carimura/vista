@@ -5,73 +5,63 @@
 ## Running Locally
 
 This demo is designed to be run outside of a corporate firewall. The
-moving parts have not been instrumented to run with proxies. Due to the
-dependency on ngrok, the demo may not work even on a corporate "guest" WiFi
-that provides web access to the public Internet.
+moving parts have not been instrumented to run with proxies.
 
 ### Step 1: Get prerequisite accounts
 
 - Docker ID [docker id docs](https://docs.docker.com/docker-id/)
 - Pubnub free account
 - Twitter [developer account](https://apps.twitter.com/)
+  - NOTE: MAKE A NEW ACCOUNT! Otherwise this will tweet a bunch of things to your Twitter.
 - Flickr [developer account](https://www.flickr.com/services/apps/create/apply/)
+
+### Step 2: Set required env vars
+
+1. Copy `envs-example.sh` to `envs.sh` and fill in all the required values.
+1. Run: `. ./envs.sh` - NOTE: You NEED the initial `.`
 
 ### Step 2: Install Fn CLI and start Fn server
 
 Ensure Docker is running. Ensure you are logged in with docker login.
 
-`curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh`
+Install `fn` CLI:
 
-Installs to /usr/local/bin/fn.
+```sh
+curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
+```
 
-`fn start`
+Then start `fn` server:
+
+```sh
+fn start
+```
 
 (Easy huh?)
 
-### Step 3: Setup ngrok
-1. install [ngrok](https://ngrok.com/)
-1. `ngrok http 8080` (for Fn)
-1. `ngrok http 9000` (for minio)
-1. `export API_URL=<ngrok_url_for_http_8080>`
+### Step 3: Set everything up
 
+1. Start minio server: `docker run --rm -d -it -p 9000:9000 --name minio1 -v /tmp/export/minio1:/export -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio server /export`
+1. Configure everything: `./setup.sh`
 
-### Step 4: Deploy/configure the Vista functions
-Ensure you have a GNU compatible make.
+### Step 4: Run the demo!
 
-1. modify every func.yaml in /services/\* to change carimura to your docker id
-   (working on a better way to manage this, but in the meantime `find . -name func.yaml -exec perl -pi.bak -e "s/carimura/<yourdockerid>/g" {} \; -print`)
-1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server) 
-1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
-1. Edit public/vista.html and replace the hard coded pubnub subscribe_key with your actual key from pubnub.  
-1. `open public/vista.html`
-1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).
+First open the UI:
 
-### Step 5: Local minio setup
-1. install the [mc minio client](https://github.com/minio/mc)
-1. Edit scripts/minio_config.json to change the webhook URL to the API_URL from step 4 above  *Note, leave the `/r/myapp/publish` on the end!*  For example,
-`"endpoint":"http://bb45728acf.ngrok.io/r/myapp/publish"`
-1. `mkdir -p /tmp/config/minio1; cp minio_config.json /tmp/config/minio1/config.json`
-1. start the minio server 
+```sh
+open vista.html
 ```
-docker run -p 9000:9000 --name minio1 \
-   -v /tmp/export/minio1:/export \
-   -v /tmp/config/minio1:/root/.minio \
-   minio/minio server /export
+
+Now run the demo:
+
+```sh
+./run.sh
 ```
-1. `mc config host add local <insert ngrok url for port 9000> DEMOACCESSKEY DEMOSECRETKEY` (local is an alias, can be anything but below script assumes local)
-1. Make sure the bucket in scripts/setup_minio.sh is the same as set in step 5, then execute `./setup_minio.sh`. This sets up the bucket and webhooks.
 
-### Step 6: Run the demo!
-1. `cd scraper`
-1. Plate detection: `cat payload.json | fn call myapp /scraper`
-1. Facial detection: `cat payload_faces.json | fn call myapp /scraper`
-
-You should see activity in the ngrok logs, server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
-
+You should see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
 
 ## Known Issues
 
-- [Issue 13](https://github.com/carimura/vista/issues/13):  Ngrok gives a 429 Too Many Requests when running this at any scale (ie > 5 images). Upgrading Ngrok fixes this, but we shouldn't force all users of this demo to upgrade ngrok. Maybe future work idea is to get rid of ngrok somehow..
+- TBD
 
 ## Future Work Ideas
 
@@ -90,51 +80,16 @@ wiring between the services. Let's look at the wiring first.
 
 ### Wiring
 
-The wiring for the demo uses a few enablers: ngrok and minio.
-
-ngrok is an insanely useful tool that essentially opens up a big
-security hole in your home router for as long as ngrok runs. This is 
-why the demo may not run on corporate networks or guest WiFis. This is deemed an
-acceptable risk because the so-called "ngrok URL" is ephemeral and
-somewhat hard to guess.
-[This thread on ycombinator](https://news.ycombinator.com/item?id=14279142)
-lists some risks of using ngrok, stating, "If your users have to resort
-to this they are not getting the appropriate support they need."
-
-ngrok will create a publically accessible and DNS discoverable endpoint
-to an arbitrary local port running on your localhost. This demo starts
-up the `fn` server on port 8080, and then uses ngrok to make that
-service accessible to the public Internet.
-
 The demo uses minio as a stand-in for Amazon S3 storage. This enables
 the demo to be written for the S3 API, yet not have to actually use S3
-for the storage. Once again, ngrok is used to expose access to a
-locally running minio docker container.
+for the storage.
 
 The functions themselves are set up and "routed" when the `make deploy`
-happens. This is the output in the ngrok 8080 window when doing `make
-deploy`.
-
-    PUT /v1/apps/myapp/routes/scraper       200 OK
-    PUT /v1/apps/myapp/routes/alert         200 OK
-    PUT /v1/apps/myapp/routes/detect-faces  200 OK
-    PUT /v1/apps/myapp/routes/detect-plates 200 OK
-    PUT /v1/apps/myapp/routes/publish       200 OK
-    PUT /v1/apps/myapp/routes/draw          200 OK
+happens.
 
 The act of running the `setenv.sh` script pushes the current set of env
 vars into the function runtimes. This includes mashup keys, tokens, and
-secrets vital to the success of the demo. This also sets up the routes.
-
-    PATCH /v1/apps/myapp/routes/scraper 200 OK
-    PATCH /v1/apps/myapp/routes/scraper 200 OK
-    PATCH /v1/apps/myapp/routes/alert   200 OK
-    PATCH /v1/apps/myapp/routes/alert   200 OK
-    PATCH /v1/apps/myapp/routes/alert   200 OK
-    PATCH /v1/apps/myapp/routes/alert   200 OK
-    PATCH /v1/apps/myapp                200 OK
-    PATCH /v1/apps/myapp                200 OK
-    PATCH /v1/apps/myapp                200 OK
+secrets vital to the success of the demo. 
 
 After this completes, you can do
 
@@ -148,8 +103,7 @@ After this completes, you can do
     /scraper <dockerid>/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
 
 Finally, the minio wiring. I'm a bit foggy on this, but it basically
-sets up something that looks like an Amazon S3 bucket. This gets wired,
-again, through ngrok 9000.
+sets up something that looks like an Amazon S3 bucket. 
 
 ### Services
 
