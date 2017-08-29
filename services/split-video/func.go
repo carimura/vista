@@ -11,6 +11,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	minio "github.com/minio/minio-go"
 )
 
 type payloadIn struct {
