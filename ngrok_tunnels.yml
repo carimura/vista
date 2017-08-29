@@ -1,0 +1,7 @@
+tunnels:
+  fn:
+    proto: http
+    addr: 8080
+  minio:
+    proto: http
+    addr: 9000
