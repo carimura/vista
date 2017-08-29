@@ -33,7 +33,11 @@ fn start
 
 (Easy huh?)
 
-### Step 5: Local minio setup
+### Step 3: Start minio server
+
+TODO: move all these scripts into root dir, or make one that does all of this stuff in one go.
+Could even generate the vista.html instead of having to edit it. Or pass it in via URL. Maybe also
+set the oracle-vista-out automatically as default so don't have to type it.
 
 1. Start minio server: `docker run --rm -d -it -p 9000:9000 --name minio1 -v /tmp/export/minio1:/export -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio server /export`
 1. Setup minio buckets and webhooks: `docker run -it -v $PWD:/mc -w /mc --entrypoint=/bin/sh minio/mc`
@@ -44,13 +48,18 @@ fn start
 
 Ensure you have a GNU compatible make.
 
+TODO: put the my-envs.sh example in here, make it easier to set. Or maybe `fn` can support a .env file like Docker, that contains all this crap.
+and maybe `fn run` will prompt to create such a file if the required vars don't exist.
+
 1. `cd services; make deploy` (this should deploy all demo funcs to the Fn server)
 1. set the proper ENV vars needed in scripts/setenv.sh, then run run `./setenv.sh`
 1. Edit `public/vista.html` and replace the hard coded pubnub subscribe_key with your actual key from pubnub.
 1. `open public/vista.html`
 1. Enter oracle-vista-out as the value of the BUCKET environment variable into the box (this subscribes to pubnub channel).
 
-### Step 6: Run the demo!
+### Step 5: Run the demo!
+
+TODO: ./run-plate.sh and ./run-facial.sh
 
 1. `cd scraper`
 1. Plate detection: `cat payload.json | fn call myapp /scraper`
