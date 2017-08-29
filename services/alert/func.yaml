@@ -1,5 +1,4 @@
 name: carimura/alert
-version: 0.1.15
-runtime: ""
+version: 0.1.21
 type: async
 path: /alert

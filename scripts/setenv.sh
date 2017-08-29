@@ -5,6 +5,7 @@ fn apps config set myapp MINIO_SERVER_URL $MINIO_SERVER_URL
 fn apps config set myapp BUCKET oracle-vista-out
 fn apps config set myapp ACCESS $ACCESS
 fn apps config set myapp SECRET $SECRET
+fn apps config set myapp FN_TOKEN $FN_TOKEN
 
 cd ../services/alert
 fn routes config set myapp /alert TWITTER_CONF_KEY $TWITTER_CONF_KEY
