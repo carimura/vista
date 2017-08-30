@@ -23,14 +23,10 @@ type payloadIn struct {
 func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
-	fnStart(os.Getenv("BUCKET"), p.Plate)
-	defer fnFinish(os.Getenv("BUCKET"), p.Plate)
+	fnStart(os.Getenv("S3_BUCKET"), p.Plate)
+	defer fnFinish(os.Getenv("S3_BUCKET"), p.Plate)
 
 	outfile := "working.jpg"
-
-	//fmt.Println("------- ALERT STANDARD IN -------")
-	//fmt.Println(p)
-	//fmt.Println(os.Environ())
 
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONF_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONF_SECRET"))
@@ -49,8 +45,8 @@ func main() {
 	v := url.Values{}
 	v.Set("media_ids", media.MediaIDString)
 
-	tweet, err := api.PostTweet("VistaGuard Alert: Watch for license plate "+p.Plate+" [Detected "+timeStr+"]", v)
-	fmt.Println(tweet)
+	api.PostTweet("VistaGuard Alert: Watch for license plate "+p.Plate+" [Detected "+timeStr+"]", v)
+	//fmt.Println(tweet)
 }
 
 func imgToBase64(imgFile string) string {

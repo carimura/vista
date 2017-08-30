@@ -76,7 +76,7 @@ def isNude(url):
 def main():
     # Notify the UI that a function has started
     image_name = payload["id"] + ".jpg"
-    sendWorkerCount(os.environ["BUCKET"], image_name)
+    sendWorkerCount(os.environ["S3_BUCKET"], image_name)
 
     image_url = payload["image_url"]
     print "image_url: " + image_url
@@ -102,7 +102,6 @@ def main():
       "image_url": image_url,
       "is_nude": is_nude,
       "rectangles": rectangles,
-      "bucket": payload["bucket"],
       "id": payload["id"]
     }
     

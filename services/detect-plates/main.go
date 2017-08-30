@@ -38,8 +38,8 @@ func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
 
-	fnStart(os.Getenv("BUCKET"), p.ID)
-	defer fnFinish(os.Getenv("BUCKET"), p.ID)
+	fnStart(os.Getenv("S3_BUCKET"), p.ID)
+	defer fnFinish(os.Getenv("S3_BUCKET"), p.ID)
 	outfile := "working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
