@@ -65,6 +65,7 @@ You should see activity in the server logs, and output to the vista.html screen.
 - All counts will be moved to Functions UI so can simplify by removing those
   graphs.
 - Video stream (split-video) added. Could do more work around this. TBD.
+- Also see [issues](https://github.com/carimura/vista/issues)
 
 Other ideas: Feel free to create GitHub issues or contact Chad
 
