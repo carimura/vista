@@ -60,16 +60,11 @@ Now run the demo:
 
 You should see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
 
-## Known Issues
-
-- TBD
-
 ## Future Work Ideas
 
-- Add the function count stuff to the publish function
-- Add video stream as source for detect-plates, not just the flickr scraper
-- lots of dependencies still. Could eliminate Flickr by pulling straight from Google images?
-- if BMC has anything S3-compat, could use that as well to avoid Minio
+- All counts will be moved to Functions UI so can simplify by removing those
+  graphs.
+- Video stream (split-video) added. Could do more work around this. TBD.
 
 Other ideas: Feel free to create GitHub issues or contact Chad
 
