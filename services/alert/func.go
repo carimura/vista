@@ -23,8 +23,8 @@ type payloadIn struct {
 func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
-	fnStart(os.Getenv("S3_BUCKET"), p.Plate)
-	defer fnFinish(os.Getenv("S3_BUCKET"), p.Plate)
+	fnStart(os.Getenv("STORAGE_BUCKET"), p.Plate)
+	defer fnFinish(os.Getenv("STORAGE_BUCKET"), p.Plate)
 
 	outfile := "working.jpg"
 

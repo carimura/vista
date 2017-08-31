@@ -12,5 +12,5 @@ export FLICKR_API_SECRET=X
 # Only change the following if you changed the defaults
 export FUNC_SERVER_URL=http://docker.for.mac.localhost:8080
 export MINIO_SERVER_URL=http://docker.for.mac.localhost:9000
-export S3_ACCESS_KEY=DEMOACCESSKEY
-export S3_SECRET_KEY=DEMOSECRETKEY
+export STORAGE_ACCESS_KEY=DEMOACCESSKEY
+export STORAGE_SECRET_KEY=DEMOSECRETKEY
