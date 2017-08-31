@@ -40,8 +40,10 @@ fn start
 
 ### Step 3: Set everything up
 
+Use the `local` arg to do everything locally (ie: doesn't push to docker registry).
+
 ```sh
-./setup.sh
+./setup.sh [local]
 ```
 
 ### Step 4: Run the demo!
