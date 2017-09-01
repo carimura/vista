@@ -131,7 +131,8 @@
 
 <script>
 	function addImg(url, id) {
-		column = (totalImgs % 4) + 1;
+                url = url.replace("docker.for.mac.localhost", "127.0.0.1");
+	        column = (totalImgs % 4) + 1;
 		totalImgs++;
 		$("#img-count").text(totalImgs);
 		imgLink = $('<a href="'+url+'" target="_blank">');
