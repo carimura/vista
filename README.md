@@ -40,25 +40,21 @@ fn start
 
 ### Step 3: Set everything up
 
+Use the `local` arg to do everything locally (ie: doesn't push to docker registry).
+
 ```sh
-./setup.sh
+./setup.sh [local]
 ```
 
 ### Step 4: Run the demo!
-
-First open the UI:
-
-```sh
-open public/vista.html
-```
-
-Now run the demo:
 
 ```sh
 ./run.sh
 ```
 
-You should see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
+This will open a browser window to view the results. 
+
+You should also see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
 
 ## Future Work Ideas
 
