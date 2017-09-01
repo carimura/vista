@@ -1,5 +1,6 @@
 set -ex
 
+
 # we need to have a publish function in place before starting minio, so deploy first
 # time="2017-08-30T16:21:13Z" level=error msg="Initializing object layer failed" cause="Unable to initialize event notification. Unexpected response from webhook server http://docker.for.mac.localhost:8080/r/myapp/publish: (404 Not Found)" source="[server-main.go:206:serverMain()]"
 cd services

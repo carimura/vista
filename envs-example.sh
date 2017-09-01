@@ -1,3 +1,5 @@
+export FN_REGISTRY=<your docker id>
+
 export PUBNUB_PUBLISH_KEY=X
 export PUBNUB_SUBSCRIBE_KEY=X
 
