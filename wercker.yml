@@ -54,7 +54,7 @@ detect-faces-push:
         name: move source
         code: cp -r services/detect-faces /func
     - internal/docker-push:
-        repository: carimura/detect-faces
+        repository: registry-alpha.oracledx.com/carimura/detect-faces
         working-dir: /func
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
