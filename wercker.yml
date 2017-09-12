@@ -30,7 +30,9 @@ detect-faces-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: carimura/detect-faces
+        repository: registry-alpha.oracledx.com/carimura/detect-faces
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: master-base
 
 detect-faces-test:
