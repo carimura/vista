@@ -1,43 +1,53 @@
-apiVersion: v1
+piVersion: v1
 kind: ConfigMap
 metadata:
-  name: functions-config
+  name: fn-service-config
+  namespace: default
 data:
-  MQ_URL: redis://redis-master.default
-  DB_URL: mysql://root:boomsauce@tcp(mysql-master:3306)/functions
+  MQ_URL: redis://fn-redis-master.default
+  DB_URL: mysql://root:boomsauce@tcp(fn-mysql-master:3306)/fn
+  ZIPKIN_URL: http://zipkin:9411/api/v1/spans
+  API_URL: http://fn-service:8080
 ---
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: functions
+  name: fn-service
   labels:
-    app: functions
+    app: fn
+    role: fn-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
-  - port: 8080
+  - name: fn-service
+    port: 8080
     targetPort: 8080
-    nodePort: 31000
+  - name: fn-ui
+    port: 80
+    targetPort: 80
   selector:
-    app: functions
+    app: fn
+    role: fn-service
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: fn-api-deployment
+  name: fn-service
 spec:
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
-        app: functions
+        app: fn
+        role: fn-service
     spec:
       terminationGracePeriodSeconds: 1
       imagePullSecrets:
+      - name: docker-reg-secret
       - name: sre-reg-secret
       containers:
-      - name: fn-api
-        image:  registry.oracledx.com/skeppare/functions-service:0.1.13
+      - name: fn-service
+        image: registry.oracledx.com/skeppare/functions-service:0.1.46
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
@@ -49,25 +59,49 @@ spec:
         - name: MQ_URL
           valueFrom:
             configMapKeyRef:
-              name: functions-config
+              name: fn-service-config
               key: MQ_URL
         - name: DB_URL
           valueFrom:
             configMapKeyRef:
-              name: functions-config
+              name: fn-service-config
               key: DB_URL
+        - name: ZIPKIN_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fn-service-config
+              key: ZIPKIN_URL
         volumeMounts:
         - name: docker-socket
-          mountPath: "/var/run/docker.sock"
+          mountPath: /var/run/docker.sock
+      - name: fn-ui
+        image: registry.oracledx.com/skeppare/functions-ui:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
+        - name: API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fn-service-config
+              key: API_URL
+      - name: statsd-exporter
+        image: registry.oracledx.com/odxsre/core-services-statsd-exporter:latest
+        imagePullPolicy: IfNotPresent
+      - name: prometheus-pusher
+        image: registry.oracledx.com/odxsre/core-services-prometheus-pusher:latest
+        imagePullPolicy: IfNotPresent
       volumes:
       - name: docker-socket
         hostPath:
-          path: "/var/run/docker.sock"
+          path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-master
+  name: fn-mysql-master
   labels:
     app: mysql
     role: datastore
@@ -82,7 +116,7 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: mysql-master
+  name: fn-mysql-master
 spec:
   replicas: 1
   template:
@@ -93,20 +127,23 @@ spec:
     spec:
       terminationGracePeriodSeconds: 1
       containers:
-      - name: functions-mysql
-        image: mysql:5.6
+      - name: fn-mysql
+        image: mysql:5.7
+        args:
+          - "--max-connections=500"
+          - "--wait-timeout=300"
         ports:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: boomsauce
         - name: MYSQL_DATABASE
-          value: functions
+          value: fn
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-master
+  name: fn-redis-master
   labels:
     app: redis
     role: mq
@@ -121,7 +158,7 @@ spec:
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: redis-master
+  name: fn-redis-master
 spec:
   replicas: 1
   template:
@@ -132,15 +169,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 1
       containers:
-      - name: functions-redis
-        image: redis
+      - name: fn-redis
+        image: redis:4.0
         ports:
         - containerPort: 6379
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: sre-reg-secret
-type: kubernetes.io/dockercfg
-data:
-  .dockercfg: eyJyZWdpc3RyeS5vcmFjbGVkeC5jb20iOnsidXNlcm5hbWUiOiJhZ2VudCIsInBhc3N3b3JkIjoiZ2YyMVx1MDAyNjU0RyIsImVtYWlsIjoiICIsImF1dGgiOiJZV2RsYm5RNloyWXlNU1kxTkVjPSJ9fQ==

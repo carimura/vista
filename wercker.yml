@@ -30,8 +30,6 @@ detect-faces-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         repository: carimura/detect-faces
         tag: master-base
 
@@ -57,8 +55,6 @@ detect-faces-push:
         code: cp -r services/detect-faces /func
     - internal/docker-push:
         repository: carimura/detect-faces
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         working-dir: /func
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
@@ -96,8 +92,6 @@ detect-plates-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         repository: carimura/detect-plates
         tag: master-base
 
@@ -141,8 +135,6 @@ detect-plates-gobuild:
         code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
     - internal/docker-push:
         repository: carimura/detect-plates
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /srv/detect-plates
         entrypoint: ./func
@@ -193,8 +185,6 @@ alert-push:
         code: apk --no-cache add ca-certificates
     - internal/docker-push:
         repository: carimura/alert
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ./func
@@ -230,8 +220,6 @@ draw-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/draw
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 draw-test:
@@ -258,8 +246,6 @@ draw-push:
         code: cp -r services/draw /func
     - internal/docker-push:
         repository: carimura/draw
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ruby func.rb
@@ -295,8 +281,6 @@ publish-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: carimura/publish
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 publish-test:
@@ -323,8 +307,6 @@ publish-push:
         code: cp -r services/publish /func
     - internal/docker-push:
         repository: carimura/publish
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: python func.py
