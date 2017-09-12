@@ -96,7 +96,9 @@ detect-plates-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: carimura/detect-plates
+        repository: registry-alpha.oracledx.com/carimura/detect-plates
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: master-base
 
 detect-plates-test:
@@ -138,7 +140,9 @@ detect-plates-gobuild:
         name: move source
         code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
     - internal/docker-push:
-        repository: carimura/detect-plates
+        repository: registry-alpha.oracledx.com/carimura/detect-plates
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /srv/detect-plates
         entrypoint: ./func
@@ -188,7 +192,9 @@ alert-push:
         name: add certificates
         code: apk --no-cache add ca-certificates
     - internal/docker-push:
-        repository: carimura/alert
+        repository: registry-alpha.oracledx.com/carimura/alert
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ./func
@@ -223,7 +229,9 @@ draw-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: carimura/draw
+        repository: registry-alpha.oracledx.com/carimura/draw
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: master-base
 
 draw-test:
@@ -249,7 +257,9 @@ draw-push:
         name: move source
         code: cp -r services/draw /func
     - internal/docker-push:
-        repository: carimura/draw
+        repository: registry-alpha.oracledx.com/carimura/draw
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ruby func.rb
@@ -284,7 +294,9 @@ publish-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: carimura/publish
+        repository: registry-alpha.oracledx.com/carimura/publish
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: master-base
 
 publish-test:
@@ -310,7 +322,9 @@ publish-push:
         name: move source
         code: cp -r services/publish /func
     - internal/docker-push:
-        repository: carimura/publish
+        repository: registry-alpha.oracledx.com/carimura/publish
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: python func.py
