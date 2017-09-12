@@ -1,17 +1,19 @@
 deploy:
-	cd draw; fn deploy myapp
-	cd publish; fn deploy myapp
-	cd detect-plates; fn deploy myapp
-	cd detect-faces; fn deploy myapp
-	cd alert; fn deploy myapp
-	cd scraper; fn deploy myapp
-	cd split-video; fn deploy myapp
+	cd draw; fn deploy --app myapp
+	cd publish; fn deploy --app myapp
+	cd detect-plates; fn deploy --app myapp
+	cd detect-faces; fn deploy --app myapp
+	cd alert; fn deploy --app myapp
+	cd scraper; fn deploy --app myapp
+	cd split-video; fn deploy --app myapp
+	cd wls-post; fn deploy --app myapp
 
 deploy-local:
-	cd draw; fn deploy --local myapp
-	cd publish; fn deploy --local myapp
-	cd detect-plates; fn deploy --local myapp
-	cd detect-faces; fn deploy --local myapp
-	cd alert; fn deploy --local myapp
-	cd scraper; fn deploy --local myapp
-	cd split-video; fn deploy --local myapp
+	cd draw; fn deploy --local --app myapp
+	cd publish; fn deploy --local --app myapp
+	cd detect-plates; fn deploy --local --app myapp
+	cd detect-faces; fn deploy --local --app myapp
+	cd alert; fn deploy --local --app myapp
+	cd scraper; fn deploy --local --app myapp
+	cd split-video; fn deploy --local --app myapp
+	cd wls-post; fn deploy --local --app myapp

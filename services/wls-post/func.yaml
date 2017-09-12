@@ -1,0 +1,5 @@
+name: wls-post
+version: 0.0.8
+runtime: go
+entrypoint: ./func
+path: /wls-post

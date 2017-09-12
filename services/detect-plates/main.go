@@ -27,6 +27,12 @@ type payloadOut struct {
 	Plate      string      `json:"plate"`
 }
 
+type payloadWLS struct {
+	ImageURL string `json:"imageURL"`
+	Plate    string `json:"plate"`
+	State    string `json:"state"`
+}
+
 type rectangle struct {
 	StartX int `json:"startx"`
 	StartY int `json:"starty"`
@@ -71,13 +77,22 @@ func main() {
 			Plate:      plate.BestPlate,
 		}
 
-		fmt.Printf("\n\npout! --> %+v ", pout)
+		poutWLS := &payloadWLS{
+			ImageURL: p.URL,
+			Plate:    plate.BestPlate,
+		}
+
+		fmt.Printf("\n\npout: %+v ", pout)
+		fmt.Printf("\n\npoutWLS: %+v ", poutWLS)
 
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
 
 		b2 := new(bytes.Buffer)
 		json.NewEncoder(b2).Encode(pout)
+
+		b3 := new(bytes.Buffer)
+		json.NewEncoder(b3).Encode(poutWLS)
 
 		postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
 		res, _ := http.Post(postURL, "application/json", b)
@@ -86,6 +101,15 @@ func main() {
 		alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
 		resAlert, _ := http.Post(alertPostURL, "application/json", b2)
 		fmt.Println(resAlert.Body)
+
+		WLSPostURL := os.Getenv("FUNC_SERVER_URL") + "/wls-post"
+		resWLSFunc, _ := http.Post(WLSPostURL, "application/json", b3)
+		fmt.Println(resWLSFunc.Body)
+
+		defer res.Body.Close()
+		defer resAlert.Body.Close()
+		defer resWLSFunc.Body.Close()
+
 	} else {
 
 		fmt.Println("No Plates Found!")

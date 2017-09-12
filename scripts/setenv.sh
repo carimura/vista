@@ -2,6 +2,7 @@ fn apps config set myapp PUBNUB_PUBLISH_KEY $PUBNUB_PUBLISH_KEY
 fn apps config set myapp PUBNUB_SUBSCRIBE_KEY $PUBNUB_SUBSCRIBE_KEY
 fn apps config set myapp FUNC_SERVER_URL ${FUNC_SERVER_URL}/r/myapp
 fn apps config set myapp MINIO_SERVER_URL $MINIO_SERVER_URL
+fn apps config set myapp WLS_SERVER_URL $WLS_SERVER_URL
 fn apps config set myapp STORAGE_ACCESS_KEY $STORAGE_ACCESS_KEY
 fn apps config set myapp STORAGE_SECRET_KEY $STORAGE_SECRET_KEY
 fn apps config set myapp STORAGE_BUCKET oracle-vista-out
