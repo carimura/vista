@@ -1,4 +1,4 @@
 name: draw
-version: 0.1.65
-type: async
-timeout: 60
+version: 0.1.74
+type: sync
+timeout: 120
