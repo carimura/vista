@@ -31,8 +31,6 @@ detect-faces-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: registry-alpha.oracledx.com/carimura/detect-faces
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 detect-faces-test:
@@ -57,8 +55,6 @@ detect-faces-push:
         code: cp -r services/detect-faces /func
     - internal/docker-push:
         repository: registry-alpha.oracledx.com/carimura/detect-faces
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         working-dir: /func
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         entrypoint: python func.py
