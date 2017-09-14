@@ -1,5 +1,5 @@
 name: detect-plates
-version: 0.1.39
+version: 0.1.42
 type: async
 timeout: 120
 path: /detect-plates
