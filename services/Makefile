@@ -1,19 +1,25 @@
+APP?=myapp
+
 deploy:
-	cd draw; fn deploy --app myapp
-	cd publish; fn deploy --app myapp
-	cd detect-plates; fn deploy --app myapp
-	cd detect-faces; fn deploy --app myapp
-	cd alert; fn deploy --app myapp
-	cd scraper; fn deploy --app myapp
-	cd split-video; fn deploy --app myapp
-	cd wls-post; fn deploy --app myapp
+	cd draw; fn deploy --app ${APP}
+	cd publish; fn deploy --app ${APP}
+	cd detect-plates; fn deploy --app ${APP}
+	cd detect-faces; fn deploy --app ${APP}
+	cd alert; fn deploy --app ${APP}
+	cd scraper; fn deploy --app ${APP}
+	cd split-video; fn deploy --app ${APP}
+	cd wls-post; fn deploy --app ${APP}
+	cd flow; fn deploy --app ${APP}
+	cd post-slack; fn deploy --app ${APP}
 
 deploy-local:
-	cd draw; fn deploy --local --app myapp
-	cd publish; fn deploy --local --app myapp
-	cd detect-plates; fn deploy --local --app myapp
-	cd detect-faces; fn deploy --local --app myapp
-	cd alert; fn deploy --local --app myapp
-	cd scraper; fn deploy --local --app myapp
-	cd split-video; fn deploy --local --app myapp
-	cd wls-post; fn deploy --local --app myapp
+	cd draw; fn deploy --local --app ${APP}
+	cd publish; fn deploy --local --app ${APP}
+	cd detect-plates; fn deploy --local --app ${APP}
+	cd detect-faces; fn deploy --local --app ${APP}
+	cd alert; fn deploy --local --app ${APP}
+	cd scraper; fn deploy --local --app ${APP}
+	cd split-video; fn deploy --local --app ${APP}
+	cd wls-post; fn deploy --local --app ${APP}
+	cd flow; fn deploy --local --app ${APP}
+	cd post-slack; fn deploy --local --app ${APP}

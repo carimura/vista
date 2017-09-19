@@ -72,12 +72,23 @@ payload["rectangles"].each do |coords|
 end
 
 image_name = "image_#{payload["id"]}.jpg"
+if payload["resize"]
+   img.resize payload["resize"]
+end
+
 img.write(image_name)
 
 link = upload_file(image_name, payload)
+
+
 
 msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
   message: msg,
   channel: ENV["STORAGE_BUCKET"]
 )
+
+if ENV["NO_CHAIN"]
+    payload = { :id => payload["id"], :image_url => link }
+    puts result.to_json
+end

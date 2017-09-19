@@ -1,0 +1,5 @@
+name: post-slack
+version: 0.0.6
+runtime: java
+cmd: com.example.vista.PostToSlack::postToSlack
+format: http

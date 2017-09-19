@@ -1,0 +1,10 @@
+{
+  "channel": "general",
+  "upload": {
+    "url": "http://www.zoot.org.uk/wp/wp-content/uploads/2015/09/movie.gif",
+    "type": "auto",
+    "filename": "movie.gif",
+    "title": "Submarine",
+    "initial_comment": "look an exploding submarine"
+  }
+}
