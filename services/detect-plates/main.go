@@ -21,10 +21,8 @@ type payloadIn struct {
 	CountryCode string `json:"countrycode"`
 }
 
-type emptyPayloadOut struct {
-}
 type payloadOut struct {
-	GotPlate   bool     `json:"got_plate"`
+	GotPlate   bool        `json:"got_plate"`
 	ID         string      `json:"id"`
 	ImageURL   string      `json:"image_url"`
 	Rectangles []rectangle `json:"rectangles"`
@@ -49,6 +47,9 @@ func main() {
 	json.NewDecoder(os.Stdin).Decode(p)
 
 	_, noChain := os.LookupEnv("NO_CHAIN")
+	if noChain{
+		log.Println("running without chaining")
+	}
 
 	fnStart(os.Getenv("STORAGE_BUCKET"), p.ID)
 	defer fnFinish(os.Getenv("STORAGE_BUCKET"), p.ID)
@@ -63,7 +64,7 @@ func main() {
 	}
 	alpr.SetTopN(10)
 
-	fmt.Println("Checking Plate URL ---> " + p.URL)
+	log.Println("Checking Plate URL ---> " + p.URL)
 	downloadFile(outfile, p.URL)
 
 	imageBytes, err := ioutil.ReadFile(outfile)
@@ -102,9 +103,11 @@ func main() {
 		json.NewEncoder(b3).Encode(poutWLS)
 
 		if !noChain {
+
 			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+			log.Printf("Sending %s to %s",string(b.Bytes()),postURL)
 			res, _ := http.Post(postURL, "application/json", b)
-			fmt.Println(res.Body)
+			log.Println(res.Body)
 
 			alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
 			resAlert, _ := http.Post(alertPostURL, "application/json", b2)

@@ -39,7 +39,7 @@ public class PostToSlackTest{
         fn.givenEvent().withBody("{\n" +
                 "  \"channel\": \"general\",\n" +
                 "  \"upload\": {\n" +
-                "    \"url\": \"http://www.zoot.org.uk/wp/wp-content/uploads/2015/01/dragknife2-150x150.jpeg\",\n" +
+                "    \"url\": \"https://farm3.staticflickr.com/2175/5714544755_e5dc8e6ede_b.jpg\",\n" +
                 "    \"type\": \"auto\",\n" +
                 "    \"filename\": \"movie.gif\",\n" +
                 "    \"title\": \"Submarine\",\n" +

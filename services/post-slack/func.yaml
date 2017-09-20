@@ -1,5 +1,6 @@
 name: post-slack
-version: 0.0.6
+version: 0.0.18
 runtime: java
 cmd: com.example.vista.PostToSlack::postToSlack
 format: http
+timeout: 30

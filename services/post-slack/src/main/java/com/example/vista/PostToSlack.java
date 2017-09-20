@@ -17,6 +17,7 @@ public class PostToSlack {
 
     private static String slackToken;
     private static OkHttpClient client = new OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS).build();
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     @FnConfiguration
@@ -89,6 +90,7 @@ public class PostToSlack {
     }
 
     private void sendRequest(Request request) throws IOException {
+        System.err.println("Sending" + request);
         Response res = client.newCall(request).execute();
         System.err.println("Got response " + res);
         if (!res.isSuccessful()) {

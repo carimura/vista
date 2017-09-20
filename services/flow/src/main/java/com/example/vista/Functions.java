@@ -1,6 +1,7 @@
 package com.example.vista;
 
 import com.example.vista.messages.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fnproject.fn.api.Headers;
 import com.fnproject.fn.api.flow.FlowFuture;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created on 12/09/2017.
@@ -17,7 +20,7 @@ import java.io.IOException;
  * (c) 2017 Oracle Corporation
  */
 public class Functions {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private static final Logger log = LoggerFactory.getLogger(Functions.class);
 
 
@@ -30,7 +33,7 @@ public class Functions {
     }
 
     public static FlowFuture<DrawResp> drawRectangles(DrawReq req) {
-        return wrapJsonFunction("./draw",req, DrawResp.class);
+        return wrapJsonFunction("./draw", req, DrawResp.class);
     }
 
     //
@@ -39,17 +42,16 @@ public class Functions {
 //    }
 
 
-    public static FlowFuture<Void> postMessageToSlack(String channel,String message) {
+    public static FlowFuture<Void> postMessageToSlack(String channel, String message) {
         SlackRequest req = new SlackRequest();
-        SlackMessage upload = new SlackMessage(message);
-        req.message = upload;
+        req.message = new SlackMessage(message);
         req.channel = channel;
         return wrapJsonFunction("./post-slack", req);
 
     }
 
 
-    public static FlowFuture<Void> postImageToSlack(String channel,String url, String filename, String title, String initial_comment) {
+    public static FlowFuture<Void> postImageToSlack(String channel, String url, String filename, String title, String initial_comment) {
         SlackRequest req = new SlackRequest();
         SlackUpload upload = new SlackUpload();
         upload.filename = filename;
@@ -62,9 +64,16 @@ public class Functions {
 
     }
 
+    public static FlowFuture<Void> postAlertToTwitter(String url, String plate) {
+        return wrapJsonFunction("./alert", new AlertReq(url, plate));
+    }
+
     private static <RespT> FlowFuture<RespT> wrapJsonFunction(String name, Object input, Class<RespT> result) {
         log.info("Calling {} with {}", name, input);
-        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.emptyHeaders(), toJson(input))
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("NO_CHAIN", "true");
+
+        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.fromMap(headerMap), toJson(input))
                 .thenApply((httpResp) -> fromJson(httpResp.getBodyAsBytes(), result))
                 .whenComplete((v, e) -> {
                     if (e != null) {

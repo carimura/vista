@@ -1,5 +1,5 @@
 name: scraper
-version: 0.1.46
+version: 0.1.56
 runtime: ruby
 entrypoint: ruby func.rb
 timeout: 120

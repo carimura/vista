@@ -89,6 +89,6 @@ pubnub.publish(
 )
 
 if ENV["NO_CHAIN"]
-    payload = { :id => payload["id"], :image_url => link }
+    result = { :id => payload["id"], :image_url => link }
     puts result.to_json
 end
