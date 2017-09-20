@@ -1,4 +1,4 @@
 name: publish
-version: 0.1.59
+version: 0.1.61
 type: async
 path: /publish
