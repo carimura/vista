@@ -1,6 +1,6 @@
 name: detect-plates
-version: 0.1.64
+version: 0.1.65
 type: sync
+memory: 128
 timeout: 120
 path: /detect-plates
-memory: 128

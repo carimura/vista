@@ -50,19 +50,23 @@ public class VistaFlow {
                                 return detectPlates(new DetectPlateReq(scrapeResult.image_url, "us")).thenCompose((plateResp) -> {
                                     if (!plateResp.got_plate) {
                                         log.info("No plates found in {}", scrapeResult.image_url);
-                                        return currentFlow().completedValue(null);
+                                        // bug
+                                        return currentFlow().supply(()->null);
                                     }
                                     log.info("Got plate {} in {}", plateResp.plate, scrapeResult.image_url);
                                     return Functions
                                             .drawRectangles(new DrawReq(id, scrapeResult.image_url, plateResp.rectangles))
-                                            .thenCompose((drawResp) ->
-                                                    currentFlow().allOf(
-                                                            postAlertToTwitter(drawResp.image_url, plateResp.plate),
-                                                            postImageToSlack(slackChannel,
-                                                                    drawResp.image_url,
-                                                                    null,
-                                                                    "Found Plate" + plateResp.plate,
-                                                                    "Have you seen this car?")));
+                                            .thenCompose((drawResp) -> {
+                                                log.info("Got draw response {} ",drawResp.image_url);
+                                                        return currentFlow().allOf(
+                                                                postAlertToTwitter(drawResp.image_url, plateResp.plate),
+                                                                postImageToSlack(slackChannel,
+                                                                        drawResp.image_url,
+                                                                        "plate",
+                                                                        "Found plate: " + plateResp.plate,
+                                                                        "Have you seen this car?"));
+                                                    }
+                                            );
 
                                 });
 

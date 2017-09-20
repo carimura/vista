@@ -65,15 +65,17 @@ public class Functions {
     }
 
     public static FlowFuture<Void> postAlertToTwitter(String url, String plate) {
-        return wrapJsonFunction("./alert", new AlertReq(url, plate));
+        return wrapJsonFunction("./alert", new AlertReq(plate, url));
     }
 
     private static <RespT> FlowFuture<RespT> wrapJsonFunction(String name, Object input, Class<RespT> result) {
-        log.info("Calling {} with {}", name, input);
+        byte[] bytes = toJson(input);
+
+        log.info("Calling {} with {}:{}", name, input, new String(bytes));
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("NO_CHAIN", "true");
 
-        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.fromMap(headerMap), toJson(input))
+        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.fromMap(headerMap), bytes)
                 .thenApply((httpResp) -> fromJson(httpResp.getBodyAsBytes(), result))
                 .whenComplete((v, e) -> {
                     if (e != null) {
@@ -87,8 +89,13 @@ public class Functions {
 
 
     private static FlowFuture<Void> wrapJsonFunction(String name, Object input) {
-        log.info("Calling {} with {}", name, input);
-        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.emptyHeaders(), toJson(input))
+        byte[] bytes = toJson(input);
+        log.info("Calling {} with {} : {}", name, input, new String(bytes));
+
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("NO_CHAIN", "true");
+
+        return Flows.currentFlow().invokeFunction(name, HttpMethod.POST, Headers.fromMap(headerMap), bytes)
                 .handle((v, e) -> {
                     if (e != null) {
                         log.error("Got error from {} ", name, e);

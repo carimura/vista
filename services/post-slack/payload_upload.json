@@ -1,10 +1,11 @@
 {
   "channel": "general",
   "upload": {
-    "url": "https://farm3.staticflickr.com/2175/5714544755_e5dc8e6ede_b.jpg",
+    "url": "http://docker.for.mac.localhost:9000/oracle-vista-out/image_29799800595.jpg",
     "type": "auto",
-    "filename": "movie.gif",
-    "title": "Submarine",
-    "initial_comment": "look an exploding submarine"
-  }
+    "filename": "name",
+    "title": "Found Plate SMILE7",
+    "initial_comment": "Have you seen this car?"
+  },
+  "message": null
 }

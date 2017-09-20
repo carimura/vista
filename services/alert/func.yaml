@@ -1,4 +1,4 @@
 name: alert
-version: 0.1.59
-type: async
+version: 0.1.61
+type: sync
 path: /alert
