@@ -16,7 +16,7 @@ import static com.example.vista.Functions.*;
 import static com.fnproject.fn.api.flow.Flows.currentFlow;
 
 /**
- * FnFlow function that composes : several functions together
+ * FnFlow Vista function
  */
 public class VistaFlow {
     static {
@@ -35,9 +35,8 @@ public class VistaFlow {
     public void handleRequest(ScrapeReq input) throws Exception {
 
         log.info("Got request {} {}", input.query, input.num);
-
-
         postMessageToSlack(slackChannel, String.format("About to start scraping for images containing \"%s\"", input.query)).get();
+
 
         // Run the scraper function to get images from Flickr
         runScraper(input)
@@ -46,7 +45,7 @@ public class VistaFlow {
                     List<ScrapeResp.ScrapeResult> results = resp.result;
 
                     log.info("Got {} images from the scraper ", results.size());
-
+                    //loop over each image and accumulate the futures that
                     List<FlowFuture<?>> pendingTasks = results
                             .stream()
                             .map(scrapeResult -> {

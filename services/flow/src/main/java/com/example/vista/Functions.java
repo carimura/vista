@@ -15,6 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
+ * Function stubs - these are methods that create typed, asynchronous calls to the Faas
+ *
+ * Each method returns a FlowFuture that yeilds the result of the function call (or an error if one occured)
+ *
  * Created on 12/09/2017.
  * <p>
  * (c) 2017 Oracle Corporation
@@ -35,11 +40,6 @@ public class Functions {
     public static FlowFuture<DrawResp> drawRectangles(DrawReq req) {
         return wrapJsonFunction("./draw", req, DrawResp.class);
     }
-
-    //
-//    public static FlowFuture<DetectPlateResp> detectFaces(DetectPlateReq req) {
-//        return wrapJsonFunction("./detect-faces",req,DetectPlateResp.class);
-//    }
 
 
     public static FlowFuture<Void> postMessageToSlack(String channel, String message) {
