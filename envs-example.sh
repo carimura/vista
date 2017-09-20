@@ -11,6 +11,8 @@ export TWITTER_TOKEN_SECRET=X
 export FLICKR_API_KEY=X
 export FLICKR_API_SECRET=X
 
+export SLACK_API_KEY=xoxb-....
+
 # Only change the following if you changed the defaults
 export FUNC_SERVER_URL=http://docker.for.mac.localhost:8080
 export MINIO_SERVER_URL=http://docker.for.mac.localhost:9000
