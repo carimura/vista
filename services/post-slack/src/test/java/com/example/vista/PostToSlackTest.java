@@ -23,7 +23,7 @@ public class PostToSlackTest{
     public void testPostMessageToSlack(){
 
         fn.givenEvent().withBody("{\n" +
-                "  \"channel\": \"general\",\n" +
+                "  \"channel\": \"demostream\",\n" +
                 "  \"message\": {\n" +
                 "    \"text\": \"hello\"\n" +
                 "  }\n" +
@@ -37,7 +37,7 @@ public class PostToSlackTest{
     @Test
     public void testPostImageToSlack(){
         fn.givenEvent().withBody("{\n" +
-                "  \"channel\": \"general\",\n" +
+                "  \"channel\": \"demostream\",\n" +
                 "  \"upload\": {\n" +
                 "    \"url\": \"https://farm3.staticflickr.com/2175/5714544755_e5dc8e6ede_b.jpg\",\n" +
                 "    \"type\": \"auto\",\n" +

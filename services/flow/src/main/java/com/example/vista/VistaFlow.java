@@ -29,7 +29,7 @@ public class VistaFlow {
 
         log.info("Got request {} {}", input.query, input.num);
 
-        String slackChannel = "general";
+        String slackChannel = "demostream";
 
         postMessageToSlack(slackChannel, String.format("About to start scraping for images containing \"%s\"", input.query)).get();
 

@@ -1,5 +1,5 @@
 {
-  "channel": "general",
+  "channel": "demostream",
   "upload": {
     "url": "http://docker.for.mac.localhost:9000/oracle-vista-out/image_29799800595.jpg",
     "type": "auto",
