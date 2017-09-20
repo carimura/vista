@@ -8,5 +8,5 @@ package com.example.vista.messages;
 public class ScrapeReq {
     public String query;
     public int num = 5;
-
+    public int page;
 }
