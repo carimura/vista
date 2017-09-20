@@ -1,8 +1,8 @@
 name: post-slack
-version: 0.0.21
+version: 0.0.46
 runtime: java
 cmd: com.example.vista.PostToSlack::postToSlack
 memory: 128
 format: http
 timeout: 30
-idle_timeout: 300
+idle_timeout: 60
