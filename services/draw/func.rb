@@ -65,19 +65,30 @@ payload["rectangles"].each do |coords|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
     c.fill('none')
     is_nude = payload["is_nude"] || "false"
-    c.stroke('purple')
+    c.stroke('yellow')
     c.strokewidth(10)
     c.draw draw_string
   end 
 end
 
 image_name = "image_#{payload["id"]}.jpg"
+if payload["resize"]
+   img.resize payload["resize"]
+end
+
 img.write(image_name)
 
 link = upload_file(image_name, payload)
+
+
 
 msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(
   message: msg,
   channel: ENV["STORAGE_BUCKET"]
 )
+
+if ENV["NO_CHAIN"]
+    result = { :id => payload["id"], :image_url => link }
+    puts result.to_json
+end

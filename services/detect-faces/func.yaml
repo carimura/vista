@@ -1,5 +1,4 @@
 name: detect-faces
-version: 0.1.53
-type: async
+version: 0.1.86
 timeout: 60
 path: /detect-faces

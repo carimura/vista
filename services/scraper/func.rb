@@ -12,7 +12,7 @@ num_results = payload_in["num"] || 5
 service_to_call = payload_in["service_to_call"] || "detect-faces"
 page = payload_in["page"] || rand(50)
 
-puts "Querying Flickr for \"#{search_text}\" grabbing from page #{page} limiting results to #{num_results}"
+STDERR.puts "Querying Flickr for \"#{search_text}\" grabbing from page #{page} limiting results to #{num_results}"
 
 photos = flickr.photos.search(
 	:text => search_text,
@@ -23,11 +23,12 @@ photos = flickr.photos.search(
 	:content_type => 1
 )
 
-puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
+STDERR.puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
 threads = []
 
 blacklist_photos = ['35331390846']
 
+payloads = []
 photos.each do |photo|
   if blacklist_photos.include?(photo.id)
     image_url = "https://farm3.staticflickr.com/2175/5714544755_e5dc8e6ede_b.jpg"
@@ -40,10 +41,19 @@ photos.each do |photo|
              :countrycode => payload_in["countrycode"],
              :bucket => payload_in["bucket"]
   }
+  STDERR.puts "got image #{payload[:id]} : #{payload[:image_url]}"
+  payloads.push(payload)
 
-  RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
+  if !ENV["NO_CHAIN"]
+     RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
+  end
 end
 
-puts "done"
+if ENV["NO_CHAIN"]
+    result={}
+    result[:result] = payloads
+    puts result.to_json
+end
+STDERR.puts "done"
 
 
