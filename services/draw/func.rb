@@ -3,7 +3,6 @@ require 'rubygems'
 require 'open-uri'
 require 'aws-sdk'
 require 'mini_magick'
-require 'pubnub'
 
 def download_image(payload_in)
   payload = payload_in
@@ -21,7 +20,7 @@ end
 
 def upload_file(image_name, payload_in)
   payload = payload_in
-  
+
   Aws.config.update({
     endpoint: ENV["MINIO_SERVER_URL"],
     credentials: Aws::Credentials.new(ENV["STORAGE_ACCESS_KEY"], ENV["STORAGE_SECRET_KEY"]),
@@ -42,19 +41,8 @@ def upload_file(image_name, payload_in)
 	link
 end
 
-pubnub = Pubnub.new(
-    subscribe_key: ENV["PUBNUB_SUBSCRIBE_KEY"],
-    publish_key: ENV["PUBNUB_PUBLISH_KEY"]
-)
-
 std_in = STDIN.read
 payload = JSON.parse(std_in)
-
-msg = "{\"type\":\"draw\",\"running\":true, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
-pubnub.publish(
-  message: msg,
-  channel: ENV["STORAGE_BUCKET"]
-)
 
 temp_image_name = download_image(payload)
 
@@ -68,7 +56,7 @@ payload["rectangles"].each do |coords|
     c.stroke('yellow')
     c.strokewidth(10)
     c.draw draw_string
-  end 
+  end
 end
 
 image_name = "image_#{payload["id"]}.jpg"

@@ -10,9 +10,6 @@ Expects:
   Environment:
     ACCESS: SOMESTORAGEACCESSKEY
     SECRET: SOMESTORAGESECRETKEY
-    PUBNUB_SUBSCRIBE_KEY: ASD-123
-    PUBNUB_PUBLISH_KEY: QWE-456
     HOSTNAME: MYHOST
 Output:
   Description: Outputs image to bucket
-
