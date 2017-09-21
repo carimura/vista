@@ -11,6 +11,7 @@ fn apps config set ${APP} STORAGE_SECRET_KEY $STORAGE_SECRET_KEY
 fn apps config set ${APP} STORAGE_BUCKET oracle-vista-out
 fn apps config set ${APP} FN_TOKEN $FN_TOKEN
 
+
 cd ../services/alert
 fn routes config set ${APP} /alert TWITTER_CONF_KEY $TWITTER_CONF_KEY
 fn routes config set ${APP} /alert TWITTER_CONF_SECRET $TWITTER_CONF_SECRET
