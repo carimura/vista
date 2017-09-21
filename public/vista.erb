@@ -100,7 +100,7 @@
 			</form></div>
 			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
       <div class="lead" id="worker-count-wrapper">
-          <span id="worker-count">0</span> <a href="/detailed-vista.html">functions</a> running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
+          <span id="img-count">0</span> images processed.
       </div>
 			</div>
 		</div>
@@ -141,11 +141,6 @@
 
 	var totalImgs = 0;
     var totalFuncs = 0;
-    var counters = {}
-
-	function getCounter(id) {
-		return counters[id];
-	}
 
     randData = function() {
         // generate an array of random data
@@ -160,35 +155,6 @@
             }
         return data;
     }
-
-	function fireCounter(id, running) {
-        if (counters[id] === undefined) {
-            counters[id] = 0;
-            chart.addSeries({
-                name: id,
-                data: randData()
-            });
-        }
-        if (running) {
-            counters[id] += 1;
-            $("#worker-count").text(getCounter(id));
-        } else {
-            counters[id] -= 1;
-            if (counters[id] < 0) {
-                counters[id] = 0
-            }
-            totalFuncs+=1
-            $("#worker-count").text(getCounter(id));
-            $("#total-funcs-count").text(totalFuncs);
-        }
-	}
-
-	function decrementCounter(id) {
-        counters[id] -= 1;
-        totalFuncs+=1
-		$("#worker-count").text(getCounter(id));
-        $("#total-funcs-count").text(totalFuncs);
-	}
 
 	var dots = window.setInterval( function() {
 		var wait = document.getElementById("listening-dots");
@@ -216,14 +182,8 @@
         try {
           m = JSON.parse(m)
           if("url" in m) {
-					  addImg(m["url"], m["id"]);
-				  } else {
-            if("type" in m) {
-                 fireCounter(m["type"],m["running"])
-             } else {
-                //  alert("This shouldnt happen, hope you're not demoing. :(")
-             }
-				  }
+            addImg(m["url"], m["id"]);
+		  }
         } catch (e) {
           console.log("Problem parsing m, val is"); console.log(m);
         }
