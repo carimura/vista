@@ -91,7 +91,7 @@
       "webhook":{
          "1":{
             "enable":true,
-            "endpoint":"http://docker.for.mac.localhost:8080/r//publish"
+            "endpoint":"http://docker.for.mac.localhost:8080/r/myapp/publish"
          }
       },
       "mysql":{

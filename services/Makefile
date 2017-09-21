@@ -7,8 +7,8 @@ deploy:
 	cd detect-faces; fn deploy --app ${APP}
 	cd alert; fn deploy --app ${APP}
 	cd scraper; fn deploy --app ${APP}
-	cd split-video; fn deploy --app ${APP}
-	cd wls-post; fn deploy --app ${APP}
+	#cd split-video; fn deploy --app ${APP}
+	#cd wls-post; fn deploy --app ${APP}
 	cd flow; fn deploy --app ${APP}
 	cd post-slack; fn deploy --app ${APP}
 
@@ -19,7 +19,7 @@ deploy-local:
 	cd detect-faces; fn deploy --local --app ${APP}
 	cd alert; fn deploy --local --app ${APP}
 	cd scraper; fn deploy --local --app ${APP}
-	cd split-video; fn deploy --local --app ${APP}
-	cd wls-post; fn deploy --local --app ${APP}
+	#cd split-video; fn deploy --local --app ${APP}
+	#cd wls-post; fn deploy --local --app ${APP}
 	cd flow; fn deploy --local --app ${APP}
 	cd post-slack; fn deploy --local --app ${APP}
