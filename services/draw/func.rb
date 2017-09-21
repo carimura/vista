@@ -65,8 +65,8 @@ payload["rectangles"].each do |coords|
     draw_string = "rectangle #{coords["startx"]}, #{coords["starty"]}, #{coords["endx"]}, #{coords["endy"]}"
     c.fill('none')
     is_nude = payload["is_nude"] || "false"
-    c.stroke('red')
-    c.strokewidth(5)
+    c.stroke('yellow')
+    c.strokewidth(10)
     c.draw draw_string
   end 
 end
