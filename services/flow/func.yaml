@@ -1,5 +1,5 @@
 name: flow
-version: 0.0.71
+version: 0.0.74
 runtime: java
 cmd: com.example.vista.VistaFlow::handleRequest
 format: http
