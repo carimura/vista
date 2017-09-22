@@ -11,6 +11,7 @@ import java.util.List;
  * <p>
  * (c) 2017 Oracle Corporation
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScrapeResp implements Serializable {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ScrapeResult implements Serializable {

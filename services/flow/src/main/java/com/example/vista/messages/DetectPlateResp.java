@@ -1,5 +1,7 @@
 package com.example.vista.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import java.util.List;
  * <p>
  * (c) 2017 Oracle Corporation
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DetectPlateResp implements Serializable {
     public boolean got_plate;
     public String plate;

@@ -1,5 +1,7 @@
 package com.example.vista.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 /**
@@ -7,6 +9,7 @@ import java.io.Serializable;
  * <p>
  * (c) 2017 Oracle Corporation
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DrawResp implements Serializable{
     public String image_url;
 }
