@@ -47,7 +47,7 @@ public class VistaFlow {
                                         // bug
                                         return currentFlow().completedValue(null);
                                     }
-                                    
+
                                     log.info("Got plate {} in {}", plateResp.plate, scrapeResult.image_url);
                                     return currentFlow()
                                             .invokeFunction("./draw", new DrawReq(id, scrapeResult.image_url, plateResp.rectangles, "300x300"), DrawResp.class)

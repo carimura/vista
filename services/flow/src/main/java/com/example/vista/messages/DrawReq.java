@@ -1,5 +1,7 @@
 package com.example.vista.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,7 @@ import java.util.List;
  * <p>
  * (c) 2017 Oracle Corporation
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DrawReq {
     public final String id;
     public final String image_url;

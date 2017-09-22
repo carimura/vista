@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fdk-java.version>1.0.17</fdk-java.version>
+        <fdk-java.version>1.0.28</fdk-java.version>
     </properties>
     <groupId>com.example.vista</groupId>
     <artifactId>post-slack</artifactId>
