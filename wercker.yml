@@ -25,7 +25,7 @@ detect-faces-base:
         packages: python python-dev python-pip libopencv-calib3d2.4 libopencv-core2.4 libopencv-features2d2.4 libopencv-flann2.4 libopencv-highgui2.4 libopencv-imgproc2.4 libopencv-legacy2.4 libopencv-ml2.4 libopencv-objdetect2.4  libopencv-video2.4 libv4l-0 libv4lconvert0 python-opencv libdc1394-22
     - pip-install:
         cwd: services/detect-faces
-        packages: pubnub Algorithmia
+        packages: Algorithmia
     - script:
         name: prune
         code: rm -rf /pipeline
@@ -112,7 +112,6 @@ detect-plates-test:
         cwd: services/detect-plates
         code: |
           go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-          go get github.com/pubnub/go/messaging
     - script:
         name: go build
         cwd: services/detect-plates
@@ -131,7 +130,6 @@ detect-plates-gobuild:
         cwd: services/detect-plates
         code: |
           go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-          go get github.com/pubnub/go/messaging
     - script:
         name: go build
         cwd: services/detect-plates
@@ -169,7 +167,7 @@ alert-gobuild:
     - script:
         name: go get
         cwd: /src
-        code: go get github.com/ChimeraCoder/anaconda; go get github.com/pubnub/go/messaging
+        code: go get github.com/ChimeraCoder/anaconda
     - script:
         name: go build
         cwd: /src

@@ -1,4 +1,4 @@
 name: detect-faces
-version: 0.1.95
+version: 0.1.96
 timeout: 60
 path: /detect-faces

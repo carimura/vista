@@ -70,12 +70,6 @@ link = upload_file(image_name, payload)
 
 STDERR.puts "Image link: #{link}"
 
-msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
-pubnub.publish(
-  message: msg,
-  channel: ENV["STORAGE_BUCKET"]
-)
-
 if ENV["NO_CHAIN"]
     result = { :id => payload["id"], :image_url => link }
     puts result.to_json
