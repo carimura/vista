@@ -100,24 +100,20 @@
 			</form></div>
 			<div class="lead listening" style="display: none;">Listening on <b></b> <span id="listening-dots"></span></div>
       <div class="lead" id="worker-count-wrapper">
-          <span id="worker-count">0</span> <a href="/detailed-vista.html">functions</a> running, <span id="total-funcs-count">0</span> functions completed, <span id="img-count">0</span> images processed.
-          <div id="functions-graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+          <span id="img-count">0</span> images processed.
       </div>
 			</div>
 		</div>
 	</div>
 
       <hr id="results">
-
 			<div class="row-fluid marketing">
 				<div class="span3" id="results-container-1"></div>
 				<div class="span3" id="results-container-2"></div>
 				<div class="span3" id="results-container-3"></div>
 				<div class="span3" id="results-container-4"></div>
 				</div>
-
       <hr>
-
     </div> <!-- /container -->
 
     <!-- Le javascript
@@ -126,9 +122,6 @@
     <script src="js/jquery.js"></script>
 	<script src="https://cdn.pubnub.com/pubnub-3.9.2.js" type="text/javascript"></script>
     <!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-
 <script>
 	function addImg(url, id) {
                 url = url.replace("docker.for.mac.localhost", "127.0.0.1");
@@ -148,11 +141,6 @@
 
 	var totalImgs = 0;
     var totalFuncs = 0;
-    var counters = {}
-
-	function getCounter(id) {
-		return counters[id];
-	}
 
     randData = function() {
         // generate an array of random data
@@ -167,97 +155,6 @@
             }
         return data;
     }
-
-    $(document).ready(function () {
-        Highcharts.setOptions({
-            global: {
-                useUTC: false
-            }
-        });
-    });
-
-    var chart = Highcharts.chart('functions-graph', {
-        chart: {
-            type: 'spline',
-            animation: Highcharts.svg, // don't animate in old IE
-            marginRight: 10,
-            events: {
-                load: function () {
-                    // set up the updating of the chart each second
-                    var theseries = this.series
-                    setInterval(function () {
-                        var x = (new Date()).getTime();
-                        for(i = 0; i< theseries.length;i++) {
-                            if (theseries[i] !== undefined) {
-                                y = getCounter(theseries[i].name);
-                                theseries[i].addPoint([x, y], true, true);
-                            }
-                        }
-                    }, 1000);
-                }
-            }
-        },
-        title: {
-            text: 'Functions Running'
-        },
-        xAxis: {
-            type: 'datetime',
-            tickPixelInterval: 150
-        },
-        yAxis: {
-            title: {
-                text: 'Functions'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            formatter: function () {
-                return '<b>' + this.series.name + '</b><br/>' +
-                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                    Highcharts.numberFormat(this.y, 1);
-            }
-        },
-        legend: {
-            enabled: true
-        },
-        exporting: {
-            enabled: false
-        },
-        series: []
-    });
-
-	function fireCounter(id, running) {
-        if (counters[id] === undefined) {
-            counters[id] = 0;
-            chart.addSeries({
-                name: id,
-                data: randData()
-            });
-        }
-        if (running) {
-            counters[id] += 1;
-            $("#worker-count").text(getCounter(id));
-        } else {
-            counters[id] -= 1;
-            if (counters[id] < 0) {
-                counters[id] = 0
-            }
-            totalFuncs+=1
-            $("#worker-count").text(getCounter(id));
-            $("#total-funcs-count").text(totalFuncs);
-        }
-	}
-
-	function decrementCounter(id) {
-        counters[id] -= 1;
-        totalFuncs+=1
-		$("#worker-count").text(getCounter(id));
-        $("#total-funcs-count").text(totalFuncs);
-	}
 
 	var dots = window.setInterval( function() {
 		var wait = document.getElementById("listening-dots");
@@ -285,14 +182,8 @@
         try {
           m = JSON.parse(m)
           if("url" in m) {
-					  addImg(m["url"], m["id"]);
-				  } else {
-            if("type" in m) {
-                 fireCounter(m["type"],m["running"])
-             } else {
-                //  alert("This shouldnt happen, hope you're not demoing. :(")
-             }
-				  }
+            addImg(m["url"], m["id"]);
+		  }
         } catch (e) {
           console.log("Problem parsing m, val is"); console.log(m);
         }

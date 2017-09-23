@@ -9,10 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
-	"github.com/pubnub/go/messaging"
 )
 
 type payloadIn struct {
@@ -51,8 +49,6 @@ func main() {
 		log.Println("running without chaining")
 	}
 
-	fnStart(os.Getenv("STORAGE_BUCKET"), p.ID)
-	defer fnFinish(os.Getenv("STORAGE_BUCKET"), p.ID)
 	outfile := "working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
@@ -156,37 +152,6 @@ func downloadFile(filepath string, url string) (err error) {
 	}
 
 	return nil
-}
-
-var (
-	pubKey, subKey, ran string
-	pn                  *messaging.Pubnub
-	cbChannel           = make(chan []byte)
-	errChan             = make(chan []byte)
-)
-
-func fnStart(bucket, id string) {
-	pubKey = os.Getenv("PUBNUB_PUBLISH_KEY")
-	subKey = os.Getenv("PUBNUB_SUBSCRIBE_KEY")
-
-	pn = messaging.NewPubnub(pubKey, subKey, "", "", false, "", nil)
-	go func() {
-		for {
-			select {
-			case msg := <-cbChannel:
-				log.Println(time.Now().Second(), ": ", string(msg))
-			case msg := <-errChan:
-				log.Println(string(msg))
-			default:
-			}
-		}
-	}()
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates","running":true, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
-}
-
-func fnFinish(bucket, id string) {
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates","running":false, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
-	time.Sleep(time.Second * 2)
 }
 
 func init() {
