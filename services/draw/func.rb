@@ -80,7 +80,7 @@ img.write(image_name)
 
 link = upload_file(image_name, payload)
 
-
+STDERR.puts "Image link: #{link}"
 
 msg = "{\"type\":\"draw\",\"running\":false, \"id\":\"#{payload["id"]}\", \"runner\": \"#{ENV["HOSTNAME"]}\"}"
 pubnub.publish(

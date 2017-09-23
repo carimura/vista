@@ -34,8 +34,11 @@ func main() {
 
 	timeStr := string(time.Now().Format(time.RFC3339))
 
+	os.Stderr.WriteString(p.ImageURL)
 	downloadFile(outfile, p.ImageURL)
 	image := imgToBase64(outfile)
+
+	os.Stderr.WriteString(image)
 
 	media, err := api.UploadMedia(image)
 	if err != nil {

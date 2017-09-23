@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
-	"log"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 	"github.com/pubnub/go/messaging"
@@ -47,7 +47,7 @@ func main() {
 	json.NewDecoder(os.Stdin).Decode(p)
 
 	_, noChain := os.LookupEnv("NO_CHAIN")
-	if noChain{
+	if noChain {
 		log.Println("running without chaining")
 	}
 
@@ -85,13 +85,13 @@ func main() {
 			Plate:      plate.BestPlate,
 		}
 
-		poutWLS := &payloadWLS{
+		/*poutWLS := &payloadWLS{
 			ImageURL: p.URL,
 			Plate:    plate.BestPlate,
-		}
+		}*/
 
 		log.Printf("\n\npout: %+v ", pout)
-		log.Printf("\n\npoutWLS: %+v ", poutWLS)
+		//log.Printf("\n\npoutWLS: %+v ", poutWLS)
 
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
@@ -99,13 +99,13 @@ func main() {
 		b2 := new(bytes.Buffer)
 		json.NewEncoder(b2).Encode(pout)
 
-		b3 := new(bytes.Buffer)
-		json.NewEncoder(b3).Encode(poutWLS)
+		//b3 := new(bytes.Buffer)
+		//json.NewEncoder(b3).Encode(poutWLS)
 
 		if !noChain {
 
 			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
-			log.Printf("Sending %s to %s",string(b.Bytes()),postURL)
+			log.Printf("Sending %s to %s", string(b.Bytes()), postURL)
 			res, _ := http.Post(postURL, "application/json", b)
 			log.Println(res.Body)
 
@@ -113,12 +113,12 @@ func main() {
 			resAlert, _ := http.Post(alertPostURL, "application/json", b2)
 			fmt.Println(resAlert.Body)
 
-			WLSPostURL := os.Getenv("FUNC_SERVER_URL") + "/wls-post"
-			resWLSFunc, _ := http.Post(WLSPostURL, "application/json", b3)
-			fmt.Println(resWLSFunc.Body)
+			//WLSPostURL := os.Getenv("FUNC_SERVER_URL") + "/wls-post"
+			//resWLSFunc, _ := http.Post(WLSPostURL, "application/json", b3)
+			//fmt.Println(resWLSFunc.Body)
 			defer res.Body.Close()
 			defer resAlert.Body.Close()
-			defer resWLSFunc.Body.Close()
+			//defer resWLSFunc.Body.Close()
 		} else {
 			os.Stdout.Write(b.Bytes())
 		}

@@ -45,7 +45,12 @@ photos.each do |photo|
   payloads.push(payload)
 
   if !ENV["NO_CHAIN"]
-     RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
+    begin
+      RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
+    rescue
+      STDERR.puts "Rescuing from scraper call to detect_plates. Call id #{ENV["FN_CALL_ID"]}"
+      puts "Rescuing from scraper call to detect_plates. Call id #{ENV["FN_CALL_ID"]}"
+    end
   end
 end
 
