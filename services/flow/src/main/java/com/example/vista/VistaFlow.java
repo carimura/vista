@@ -50,12 +50,12 @@ public class VistaFlow {
 
                                     log.info("Got plate {} in {}", plateResp.plate, scrapeResult.image_url);
                                     return currentFlow()
-                                            .invokeFunction("./draw", new DrawReq(id, scrapeResult.image_url, plateResp.rectangles, "300x300"), DrawResp.class)
+                                            .invokeFunction("./draw", new DrawReq(id, scrapeResult.image_url, plateResp.rectangles,"300x300"), DrawResp.class)
                                             .thenCompose((drawResp) -> {
                                                         // Finally when the image is rendered  post an alert to twitter and slack in parallel
                                                         log.info("Got draw response {} ", drawResp.image_url);
                                                         return currentFlow().allOf(
-                                                                currentFlow().invokeFunction("./alert", new AlertReq(drawResp.image_url, plateResp.plate)),
+                                                                currentFlow().invokeFunction("./alert", new AlertReq(plateResp.plate, drawResp.image_url)),
                                                                 Slack.postImageToSlack(slackChannel,
                                                                         drawResp.image_url,
                                                                         "plate",
