@@ -4,7 +4,6 @@ fn apps config set ${APP} PUBNUB_PUBLISH_KEY $PUBNUB_PUBLISH_KEY
 fn apps config set ${APP} PUBNUB_SUBSCRIBE_KEY $PUBNUB_SUBSCRIBE_KEY
 fn apps config set ${APP} FUNC_SERVER_URL ${FUNC_SERVER_URL}/r/${APP}
 fn apps config set ${APP} MINIO_SERVER_URL $MINIO_SERVER_URL
-fn apps config set ${APP} WLS_SERVER_URL $WLS_SERVER_URL
 fn apps config set ${APP} COMPLETER_BASE_URL http://$DOCKER_LOCALHOST:8081
 fn apps config set ${APP} STORAGE_ACCESS_KEY $STORAGE_ACCESS_KEY
 fn apps config set ${APP} STORAGE_SECRET_KEY $STORAGE_SECRET_KEY
@@ -32,7 +31,7 @@ sync_async_fns="alert detect-faces detect-plates draw"
 #
 if [[ ${VISTA_MODE} == "flow" ]]
 then
-   echo configuring apps for flow
+   echo "-------- Configuring App for Fn Flow ---------"
    # just the flow  version
    fn apps config set ${APP} NO_CHAIN true
 
@@ -41,7 +40,7 @@ then
      fn routes update  ${APP} $func --type sync
    done
 else
-   echo configuring apps for async
+   echo "------- Configuring App for Async --------"
    fn apps config set ${APP} NO_CHAIN ""
 
   for func in $sync_async_fns ; do
