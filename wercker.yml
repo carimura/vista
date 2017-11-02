@@ -25,12 +25,12 @@ detect-faces-base:
         packages: python python-dev python-pip libopencv-calib3d2.4 libopencv-core2.4 libopencv-features2d2.4 libopencv-flann2.4 libopencv-highgui2.4 libopencv-imgproc2.4 libopencv-legacy2.4 libopencv-ml2.4 libopencv-objdetect2.4  libopencv-video2.4 libv4l-0 libv4lconvert0 python-opencv libdc1394-22
     - pip-install:
         cwd: services/detect-faces
-        packages: pubnub Algorithmia
+        packages: Algorithmia
     - script:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/detect-faces
+        repository: $FN_REGISTRY/detect-faces
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
@@ -56,7 +56,7 @@ detect-faces-push:
         name: move source
         code: cp -r services/detect-faces /func
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/detect-faces
+        repository: $FN_REGISTRY/detect-faces
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         working-dir: /func
@@ -96,7 +96,7 @@ detect-plates-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/detect-plates
+        repository: $FN_REGISTRY/detect-plates
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
@@ -112,7 +112,6 @@ detect-plates-test:
         cwd: services/detect-plates
         code: |
           go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-          go get github.com/pubnub/go/messaging
     - script:
         name: go build
         cwd: services/detect-plates
@@ -131,7 +130,6 @@ detect-plates-gobuild:
         cwd: services/detect-plates
         code: |
           go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-          go get github.com/pubnub/go/messaging
     - script:
         name: go build
         cwd: services/detect-plates
@@ -140,7 +138,7 @@ detect-plates-gobuild:
         name: move source
         code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/detect-plates
+        repository: $FN_REGISTRY/detect-plates
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
@@ -169,7 +167,7 @@ alert-gobuild:
     - script:
         name: go get
         cwd: /src
-        code: go get github.com/ChimeraCoder/anaconda; go get github.com/pubnub/go/messaging
+        code: go get github.com/ChimeraCoder/anaconda
     - script:
         name: go build
         cwd: /src
@@ -192,7 +190,7 @@ alert-push:
         name: add certificates
         code: apk --no-cache add ca-certificates
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/alert
+        repository: $FN_REGISTRY/alert
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
@@ -229,7 +227,7 @@ draw-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/draw
+        repository: $FN_REGISTRY/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
@@ -257,7 +255,7 @@ draw-push:
         name: move source
         code: cp -r services/draw /func
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/draw
+        repository: $FN_REGISTRY/draw
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
@@ -294,7 +292,7 @@ publish-base:
         name: prune
         code: rm -rf /pipeline
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/publish
+        repository: $FN_REGISTRY/publish
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: master-base
@@ -322,7 +320,7 @@ publish-push:
         name: move source
         code: cp -r services/publish /func
     - internal/docker-push:
-        repository: registry-alpha.oracledx.com/carimura/publish
+        repository: $FN_REGISTRY/publish
         username: $DOCKER_USERNAME
         password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT

@@ -1,4 +1,5 @@
 .cache
+.idea
 .gem
 .pip
 .sudo_as_admin_successful
@@ -12,3 +13,4 @@ tmp/
 /envs.sh
 data/
 vista.html
+.idea

@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
-	"github.com/pubnub/go/messaging"
 )
 
 type payloadIn struct {
@@ -21,6 +20,7 @@ type payloadIn struct {
 }
 
 type payloadOut struct {
+	GotPlate   bool        `json:"got_plate"`
 	ID         string      `json:"id"`
 	ImageURL   string      `json:"image_url"`
 	Rectangles []rectangle `json:"rectangles"`
@@ -44,8 +44,11 @@ func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
 
-	fnStart(os.Getenv("STORAGE_BUCKET"), p.ID)
-	defer fnFinish(os.Getenv("STORAGE_BUCKET"), p.ID)
+	_, noChain := os.LookupEnv("NO_CHAIN")
+	if noChain {
+		log.Println("running without chaining")
+	}
+
 	outfile := "working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
@@ -57,7 +60,7 @@ func main() {
 	}
 	alpr.SetTopN(10)
 
-	fmt.Println("Checking Plate URL ---> " + p.URL)
+	log.Println("Checking Plate URL ---> " + p.URL)
 	downloadFile(outfile, p.URL)
 
 	imageBytes, err := ioutil.ReadFile(outfile)
@@ -68,22 +71,23 @@ func main() {
 
 	if len(results.Plates) > 0 {
 		plate := results.Plates[0]
-		fmt.Printf("\n\n FOUND PLATE ------>> %+v", plate)
+		log.Printf("\n\n FOUND PLATE ------>> %+v", plate)
 
 		pout := &payloadOut{
+			GotPlate:   true,
 			ID:         p.ID,
 			ImageURL:   p.URL,
 			Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
 			Plate:      plate.BestPlate,
 		}
 
-		poutWLS := &payloadWLS{
+		/*poutWLS := &payloadWLS{
 			ImageURL: p.URL,
 			Plate:    plate.BestPlate,
-		}
+		}*/
 
-		fmt.Printf("\n\npout: %+v ", pout)
-		fmt.Printf("\n\npoutWLS: %+v ", poutWLS)
+		log.Printf("\n\npout: %+v ", pout)
+		//log.Printf("\n\npoutWLS: %+v ", poutWLS)
 
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
@@ -91,28 +95,36 @@ func main() {
 		b2 := new(bytes.Buffer)
 		json.NewEncoder(b2).Encode(pout)
 
-		b3 := new(bytes.Buffer)
-		json.NewEncoder(b3).Encode(poutWLS)
+		//b3 := new(bytes.Buffer)
+		//json.NewEncoder(b3).Encode(poutWLS)
 
-		postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
-		res, _ := http.Post(postURL, "application/json", b)
-		fmt.Println(res.Body)
+		if !noChain {
 
-		alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
-		resAlert, _ := http.Post(alertPostURL, "application/json", b2)
-		fmt.Println(resAlert.Body)
+			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+			log.Printf("Sending %s to %s", string(b.Bytes()), postURL)
+			res, _ := http.Post(postURL, "application/json", b)
+			log.Println(res.Body)
 
-		WLSPostURL := os.Getenv("FUNC_SERVER_URL") + "/wls-post"
-		resWLSFunc, _ := http.Post(WLSPostURL, "application/json", b3)
-		fmt.Println(resWLSFunc.Body)
+			alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
+			resAlert, _ := http.Post(alertPostURL, "application/json", b2)
+			fmt.Println(resAlert.Body)
 
-		defer res.Body.Close()
-		defer resAlert.Body.Close()
-		defer resWLSFunc.Body.Close()
-
+			//WLSPostURL := os.Getenv("FUNC_SERVER_URL") + "/wls-post"
+			//resWLSFunc, _ := http.Post(WLSPostURL, "application/json", b3)
+			//fmt.Println(resWLSFunc.Body)
+			defer res.Body.Close()
+			defer resAlert.Body.Close()
+			//defer resWLSFunc.Body.Close()
+		} else {
+			os.Stdout.Write(b.Bytes())
+		}
 	} else {
-
-		fmt.Println("No Plates Found!")
+		log.Println("No Plates Found!")
+		if noChain {
+			json.NewEncoder(os.Stdout).Encode(&payloadOut{
+				GotPlate: false,
+			})
+		}
 
 	}
 
@@ -140,37 +152,6 @@ func downloadFile(filepath string, url string) (err error) {
 	}
 
 	return nil
-}
-
-var (
-	pubKey, subKey, ran string
-	pn                  *messaging.Pubnub
-	cbChannel           = make(chan []byte)
-	errChan             = make(chan []byte)
-)
-
-func fnStart(bucket, id string) {
-	pubKey = os.Getenv("PUBNUB_PUBLISH_KEY")
-	subKey = os.Getenv("PUBNUB_SUBSCRIBE_KEY")
-
-	pn = messaging.NewPubnub(pubKey, subKey, "", "", false, "", nil)
-	go func() {
-		for {
-			select {
-			case msg := <-cbChannel:
-				fmt.Println(time.Now().Second(), ": ", string(msg))
-			case msg := <-errChan:
-				fmt.Println(string(msg))
-			default:
-			}
-		}
-	}()
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates","running":true, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
-}
-
-func fnFinish(bucket, id string) {
-	pn.Publish(bucket, fmt.Sprintf(`{"type":"detect-plates","running":false, "id":"%s", "runner": "%s"}`, id, os.Getenv("HOSTNAME")), cbChannel, errChan)
-	time.Sleep(time.Second * 2)
 }
 
 func init() {

@@ -1,4 +1,4 @@
-# Vista
+# Vista Demo 2
 
 ![logo](https://drive.google.com/uc?export=view&id=0BzyYzhn6bht-Sm1VaFdKY2hKYXc)
 
@@ -207,5 +207,7 @@ It looks like this entirely relies on pubnub to draw the fancy
 dynamically updating line chart and the images as they come along.
 
 This uses the pubnub javascript API, as well as highcharts.
+
+
 
 
