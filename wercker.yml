@@ -73,7 +73,7 @@ detect-faces-deploy:
         code: |
           cp fn services/detect-faces
           cd services/detect-faces
-          ./fn routes update --type async --timeout 60s --image carimura/detect-faces:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-faces
+          ./fn routes update --type async --timeout 60 --image carimura/detect-faces:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-faces
 
 
 detect-plates-base:
@@ -156,7 +156,7 @@ detect-plates-deploy:
         code: |
           cp fn services/detect-plates
           cd services/detect-plates
-          ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
+          ./fn routes update --type async --timeout 60 --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
 
 alert-gobuild:
   box: golang:latest
@@ -205,7 +205,7 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
-        code: ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
+        code: ./fn routes update --type async --timeout 60 --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -273,7 +273,7 @@ draw-deploy:
           pwd; ls;
           cp fn services/draw
           cd services/draw
-          ./fn routes update --type async --timeout 60s --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
+          ./fn routes update --type async --timeout 60 --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
 
 
 publish-base:
@@ -337,6 +337,6 @@ publish-deploy:
         code: |
           cp fn services/publish
           cd services/publish
-          ./fn routes update --type async --timeout 60s --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
+          ./fn routes update --type async --timeout 60 --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
 
 
