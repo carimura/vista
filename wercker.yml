@@ -17,65 +17,6 @@ build:
         code: echo "i ain't mad atcha"
 
 
-# detect has a bunch of deps so we don't want to build them very often
-detect-faces-base:
-  box: debian:jessie
-  steps:
-    - install-packages:
-        packages: python python-dev python-pip libopencv-calib3d2.4 libopencv-core2.4 libopencv-features2d2.4 libopencv-flann2.4 libopencv-highgui2.4 libopencv-imgproc2.4 libopencv-legacy2.4 libopencv-ml2.4 libopencv-objdetect2.4  libopencv-video2.4 libv4l-0 libv4lconvert0 python-opencv libdc1394-22
-    - pip-install:
-        cwd: services/detect-faces
-        packages: Algorithmia
-    - script:
-        name: prune
-        code: rm -rf /pipeline
-    - internal/docker-push:
-        repository: $FN_REGISTRY/detect-faces
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
-        tag: master-base
-
-detect-faces-test:
-  box:
-    id: carimura/detect-faces:master-base
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/detect-faces /func
-    - script:
-        name: run tests
-        code: |
-          cd services/detect-faces
-          python func_test.py
-
-detect-faces-push:
-  box:
-    id: carimura/detect-faces:master-base
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/detect-faces /func
-    - internal/docker-push:
-        repository: $FN_REGISTRY/detect-faces
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
-        working-dir: /func
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        entrypoint: python func.py
-
-detect-faces-deploy:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: fn routes update
-        code: |
-          cp fn services/detect-faces
-          cd services/detect-faces
-          ./fn routes update --type async --timeout 60s --image carimura/detect-faces:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-faces
-
-
 detect-plates-base:
   box: golang:latest
   steps:
