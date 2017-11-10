@@ -1,4 +1,4 @@
-APP=${APP:-myapp}
+APP=${APP:-vista}
 
 fn apps config set ${APP} PUBNUB_PUBLISH_KEY $PUBNUB_PUBLISH_KEY
 fn apps config set ${APP} PUBNUB_SUBSCRIBE_KEY $PUBNUB_SUBSCRIBE_KEY
