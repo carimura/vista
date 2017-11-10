@@ -22,8 +22,8 @@ export MINIO_SERVER_URL=http://${DOCKER_LOCALHOST}:9000
 export STORAGE_ACCESS_KEY=DEMOACCESSKEY
 export STORAGE_SECRET_KEY=DEMOSECRETKEY
 
-# change this to deploy to a different app  other than "myapp"
-# export APP=myapp
+# change this to deploy to a different app  other than "vista"
+# export APP=vista
 
 # set this to run vista in flow mode
 # export VISTA_MODE=flow

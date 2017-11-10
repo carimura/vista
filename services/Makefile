@@ -1,4 +1,4 @@
-APP?=myapp
+APP?=vista
 
 deploy:
 	cd draw; fn deploy --app ${APP}
