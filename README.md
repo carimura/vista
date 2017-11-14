@@ -86,14 +86,13 @@ secrets vital to the success of the demo.
 
 After this completes, you can do
 
-    fn routes list myapp
+    fn routes list vista
     path  image     endpoint
-    /alert  <dockerid>/alert:0.1.18  f8cb781a.ngrok.io/r/myapp/alert
-    /detect-faces <dockerid>/detect-faces:0.1.12 f8cb781a.ngrok.io/r/myapp/detect-faces
-    /detect-plates <dockerid>/detect-plates:0.1.15 f8cb781a.ngrok.io/r/myapp/detect-plates
-    /draw  <dockerid>/draw:0.1.20  f8cb781a.ngrok.io/r/myapp/draw
-    /publish <dockerid>/publish:0.1.13  f8cb781a.ngrok.io/r/myapp/publish
-    /scraper <dockerid>/scraper:0.1.13  f8cb781a.ngrok.io/r/myapp/scraper
+    /alert  <dockerid>/alert:0.1.18  localhost:8080/r/vista/alert
+    /detect-plates <dockerid>/detect-plates:0.1.15 localhost:8080/r/vista/detect-plates
+    /draw  <dockerid>/draw:0.1.20  localhost:8080/r/vista/draw
+    /publish <dockerid>/publish:0.1.13  localhost:8080/r/vista/publish
+    /scraper <dockerid>/scraper:0.1.13  localhost:8080/r/vista/scraper
 
 Finally, the minio wiring. I'm a bit foggy on this, but it basically
 sets up something that looks like an Amazon S3 bucket. 

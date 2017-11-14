@@ -17,6 +17,7 @@ build:
         code: echo "i ain't mad atcha"
 
 
+<<<<<<< HEAD
 # detect has a bunch of deps so we don't want to build them very often
 detect-faces-base:
   box: debian:jessie
@@ -76,6 +77,8 @@ detect-faces-deploy:
           ./fn routes update --type async --timeout 60 --image carimura/detect-faces:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-faces
 
 
+=======
+>>>>>>> master
 detect-plates-base:
   box: golang:latest
   steps:
@@ -156,7 +159,11 @@ detect-plates-deploy:
         code: |
           cp fn services/detect-plates
           cd services/detect-plates
+<<<<<<< HEAD
           ./fn routes update --type async --timeout 60 --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
+=======
+          ./fn routes update --type async --timeout 60s --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
+>>>>>>> master
 
 alert-gobuild:
   box: golang:latest
@@ -205,7 +212,11 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
+<<<<<<< HEAD
         code: ./fn routes update --type async --timeout 60 --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
+=======
+        code: ./fn routes update --type async --timeout 60s --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
+>>>>>>> master
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -273,7 +284,11 @@ draw-deploy:
           pwd; ls;
           cp fn services/draw
           cd services/draw
+<<<<<<< HEAD
           ./fn routes update --type async --timeout 60 --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
+=======
+          ./fn routes update --type async --timeout 60s --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
+>>>>>>> master
 
 
 publish-base:
@@ -337,6 +352,10 @@ publish-deploy:
         code: |
           cp fn services/publish
           cd services/publish
+<<<<<<< HEAD
           ./fn routes update --type async --timeout 60 --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
+=======
+          ./fn routes update --type async --timeout 60s --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish
+>>>>>>> master
 
 

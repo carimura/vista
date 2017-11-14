@@ -1,4 +1,4 @@
-APP=${APP:-myapp}
+APP=${APP:-vista}
 
 fn apps config set ${APP} PUBNUB_PUBLISH_KEY $PUBNUB_PUBLISH_KEY
 fn apps config set ${APP} PUBNUB_SUBSCRIBE_KEY $PUBNUB_SUBSCRIBE_KEY
@@ -24,7 +24,7 @@ fn routes config set ${APP} /scraper FLICKR_API_SECRET $FLICKR_API_SECRET
 cd ../post-slack
 fn routes config set ${APP} /post-slack SLACK_API_TOKEN $SLACK_API_TOKEN
 
-sync_async_fns="alert detect-faces detect-plates draw"
+sync_async_fns="alert detect-plates draw"
 
 # the flow version requires some functions to be sync
 # the normal version requires them to be async

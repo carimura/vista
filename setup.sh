@@ -1,6 +1,6 @@
 set -ex
 
-APP=${APP:-myapp}
+APP=${APP:-vista}
 export APP
 
 if [ $VISTA_MODE = flow ] ; then
