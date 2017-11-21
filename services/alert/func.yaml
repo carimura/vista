@@ -1,8 +1,4 @@
 name: alert
-<<<<<<< HEAD
-version: 0.1.163
-=======
-version: 0.1.164
->>>>>>> master
+version: 0.1.166
 timeout: 60
 path: /alert
