@@ -48,13 +48,26 @@ Use the `local` arg to do everything locally (ie: doesn't push to docker registr
 
 ### Step 4: Run the demo!
 
+When running in non-flow mode, you can do
+
 ```sh
 ./run.sh
 ```
-
 This will open a browser window to view the results. 
 
-You should also see activity in the server logs, and output to the vista.html screen. As the draw function finishes, the final images will push to the screen. Plate detection will also Tweet out from the alert function.
+When running in flow mode, open [the flow ui](http://localhost:3000/#/),
+cd to `services/flow` and do
+
+You should also see activity in the server logs, and output to the
+vista.html screen. As the draw function finishes, the final images will
+push to the screen. Plate detection will also Tweet out from the alert
+function.
+
+```sh
+cat payload.json | fn call vista flow
+```
+
+Make sure your slack link has a channel called `demostream`.
 
 ## Future Work Ideas
 
