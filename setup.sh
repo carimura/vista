@@ -1,5 +1,15 @@
 set -ex
 
+requiredEnv=$(grep -p "^export" < $(dirname $0)/envs-example.sh | sed 's/export \([^=]*\)=.*/\1/')
+
+for envVar in $requiredEnv; do
+    if [ -z $(printenv $envVar)  ] ; then
+	echo "missing environment variable  \"$envVar\" , have you followed the setup instructions?"
+        echo "required variables are $requiredEnv"
+	exit 1
+    fi
+done 
+
 APP=${APP:-vista}
 export APP
 
