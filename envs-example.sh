@@ -14,7 +14,7 @@ export TWITTER_TOKEN_SECRET=X
 export FLICKR_API_KEY=X
 export FLICKR_API_SECRET=X
 
-export SLACK_API_KEY=xoxb-....
+export SLACK_API_TOKEN=xoxb-....
 
 # Only change the following if you changed the defaults
 export FUNC_SERVER_URL=http://${DOCKER_LOCALHOST}:8080
