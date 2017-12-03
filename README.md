@@ -235,3 +235,8 @@ Test the functionality of your `docker.for.mac.localhost`.
 docker run oraclelinux curl --verbose http://docker.for.mac.localhost:8080/
 ```
 
+I find that I need to kill and restart the flow:ui image between test runs.
+
+```
+docker run --name flowui --rm   -p3000:3000 -e API_URL=http://$DOCKER_LOCALHOST:8080 -d -e COMPLETER_BASE_URL=http://$DOCKER_LOCALHOST:8081 fnproject/flow:ui
+```
