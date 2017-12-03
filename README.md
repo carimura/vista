@@ -221,5 +221,17 @@ dynamically updating line chart and the images as they come along.
 This uses the pubnub javascript API, as well as highcharts.
 
 
+### Troubleshooting
 
+Make sure your docker clock is updated:
+
+```
+docker run --rm --privileged alpine hwclock -s
+```
+
+Test the functionality of your `docker.for.mac.localhost`.
+
+```
+docker run oraclelinux curl --verbose http://docker.for.mac.localhost:8080/
+```
 
