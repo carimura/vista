@@ -37,12 +37,10 @@ detect-plates-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: $FN_REGISTRY/detect-plates
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 detect-plates-test:
-  box: carimura/detect-plates:master-base
+  box: iron/detect-plates:master-base
   steps:
     - script:
         name: move source
@@ -63,7 +61,7 @@ detect-plates-test:
 
 
 detect-plates-gobuild:
-  box: carimura/detect-plates:master-base
+  box: iron/detect-plates:master-base
   steps:
     - script:
         name: go get
@@ -79,8 +77,6 @@ detect-plates-gobuild:
         code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
     - internal/docker-push:
         repository: $FN_REGISTRY/detect-plates
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /srv/detect-plates
         entrypoint: ./func
@@ -96,7 +92,7 @@ detect-plates-deploy:
         code: |
           cp fn services/detect-plates
           cd services/detect-plates
-          ./fn routes update --type async --timeout 60 --image carimura/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /detect-plates
+          ./fn routes update --type async --timeout 60 --image iron/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
 
 alert-gobuild:
   box: golang:latest
@@ -131,8 +127,6 @@ alert-push:
         code: apk --no-cache add ca-certificates
     - internal/docker-push:
         repository: $FN_REGISTRY/alert
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ./func
@@ -145,7 +139,7 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
-        code: ./fn routes update --type async --timeout 60 --image carimura/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /alert
+        code: ./fn routes update --type async --timeout 60 --image iron/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -168,13 +162,11 @@ draw-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: $FN_REGISTRY/draw
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 draw-test:
   box:
-    id: carimura/draw:master-base
+    id: iron/draw:master-base
   steps:
     - script:
         name: move source
@@ -188,7 +180,7 @@ draw-test:
 
 draw-push:
   box:
-    id: carimura/draw:master-base
+    id: iron/draw:master-base
     cmd: /bin/sh
   steps:
     - script:
@@ -196,8 +188,6 @@ draw-push:
         code: cp -r services/draw /func
     - internal/docker-push:
         repository: $FN_REGISTRY/draw
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: ruby func.rb
@@ -213,7 +203,7 @@ draw-deploy:
           pwd; ls;
           cp fn services/draw
           cd services/draw
-          ./fn routes update --type async --timeout 60 --image carimura/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /draw
+          ./fn routes update --type async --timeout 60 --image iron/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
 
 
 publish-base:
@@ -233,13 +223,11 @@ publish-base:
         code: rm -rf /pipeline
     - internal/docker-push:
         repository: $FN_REGISTRY/publish
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: master-base
 
 publish-test:
   box:
-    id: carimura/publish:master-base
+    id: iron/publish:master-base
   steps:
     - script:
         name: move source
@@ -253,7 +241,7 @@ publish-test:
 
 publish-push:
   box:
-    id: carimura/publish:master-base
+    id: iron/publish:master-base
     cmd: /bin/sh
   steps:
     - script:
@@ -261,8 +249,6 @@ publish-push:
         code: cp -r services/publish /func
     - internal/docker-push:
         repository: $FN_REGISTRY/publish
-        username: $DOCKER_USERNAME
-        password: $DOCKER_PASSWORD
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
         working-dir: /func
         entrypoint: python func.py
@@ -277,6 +263,6 @@ publish-deploy:
         code: |
           cp fn services/publish
           cd services/publish
-          ./fn routes update --type async --timeout 60 --image carimura/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT myapp /publish
+          ./fn routes update --type async --timeout 60 --image iron/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish
 
 
