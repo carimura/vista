@@ -1,4 +1,4 @@
 name: detect-plates
-version: 0.1.173
+version: 0.1.176
 timeout: 120
 path: /detect-plates
