@@ -40,7 +40,7 @@ detect-plates-base:
         tag: master-base
 
 detect-plates-test:
-  box: iron/detect-plates:master-base
+  box: wcr.io/iron/detect-plates:master-base
   steps:
     - script:
         name: move source
@@ -61,7 +61,7 @@ detect-plates-test:
 
 
 detect-plates-gobuild:
-  box: iron/detect-plates:master-base
+  box: wcr.io/iron/detect-plates:master-base
   steps:
     - script:
         name: go get
@@ -166,7 +166,7 @@ draw-base:
 
 draw-test:
   box:
-    id: iron/draw:master-base
+    id: wcr.io/iron/draw:master-base
   steps:
     - script:
         name: move source
@@ -180,7 +180,7 @@ draw-test:
 
 draw-push:
   box:
-    id: iron/draw:master-base
+    id: wcr.io/iron/draw:master-base
     cmd: /bin/sh
   steps:
     - script:
@@ -227,7 +227,7 @@ publish-base:
 
 publish-test:
   box:
-    id: iron/publish:master-base
+    id: wcr.io/iron/publish:master-base
   steps:
     - script:
         name: move source
@@ -241,7 +241,7 @@ publish-test:
 
 publish-push:
   box:
-    id: iron/publish:master-base
+    id: wcr.io/iron/publish:master-base
     cmd: /bin/sh
   steps:
     - script:
