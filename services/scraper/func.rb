@@ -30,18 +30,20 @@ page = payload_in["page"] || rand(50)
 
 STDERR.puts "Querying Flickr for \"#{search_text}\" grabbing from page #{page} limiting results to #{num_results}"
 
-now = Time.now
-
-photos = flickr.photos.search(
-	:text => search_text,
-	:per_page => num_results,
-  :page => page,
-	:extras => 'original_format',
-	:safe_search => 1,
-	:content_type => 1
-)
-
-puts "flickr search took: #{Time.now - now}"
+begin
+  now = Time.now
+  photos = flickr.photos.search(
+    :text => search_text,
+    :per_page => num_results,
+    :page => page,
+    :extras => 'original_format',
+    :safe_search => 1,
+    :content_type => 1
+  )
+rescue Exception => err
+  fail "flickr search took, with err: #{Time.now - now} #{err}"
+  # TODO retry
+end
 
 STDERR.puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
 threads = []
