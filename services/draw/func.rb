@@ -9,10 +9,21 @@ def download_image(payload_in)
 
   temp_image_name = "temp_image_#{payload["id"]}.jpg"
 
-  File.open(temp_image_name, "wb") do |fout|
-    open(payload["image_url"]) do |fin|
-      IO.copy_stream(fin, fout)
+  retries = 3 # or any numer
+  delay = 3 # number of seconds to wait between attemps
+  begin
+    File.open(temp_image_name, "wb") do |fout|
+      open(payload["image_url"]) do |fin|
+        IO.copy_stream(fin, fout)
+      end
     end
+  rescue Exception => err
+    fail "Error downloading image: #{err}" if retries == 0
+
+    puts "Download image failed: #{err}. Retries left: #{retries -= 1}"
+    sleep delay
+
+    retry
   end
 
   temp_image_name
