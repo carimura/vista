@@ -2,6 +2,22 @@ require 'flickraw'
 require 'json'
 require 'rest-client'
 
+# monkey patch net/http to raise timeouts
+require 'net/http'
+module Net
+  class HTTP < Protocol
+    alias default_timeout_initializer initialize
+    def initialize(address, port = nil)
+      default_timeout_initializer(address, port)
+      @keep_alive_timeout = 60
+      @open_timeout = 30
+      @read_timeout = 30
+      @continue_timeout = 5
+      @ssl_timeout = 10
+    end
+  end
+end
+
 payload_in = JSON.parse(STDIN.read)
 
 FlickRaw.api_key = ENV["FLICKR_API_KEY"]
@@ -14,14 +30,20 @@ page = payload_in["page"] || rand(50)
 
 STDERR.puts "Querying Flickr for \"#{search_text}\" grabbing from page #{page} limiting results to #{num_results}"
 
-photos = flickr.photos.search(
-	:text => search_text,
-	:per_page => num_results,
-  :page => page,
-	:extras => 'original_format',
-	:safe_search => 1,
-	:content_type => 1
-)
+begin
+  now = Time.now
+  photos = flickr.photos.search(
+    :text => search_text,
+    :per_page => num_results,
+    :page => page,
+    :extras => 'original_format',
+    :safe_search => 1,
+    :content_type => 1
+  )
+rescue Exception => err
+  fail "flickr search took, with err: #{Time.now - now} #{err}"
+  # TODO retry
+end
 
 STDERR.puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
 threads = []
