@@ -4,7 +4,7 @@ fn apps config set ${APP} PUBNUB_PUBLISH_KEY $PUBNUB_PUBLISH_KEY
 fn apps config set ${APP} PUBNUB_SUBSCRIBE_KEY $PUBNUB_SUBSCRIBE_KEY
 fn apps config set ${APP} FUNC_SERVER_URL ${FUNC_SERVER_URL}/r/${APP}
 fn apps config set ${APP} MINIO_SERVER_URL $MINIO_SERVER_URL
-fn apps config set ${APP} COMPLETER_BASE_URL http://$DOCKER_LOCALHOST:8081
+fn apps config set ${APP} COMPLETER_BASE_URL $COMPLETER_BASE_URL
 fn apps config set ${APP} STORAGE_ACCESS_KEY $STORAGE_ACCESS_KEY
 fn apps config set ${APP} STORAGE_SECRET_KEY $STORAGE_SECRET_KEY
 fn apps config set ${APP} STORAGE_BUCKET oracle-vista-out

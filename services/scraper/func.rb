@@ -9,9 +9,9 @@ module Net
     alias default_timeout_initializer initialize
     def initialize(address, port = nil)
       default_timeout_initializer(address, port)
-      @keep_alive_timeout = 60
-      @open_timeout = 30
-      @read_timeout = 30
+      @keep_alive_timeout = 90
+      @open_timeout = 90
+      @read_timeout = 90
       @continue_timeout = 5
       @ssl_timeout = 10
     end
@@ -41,7 +41,7 @@ begin
     :content_type => 1
   )
 rescue Exception => err
-  fail "flickr search took, with err: #{Time.now - now} #{err}"
+  fail "flickr search at #{Time.now} took #{Time.now - now} with err #{err}"
   # TODO retry
 end
 
