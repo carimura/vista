@@ -80,23 +80,15 @@ func main() {
 		b := new(bytes.Buffer)
 		json.NewEncoder(b).Encode(pout)
 
-		b2 := new(bytes.Buffer)
-		json.NewEncoder(b2).Encode(pout)
-
-		if !noChain {
+		if noChain {
+			os.Stdout.Write(b.Bytes())
+		} else {
 			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
 			log.Printf("Sending %s to %s", string(b.Bytes()), postURL)
 			res, _ := http.Post(postURL, "application/json", b)
 			log.Println(res.Body)
 
-			alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
-			resAlert, _ := http.Post(alertPostURL, "application/json", b2)
-			fmt.Println(resAlert.Body)
-
 			defer res.Body.Close()
-			defer resAlert.Body.Close()
-		} else {
-			os.Stdout.Write(b.Bytes())
 		}
 	} else {
 		log.Println("No Plates Found!")

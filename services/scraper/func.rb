@@ -2,22 +2,6 @@ require 'flickraw'
 require 'json'
 require 'rest-client'
 
-# monkey patch net/http to raise timeouts
-require 'net/http'
-module Net
-  class HTTP < Protocol
-    alias default_timeout_initializer initialize
-    def initialize(address, port = nil)
-      default_timeout_initializer(address, port)
-      @keep_alive_timeout = 90
-      @open_timeout = 90
-      @read_timeout = 90
-      @continue_timeout = 5
-      @ssl_timeout = 10
-    end
-  end
-end
-
 payload_in = JSON.parse(STDIN.read)
 
 FlickRaw.api_key = ENV["FLICKR_API_KEY"]
@@ -42,7 +26,6 @@ begin
   )
 rescue Exception => err
   fail "flickr search at #{Time.now} took #{Time.now - now} with err #{err}"
-  # TODO retry
 end
 
 STDERR.puts "Found #{photos.size} images, posting to #{ENV["FUNC_SERVER_URL"]}/#{service_to_call}"
@@ -66,21 +49,15 @@ photos.each do |photo|
   STDERR.puts "got image #{payload[:id]} : #{payload[:image_url]}"
   payloads.push(payload)
 
-  if !ENV["NO_CHAIN"]
-    begin
-      RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
-    rescue
-      STDERR.puts "Rescuing from scraper call to detect_plates. Call id #{ENV["FN_CALL_ID"]}"
-      puts "Rescuing from scraper call to detect_plates. Call id #{ENV["FN_CALL_ID"]}"
-    end
+  if ENV["NO_CHAIN"]
+    result={}
+    result[:result] = payloads
+    puts result.to_json 
+  else
+    RestClient.post(ENV["FUNC_SERVER_URL"] + "/" + service_to_call, payload.to_json, headers={content_type: :json, accept: :json})
   end
 end
 
-if ENV["NO_CHAIN"]
-    result={}
-    result[:result] = payloads
-    puts result.to_json
-end
 STDERR.puts "done"
 
 
