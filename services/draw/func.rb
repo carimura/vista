@@ -3,7 +3,9 @@ require 'rubygems'
 require 'open-uri'
 require 'aws-sdk'
 require 'mini_magick'
+require 'rest-client'
 
+# Download image in order to process
 def download_image(payload_in)
   payload = payload_in
 
@@ -18,6 +20,7 @@ def download_image(payload_in)
   temp_image_name
 end
 
+# Upload finished image
 def upload_file(image_name, payload_in)
   payload = payload_in
 
@@ -41,6 +44,9 @@ def upload_file(image_name, payload_in)
 	link
 end
 
+
+# Start processing
+
 std_in = STDIN.read
 payload = JSON.parse(std_in)
 
@@ -54,7 +60,7 @@ payload["rectangles"].each do |coords|
     c.fill('none')
     is_nude = payload["is_nude"] || "false"
     c.stroke('yellow')
-    c.strokewidth(10)
+    c.strokewidth(8)
     c.draw draw_string
   end
 end
@@ -70,7 +76,12 @@ link = upload_file(image_name, payload)
 
 STDERR.puts "Image link: #{link}"
 
+result = { :id => payload["id"], :image_url => link, :plate => payload["plate"] }
+
 if ENV["NO_CHAIN"]
-    result = { :id => payload["id"], :image_url => link }
     puts result.to_json
+else
+    RestClient.post(ENV["FUNC_SERVER_URL"] + "/alert", result.to_json, headers={content_type: :json, accept: :json})
 end
+
+

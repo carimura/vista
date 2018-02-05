@@ -29,9 +29,9 @@ echo "Setting up app:  $APP with docker localhost $DOCKER_LOCALHOST"
 cd services
 if [[ "$1" == "local" ]]; then
   echo "Deploying local only"
-  make deploy-local
+  fn deploy --all --app vista --local
 else
-  make deploy
+  fn deploy --all --app vista
 fi
 cd ..
 
