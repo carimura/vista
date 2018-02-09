@@ -92,7 +92,7 @@ detect-plates-deploy:
         code: |
           cp fn services/detect-plates
           cd services/detect-plates
-          ./fn routes update --type async --timeout 60 --image iron/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
+          #./fn routes update --type async --timeout 60 --image iron/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
 
 alert-gobuild:
   box: golang:latest
@@ -139,7 +139,7 @@ alert-deploy:
   steps:
     - script:
         name: fn routes update
-        code: ./fn routes update --type async --timeout 60 --image iron/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
+        #code: ./fn routes update --type async --timeout 60 --image iron/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
 
 
 # draw has a bunch of deps so we don't want to build them very often
@@ -203,7 +203,7 @@ draw-deploy:
           pwd; ls;
           cp fn services/draw
           cd services/draw
-          ./fn routes update --type async --timeout 60 --image iron/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
+          #./fn routes update --type async --timeout 60 --image iron/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
 
 
 publish-base:
@@ -263,6 +263,6 @@ publish-deploy:
         code: |
           cp fn services/publish
           cd services/publish
-          ./fn routes update --type async --timeout 60 --image iron/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish
+          #./fn routes update --type async --timeout 60 --image iron/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish
 
 
