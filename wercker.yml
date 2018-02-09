@@ -122,9 +122,9 @@ alert-push:
     - script:
         name: move source
         code: mkdir /func; cp * /func; cd /func; ls;
-    - script:
-        name: add certificates
-        code: apk --no-cache add ca-certificates
+    #- script:
+    #    name: add certificates
+    #    code: apk --no-cache add ca-certificates
     - internal/docker-push:
         repository: $FN_REGISTRY/alert
         tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
