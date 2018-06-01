@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
 
 type payloadIn struct {
@@ -55,8 +55,8 @@ func main() {
 
 	log.Println("Checking Plate URL ---> " + p.URL)
 	err := downloadFile(outfile, p.URL)
-	if err !=nil {
-		log.Fatalf("Failed to download file %s: %s",p.URL,err)
+	if err != nil {
+		log.Fatalf("Failed to download file %s: %s", p.URL, err)
 	}
 
 	imageBytes, err := ioutil.ReadFile(outfile)
