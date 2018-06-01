@@ -23,7 +23,7 @@ func main() {
 	p := new(payloadIn)
 	json.NewDecoder(os.Stdin).Decode(p)
 
-	outfile := "working.jpg"
+	outfile := "/tmp/working.jpg"
 
 	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONF_KEY"))
 	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONF_SECRET"))

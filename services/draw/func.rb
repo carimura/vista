@@ -9,7 +9,7 @@ require 'rest-client'
 def download_image(payload_in)
   payload = payload_in
 
-  temp_image_name = "temp_image_#{payload["id"]}.jpg"
+  temp_image_name = "/tmp/temp_image_#{payload["id"]}.jpg"
 
   File.open(temp_image_name, "wb") do |fout|
     open(payload["image_url"]) do |fin|
@@ -65,7 +65,7 @@ payload["rectangles"].each do |coords|
   end
 end
 
-image_name = "image_#{payload["id"]}.jpg"
+image_name = "/tmp/image_#{payload["id"]}.jpg"
 if payload["resize"]
    img.resize payload["resize"]
 end
