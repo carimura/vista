@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 )
 
@@ -43,7 +42,7 @@ func main() {
 		log.Println("running without chaining")
 	}
 
-	outfile := "working.jpg"
+	outfile := "/tmp/working.jpg"
 
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
 	defer alpr.Unload()
@@ -55,7 +54,10 @@ func main() {
 	alpr.SetTopN(10)
 
 	log.Println("Checking Plate URL ---> " + p.URL)
-	downloadFile(outfile, p.URL)
+	err := downloadFile(outfile, p.URL)
+	if err !=nil {
+		log.Fatalf("Failed to download file %s: %s",p.URL,err)
+	}
 
 	imageBytes, err := ioutil.ReadFile(outfile)
 	if err != nil {
