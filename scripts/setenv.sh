@@ -33,7 +33,7 @@ if [[ ${VISTA_MODE} == "flow" ]]
 then
    echo "-------- Configuring App for Fn Flow ---------"
    # just the flow  version
-   fn apps config set ${APP} NO_CHAIN true
+   fn config app ${APP} NO_CHAIN true
 
    for func in $sync_async_fns ; do
      cd ../$func
