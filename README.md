@@ -14,6 +14,8 @@ moving parts have not been instrumented to run with proxies.
 - Twitter [developer account](https://apps.twitter.com/)
   - NOTE: MAKE A NEW ACCOUNT! Otherwise this will tweet a bunch of things to your Twitter.
 - Flickr [developer account](https://www.flickr.com/services/apps/create/apply/)
+- Slack [create a new workspace](https://slack.com/create#email)
+  - Create a channel called `demostream` in this workspace
 
 ### Step 2: Set required env vars
 
@@ -43,31 +45,35 @@ fn start
 Use the `local` arg to do everything locally (ie: doesn't push to docker registry).
 
 ```sh
-./setup.sh [local]
+./setup.sh local
 ```
+
+Note: Check if the minio (server) container is up and running. If not, you may need to bump up the "version" in scripts/minio_config.json.tmpl so that it matches the "serverConfigVersion" in https://github.com/minio/minio/blob/master/cmd/config-current.go for the minio server image/build you are using.
 
 ### Step 4: Run the demo!
 
-When running in non-flow mode, you can do
+Note: Make sure your slack link has a channel called `demostream`.
+
+When running in `non-flow` mode, you can do
 
 ```sh
 ./run.sh
 ```
 This will open a browser window to view the results. 
 
-When running in flow mode, open [the flow ui](http://localhost:3000/#/),
-cd to `services/flow` and do
+When running in `flow` mode, open [the flow ui](http://localhost:3000/#/),
+
+and do
+
+```sh
+cat services/flow/payload.json | fn call vista flow
+```
 
 You should also see activity in the server logs, and output to the
 vista.html screen. As the draw function finishes, the final images will
 push to the screen. Plate detection will also Tweet out from the alert
 function.
 
-```sh
-cat payload.json | fn call vista flow
-```
-
-Make sure your slack link has a channel called `demostream`.
 
 ## Future Work Ideas
 
