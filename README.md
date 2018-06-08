@@ -48,6 +48,8 @@ Use the `local` arg to do everything locally (ie: doesn't push to docker registr
 ./setup.sh local
 ```
 
+Note: Check if the minio (server) container is up and running. If not, you may need to bump up the "version" in scripts/minio_config.json.tmpl so that it matches the "serverConfigVersion" in https://github.com/minio/minio/blob/master/cmd/config-current.go for the minio server image/build you are using.
+
 ### Step 4: Run the demo!
 
 Note: Make sure your slack link has a channel called `demostream`.
