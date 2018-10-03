@@ -1,4 +1,9 @@
+schema_version: 20180708
 name: alert
 version: 0.1.207
 timeout: 60
-path: /alert
+format: http-stream
+triggers:
+- name: alert
+  type: http
+  source: /alert

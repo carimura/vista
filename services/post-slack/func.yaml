@@ -1,8 +1,13 @@
+schema_version: 20180708
 name: post-slack
 version: 0.0.138
 runtime: java8
 cmd: com.example.vista.PostToSlack::postToSlack
-memory: 128
-format: http
+format: http-stream
+memory: 256
 timeout: 30
 idle_timeout: 60
+triggers:
+- name: post-slack
+  type: http
+  source: /post-slack

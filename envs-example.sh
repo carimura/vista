@@ -1,7 +1,11 @@
+#!/usr/bin/env bash
+
+set -ex
+
 # on linux/bmc find this out with "docker inspect --type container -f '{{.NetworkSettings.Gateway}}' functions"
 export DOCKER_LOCALHOST=docker.for.mac.localhost
 
-export FN_REGISTRY=<your docker id>
+fn update context registry "<your docker id>"
 
 export PUBNUB_PUBLISH_KEY=X
 export PUBNUB_SUBSCRIBE_KEY=X
@@ -25,5 +29,5 @@ export STORAGE_SECRET_KEY=DEMOSECRETKEY
 # change this to deploy to a different app  other than "vista"
 # export APP=vista
 
-# set this to run vista in flow mode
-# export VISTA_MODE=flow
+ set this to run vista in flow mode
+ export VISTA_MODE=flow

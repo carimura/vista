@@ -1,4 +1,9 @@
+schema_version: 20180708
 name: detect-plates
 version: 0.1.197
 timeout: 120
-path: /detect-plates
+format: default
+triggers:
+- name: detect-plates
+  type: http
+  source: /detect-plates

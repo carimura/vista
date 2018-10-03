@@ -1,0 +1,8 @@
+cmd: com.example.vista.PostToSlack::postToSlack
+format: http
+idle_timeout: 60
+memory: 128
+name: post-slack
+runtime: java8
+timeout: 30
+version: 0.0.138

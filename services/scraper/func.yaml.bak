@@ -1,0 +1,7 @@
+entrypoint: ruby func.rb
+format: default
+name: scraper
+path: /scraper
+runtime: ruby
+timeout: 120
+version: 0.1.190

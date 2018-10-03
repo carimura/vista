@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -ex
 
 requiredEnv=$(grep -p "^export" < $(dirname $0)/envs-example.sh | sed 's/export \([^=]*\)=.*/\1/')

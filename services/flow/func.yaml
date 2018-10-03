@@ -1,6 +1,11 @@
+schema_version: 20180708
 name: flow
 version: 0.0.164
 runtime: java8
 cmd: com.example.vista.VistaFlow::handleRequest
-format: http
+format: http-stream
 timeout: 120
+triggers:
+- name: flow
+  type: http
+  source: /flow

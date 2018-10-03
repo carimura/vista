@@ -1,6 +1,11 @@
+schema_version: 20180708
 name: scraper
 version: 0.1.190
 runtime: ruby
 entrypoint: ruby func.rb
+format: default
 timeout: 120
-path: /scraper
+triggers:
+- name: scraper
+  type: http
+  source: /scraper
