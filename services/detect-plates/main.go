@@ -57,8 +57,6 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 		os.Stderr.WriteString("running without chaining")
 	}
 
-	outfile := "/tmp/working.jpg"
-
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
 	defer alpr.Unload()
 
@@ -71,8 +69,7 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 
 	os.Stderr.WriteString(fmt.Sprintf("Checking Plate URL ---> " + p.URL))
 
-	// doesn't look good, redundant file manipulations
-	err = downloadFile(outfile, p.URL)
+	b, err := downloadContent(p.URL)
 	if err != nil {
 		os.Stderr.WriteString(
 			fmt.Sprintf("Failed to download file %s: %s",
@@ -80,12 +77,7 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 		return err
 	}
 
-	imageBytes, err := ioutil.ReadFile(outfile)
-	if err != nil {
-		return err
-	}
-
-	results, err := alpr.RecognizeByBlob(imageBytes)
+	results, err := alpr.RecognizeByBlob(b)
 	if err != nil {
 		return err
 	}
@@ -148,28 +140,13 @@ func main() {
 	fdk.Handle(fdk.HandlerFunc(withError))
 }
 
-func downloadFile(filepath string, url string) (err error) {
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	// Get the data
+func downloadContent(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
-
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ioutil.ReadAll(resp.Body)
 }
 
 func init() {
