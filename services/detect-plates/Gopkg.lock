@@ -2,6 +2,15 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/fnproject/fdk-go"
+  packages = [
+    ".",
+    "utils"
+  ]
+  revision = "1c783fe496250a3e27445273fb43cace6fd4ee2b"
+
+[[projects]]
   name = "github.com/openalpr/openalpr"
   packages = ["src/bindings/go/openalpr"]
   revision = "b5fb92c21c29f5dd73c822fcd30d599c744cd093"
@@ -10,6 +19,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f5968144038dd048444cb938068f2960efa0324ed53b46c76d8f5967478a233e"
+  inputs-digest = "a776047322c4e28f0492f9417e7b53d18d7210f6f4a017e1a5a6a521a21af6e2"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -33,6 +33,7 @@ FROM carimura/detect-plates:master-base
 WORKDIR /srv/openalpr
 
 RUN go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+RUN go get github.com/fnproject/fdk-go
 
 COPY . /srv/openalpr
 
