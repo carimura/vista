@@ -1,8 +1,9 @@
 schema_version: 20180708
 name: draw
-version: 0.1.300
+version: 0.1.301
 format: default
 timeout: 120
+runtime: docker
 triggers:
 - name: draw
   type: http
