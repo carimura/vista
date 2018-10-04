@@ -2,47 +2,78 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/ChimeraCoder/anaconda"
+	"github.com/fnproject/fdk-go"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
-
-	"github.com/ChimeraCoder/anaconda"
 )
+
+const outfile string = "/tmp/working.jpg"
+
+var api *anaconda.TwitterApi
 
 type payloadIn struct {
 	ImageURL string `json:"image_url"`
 	Plate    string `json:"plate"`
 }
 
-func main() {
+func withError(ctx context.Context, in io.Reader, out io.Writer) {
+	err := myHandler(ctx, in, out)
+	if err != nil {
+		fdk.WriteStatus(out, http.StatusInternalServerError)
+		out.Write([]byte(err.Error()))
+	}
+}
+
+func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 	os.Stderr.WriteString("STARTING ALERT FUNC")
-	p := new(payloadIn)
-	json.NewDecoder(os.Stdin).Decode(p)
-
-	outfile := "/tmp/working.jpg"
-
-	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONF_KEY"))
-	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONF_SECRET"))
-	api := anaconda.NewTwitterApi(os.Getenv("TWITTER_TOKEN_KEY"), os.Getenv("TWITTER_TOKEN_SECRET"))
+	var body payloadIn
+	err := json.NewDecoder(os.Stdin).Decode(&body)
+	if err != nil {
+		return err
+	}
 
 	timeStr := string(time.Now().Format(time.RFC3339))
 
-	downloadFile(outfile, p.ImageURL)
+	err = downloadFile(outfile, body.ImageURL)
+	if err != nil {
+		return err
+	}
+
 	image := imgToBase64(outfile)
 
 	media, err := api.UploadMedia(image)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	v := url.Values{}
 	v.Set("media_ids", media.MediaIDString)
 
-	api.PostTweet("VistaGuard Alert: Watch for license plate "+p.Plate+" [Detected "+timeStr+"]", v)
+	_, err = api.PostTweet("VistaGuard Alert: "+
+		"Watch for license plate "+body.Plate+" [Detected "+timeStr+"]", v)
+
+	return err
+}
+
+func init() {
+
+	if os.Getenv("HOSTNAME") == "" {
+		h, err := os.Hostname()
+		if err == nil {
+			os.Setenv("HOSTNAME", h)
+		}
+	}
+
+	anaconda.SetConsumerKey(os.Getenv("TWITTER_CONF_KEY"))
+	anaconda.SetConsumerSecret(os.Getenv("TWITTER_CONF_SECRET"))
+	api = anaconda.NewTwitterApi(os.Getenv("TWITTER_TOKEN_KEY"), os.Getenv("TWITTER_TOKEN_SECRET"))
 }
 
 func imgToBase64(imgFile string) string {
@@ -53,7 +84,7 @@ func imgToBase64(imgFile string) string {
 	defer img.Close()
 
 	fInfo, _ := img.Stat()
-	var size int64 = fInfo.Size()
+	size := fInfo.Size()
 	buf := make([]byte, size)
 	fReader := bufio.NewReader(img)
 	fReader.Read(buf)
@@ -86,11 +117,6 @@ func downloadFile(filepath string, url string) (err error) {
 	return nil
 }
 
-func init() {
-	if os.Getenv("HOSTNAME") == "" {
-		h, err := os.Hostname()
-		if err == nil {
-			os.Setenv("HOSTNAME", h)
-		}
-	}
+func main() {
+	fdk.Handle(fdk.HandlerFunc(withError))
 }
