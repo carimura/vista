@@ -87,7 +87,7 @@
         "webhook":{
             "1":{
                "enable":true,
-               "endpoint":"http://fnservice.io/r/vista/publish"
+               "endpoint":"http://fnservice.io/t/vista/publish"
             }
          },
         "mysql": {

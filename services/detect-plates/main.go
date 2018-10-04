@@ -35,6 +35,10 @@ type rectangle struct {
 	EndY   int `json:"endy"`
 }
 
+var nextFunc = "draw"
+var fnAPIURL = os.Getenv("FUNC_SERVER_URL")
+
+
 func withError(ctx context.Context, in io.Reader, out io.Writer) {
 	err := myHandler(ctx, in, out)
 	if err != nil {
@@ -61,7 +65,6 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 	defer alpr.Unload()
 
 	if !alpr.IsLoaded() {
-		os.Stderr.WriteString("OpenALPR failed to load!")
 		return errors.New("OpenALPR failed to load!")
 	}
 
@@ -107,9 +110,10 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 		}
 
 		if noChain {
-			os.Stdout.Write(b.Bytes())
+			out.Write(b.Bytes())
+			return nil
 		} else {
-			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+			postURL := fmt.Sprintf("%s/%s", fnAPIURL, nextFunc)
 			os.Stderr.WriteString(
 				fmt.Sprintf("Sending %s to %s",
 					string(b.Bytes()), postURL))
@@ -124,7 +128,7 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 	} else {
 		os.Stderr.WriteString("No Plates Found!")
 		if noChain {
-			err := json.NewEncoder(os.Stdout).Encode(&payloadOut{
+			err := json.NewEncoder(out).Encode(&payloadOut{
 				GotPlate: false,
 			})
 			if err != nil {
