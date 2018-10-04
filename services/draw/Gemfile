@@ -1,7 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'rest'
-gem 'aws-sdk'
-gem 'mini_magick'
-gem 'json'
-gem 'rest-client'

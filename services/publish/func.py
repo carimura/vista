@@ -51,7 +51,6 @@ def handle(ctx, data=None, **kwargs):
 
             if TEST_MODE not in ['true', '1', 't', 'y', 'yes',
                              'yeah', 'yup', 'certainly', 'uh-huh']:
-
                 (pn.publish().channel(bucket_name).
                  message([message_json]).use_post(True).sync())
 

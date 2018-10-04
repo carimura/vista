@@ -1,0 +1,3 @@
+fdk
+boto3
+pillow
