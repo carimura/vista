@@ -28,19 +28,22 @@ func withError(ctx context.Context, in io.Reader, out io.Writer) {
 	if err != nil {
 		fdk.WriteStatus(out, http.StatusInternalServerError)
 		out.Write([]byte(err.Error()))
+		return
 	}
+	fdk.WriteStatus(out, http.StatusOK)
 }
 
 func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 	os.Stderr.WriteString("STARTING ALERT FUNC")
 	var body payloadIn
-	err := json.NewDecoder(os.Stdin).Decode(&body)
+	err := json.NewDecoder(in).Decode(&body)
 	if err != nil {
 		return err
 	}
 
 	timeStr := string(time.Now().Format(time.RFC3339))
 
+	// doesn't look good, needs to be fixed
 	err = downloadFile(outfile, body.ImageURL)
 	if err != nil {
 		return err

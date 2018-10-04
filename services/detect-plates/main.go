@@ -2,12 +2,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/fnproject/fdk-go"
 	"github.com/openalpr/openalpr/src/bindings/go/openalpr"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 )
@@ -33,13 +35,26 @@ type rectangle struct {
 	EndY   int `json:"endy"`
 }
 
-func main() {
+func withError(ctx context.Context, in io.Reader, out io.Writer) {
+	err := myHandler(ctx, in, out)
+	if err != nil {
+		fdk.WriteStatus(out, http.StatusInternalServerError)
+		out.Write([]byte(err.Error()))
+		return
+	}
+	fdk.WriteStatus(out, http.StatusOK)
+}
+
+func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 	p := new(payloadIn)
-	json.NewDecoder(os.Stdin).Decode(p)
+	err := json.NewDecoder(in).Decode(p)
+	if err != nil {
+		return err
+	}
 
 	_, noChain := os.LookupEnv("NO_CHAIN")
 	if noChain {
-		log.Println("running without chaining")
+		os.Stderr.WriteString("running without chaining")
 	}
 
 	outfile := "/tmp/working.jpg"
@@ -48,60 +63,89 @@ func main() {
 	defer alpr.Unload()
 
 	if !alpr.IsLoaded() {
-		fmt.Println("OpenALPR failed to load!")
-		return
+		os.Stderr.WriteString("OpenALPR failed to load!")
+		return errors.New("OpenALPR failed to load!")
 	}
+
 	alpr.SetTopN(10)
 
-	log.Println("Checking Plate URL ---> " + p.URL)
-	err := downloadFile(outfile, p.URL)
+	os.Stderr.WriteString(fmt.Sprintf("Checking Plate URL ---> " + p.URL))
+
+	// doesn't look good, redundant file manipulations
+	err = downloadFile(outfile, p.URL)
 	if err != nil {
-		log.Fatalf("Failed to download file %s: %s", p.URL, err)
+		os.Stderr.WriteString(
+			fmt.Sprintf("Failed to download file %s: %s",
+				p.URL, err))
+		return err
 	}
 
 	imageBytes, err := ioutil.ReadFile(outfile)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
 	results, err := alpr.RecognizeByBlob(imageBytes)
+	if err != nil {
+		return err
+	}
 
 	if len(results.Plates) > 0 {
 		plate := results.Plates[0]
-		log.Printf("\n\n FOUND PLATE ------>> %+v", plate)
+		os.Stderr.WriteString(
+			fmt.Sprintf("\n\n FOUND PLATE ------>> %+v", plate))
 
 		pout := &payloadOut{
-			GotPlate:   true,
-			ID:         p.ID,
-			ImageURL:   p.URL,
-			Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
-			Plate:      plate.BestPlate,
+			GotPlate: true,
+			ID:       p.ID,
+			ImageURL: p.URL,
+			Rectangles: []rectangle{
+				{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y,
+					EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
+
+			Plate: plate.BestPlate,
 		}
 
-		log.Printf("\n\npout: %+v ", pout)
+		os.Stderr.WriteString(fmt.Sprintf("\n\npout: %+v ", pout))
 
 		b := new(bytes.Buffer)
-		json.NewEncoder(b).Encode(pout)
+		err = json.NewEncoder(b).Encode(pout)
+		if err != nil {
+			return err
+		}
 
 		if noChain {
 			os.Stdout.Write(b.Bytes())
 		} else {
 			postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
-			log.Printf("Sending %s to %s", string(b.Bytes()), postURL)
-			res, _ := http.Post(postURL, "application/json", b)
-			log.Println(res.Body)
+			os.Stderr.WriteString(
+				fmt.Sprintf("Sending %s to %s",
+					string(b.Bytes()), postURL))
+			res, err := http.Post(postURL, "application/json", b)
+			if err != nil {
+				return err
+			}
+			io.Copy(os.Stderr, res.Body)
 
 			defer res.Body.Close()
 		}
 	} else {
-		log.Println("No Plates Found!")
+		os.Stderr.WriteString("No Plates Found!")
 		if noChain {
-			json.NewEncoder(os.Stdout).Encode(&payloadOut{
+			err := json.NewEncoder(os.Stdout).Encode(&payloadOut{
 				GotPlate: false,
 			})
+			if err != nil {
+				return err
+			}
 		}
 
 	}
+	return nil
+}
 
+func main() {
+	fdk.Handle(fdk.HandlerFunc(withError))
 }
 
 func downloadFile(filepath string, url string) (err error) {
