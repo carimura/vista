@@ -1,10 +1,10 @@
 schema_version: 20180708
 name: draw
-version: 0.1.301
-timeout: 120
+version: 0.1.303
 runtime: python3.7
 entrypoint: python3 func.py
 format: http-stream
+timeout: 120
 triggers:
 - name: draw
   type: http

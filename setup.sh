@@ -31,9 +31,9 @@ echo "Setting up app:  $APP with docker localhost $DOCKER_LOCALHOST"
 cd services
 if [[ "$1" == "local" ]]; then
   echo "Deploying local only"
-  fn deploy --all --app vista --local
+  fn --verbose deploy --all --app vista --local
 else
-  fn deploy --all --app vista
+  fn --verbose deploy --all --app vista
 fi
 cd ..
 
@@ -42,12 +42,17 @@ docker rm -f minio1 || true
 
 sed  -e "s/APP/$APP/" -e "s/DOCKER_LOCALHOST/$DOCKER_LOCALHOST/" < $PWD/scripts/minio_config.json.tmpl > $PWD/scripts/minio_config.json
 
+sed  -e "s/APP/$APP/" -e "s/DOCKER_LOCALHOST/$DOCKER_LOCALHOST/" < $PWD/scripts/mc.json.tmpl > $PWD/scripts/minio_config.json
+
 
 # if we want to save data outside of container, add this into line below: -v /tmp/export/minio1:/export
-docker run -d -p 9000:9000  --rm --name minio1 -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio  server /export
+docker run -d -p 9000:9000  --rm --name minio1 \
+    -e "MINIO_ACCESS_KEY=$STORAGE_ACCESS_KEY" \
+    -e "MINIO_SECRET_KEY=$STORAGE_SECRET_KEY" \
+    -v $PWD/scripts/minio_config.json:/root/.minio/config.json minio/minio  server /export
 sleep 5
 
-docker run --rm -v $PWD:/mc -w /mc --entrypoint=/bin/sh  -e DOCKER_LOCALHOST -e VISTA_MODE minio/mc scripts/setup_minio.sh
+docker run --rm -v $PWD:/mc -w /mc --entrypoint=/bin/sh  -e DEMOACCESSKEY=$STORAGE_ACCESS_KEY -e DEMOSECRETKEY=$STORAGE_SECRET_KEY -e DOCKER_LOCALHOST -e VISTA_MODE minio/mc scripts/setup_minio.sh
 
 pushd scripts
   ./setenv.sh
