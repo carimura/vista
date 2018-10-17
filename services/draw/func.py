@@ -13,8 +13,13 @@ import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-
-TEST_MODE = os.environ.get("TEST_MODE", "false")
+s3 = boto3.resource(
+    's3',
+    aws_access_key_id=os.environ.get("STORAGE_ACCESS_KEY"),
+    aws_secret_access_key=os.environ.get("STORAGE_SECRET_KEY"),
+    region_name=os.environ.get("S3_REGION", "us-phoenix-1"),
+    endpoint_url=os.environ.get("MINIO_SERVER_URL")
+)
 
 
 async def test_override_content_type(aiohttp_client):
@@ -27,14 +32,7 @@ async def test_override_content_type(aiohttp_client):
 
 
 def upload_file(file_name):
-    """Upload a file to s3 comptiable storage."""
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=os.environ.get("STORAGE_ACCESS_KEY"),
-        aws_secret_access_key=os.environ.get("STORAGE_SECRET_KEY"),
-        region_name="us-phoenix-1",
-        endpoint_url=os.environ.get("MINIO_SERVER_URL"),)
-
+    """Upload a file to s3 compatible storage."""
     s3.meta.client.upload_file(
         file_name, os.environ.get("STORAGE_BUCKET"),
         os.path.basename(file_name))
@@ -76,10 +74,7 @@ def handle(ctx, data=None, **kwargs):
         payload = ujson.loads(data)
         file_name = download_image(payload.get("image_url"), payload.get("id"))
         draw_rects(payload["rectangles"], file_name)
-        if TEST_MODE not in ['true', '1', 't', 'y', 'yes',
-                             'yeah', 'yup', 'certainly', 'uh-huh']:
-
-            upload_file(file_name)
+        upload_file(file_name)
 
 
 if __name__ == "__main__":

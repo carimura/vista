@@ -24,11 +24,11 @@ func TestHandler(t *testing.T) {
 		if err != nil {
 			t.Fatal(err.Error())
 		}
-		var body *payloadIn
-		if err := json.NewDecoder(payloadFile).Decode(body); err != nil {
+		var body payloadIn
+		if err := json.NewDecoder(payloadFile).Decode(&body); err != nil {
 			t.Fatal(err.Error())
 		}
-		if err = postTweet(body); err != nil {
+		if err = postTweet(&body); err != nil {
 			t.Fatal(err.Error())
 		}
 	})

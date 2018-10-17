@@ -15,11 +15,6 @@ pnconfig.ssl = False
 pn = PubNub(pnconfig)
 
 
-TEST_MODE = os.environ.get("TEST_MODE", "false")
-
-
-# very basic test, will fail if env var TEST_MODE is not set to true
-# we don't really want to test pubnub client in unit tests.
 async def test_override_content_type(aiohttp_client):
     with open("payload.json", "r") as payload_file:
         call = await fixtures.setup_fn_call(
@@ -49,10 +44,8 @@ def handle(ctx, data=None, **kwargs):
             message = {'url': url, 'id': image_key}
             message_json = ujson.dumps(message)
 
-            if TEST_MODE not in ['true', '1', 't', 'y', 'yes',
-                             'yeah', 'yup', 'certainly', 'uh-huh']:
-                (pn.publish().channel(bucket_name).
-                 message([message_json]).use_post(True).sync())
+            (pn.publish().channel(bucket_name).
+             message([message_json]).use_post(True).sync())
 
 
 if __name__ == "__main__":

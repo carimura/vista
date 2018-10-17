@@ -31,9 +31,28 @@ echo "Setting up app:  $APP with docker localhost $DOCKER_LOCALHOST"
 cd services
 if [[ "$1" == "local" ]]; then
   echo "Deploying local only"
-  fn --verbose deploy --all --app vista --local
+  fn --verbose deploy --all --app vista --local \
+  --build-arg TWITTER_CONF_KEY=${TWITTER_CONF_KEY} \
+  --build-arg TWITTER_CONF_SECRET=${TWITTER_CONF_SECRET} \
+  --build-arg TWITTER_TOKEN_KEY=${TWITTER_TOKEN_KEY} \
+  --build-arg TWITTER_TOKEN_SECRET=${TWITTER_TOKEN_SECRET} \
+  --build-arg STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} \
+  --build-arg STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY} \
+  --build-arg MINIO_SERVER_URL=${MINIO_SERVER_URL} \
+  --build-arg PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} \
+  --build-arg PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY}
 else
-  fn --verbose deploy --all --app vista
+  fn --verbose deploy --all --app vista \
+  --build-arg TWITTER_CONF_KEY=${TWITTER_CONF_KEY} \
+  --build-arg TWITTER_CONF_SECRET=${TWITTER_CONF_SECRET} \
+  --build-arg TWITTER_TOKEN_KEY=${TWITTER_TOKEN_KEY} \
+  --build-arg TWITTER_TOKEN_SECRET=${TWITTER_TOKEN_SECRET} \
+  --build-arg STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY} \
+  --build-arg STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY} \
+  --build-arg MINIO_SERVER_URL=${MINIO_SERVER_URL}\
+  --build-arg PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} \
+  --build-arg PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY}
+
 fi
 cd ..
 
