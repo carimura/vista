@@ -4,16 +4,13 @@ ARG PUBNUB_SUBSCRIBE_KEY
 ARG PUBNUB_PUBLISH_KEY
 ARG MINIO_SERVER_URL
 
-ENV PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY}
-ENV PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY}
-ENV MINIO_SERVER_URL=${MINIO_SERVER_URL}
-
 WORKDIR /function
 ADD . /function/
 
 RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt pytest
 
-RUN pip3 install --no-cache --no-cache-dir -r requirements.txt && pytest -v -s --tb=long func.py
+RUN pip3 install --no-cache --no-cache-dir -r requirements.txt && \
+    PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY} MINIO_SERVER_URL=${MINIO_SERVER_URL} pytest -v -s --tb=long func.py
 
 FROM fnproject/python:3.7
 WORKDIR /function
