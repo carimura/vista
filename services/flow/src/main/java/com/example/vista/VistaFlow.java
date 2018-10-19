@@ -7,16 +7,20 @@ import com.fnproject.fn.api.flow.FlowFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.vista.Slack.postMessageToSlack;
 import static com.fnproject.fn.api.flow.Flows.currentFlow;
+import com.fnproject.fn.runtime.flow.FlowFeature;
+import com.fnproject.fn.api.FnFeature;
 
 /**
  * FnFlow Vista function
  */
-public class VistaFlow {
+@FnFeature(FlowFeature.class)
+public class VistaFlow implements Serializable {
   static {
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
   }
