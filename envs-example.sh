@@ -4,27 +4,30 @@ set -ex
 
 # on linux/bmc find this out with "docker inspect --type container -f '{{.NetworkSettings.Gateway}}' functions"
 export DOCKER_LOCALHOST=docker.for.mac.localhost
+export COMPLETER_BASE_URL=http://${DOCKER_LOCALHOST}:8081
 
 fn update context registry `whoami`
 
-export PUBNUB_PUBLISH_KEY="pub-c-40a27c4c-2a77-42ac-9df7-027aac24f9b3"
-export PUBNUB_SUBSCRIBE_KEY="sub-c-1a356ba8-8678-11e7-8979-5e3a640e5579"
+export PUBNUB_PUBLISH_KEY=".."
+export PUBNUB_SUBSCRIBE_KEY=".."
 
-export TWITTER_CONF_KEY=X
-export TWITTER_CONF_SECRET=X
-export TWITTER_TOKEN_KEY=X
-export TWITTER_TOKEN_SECRET=X
+export TWITTER_CONF_KEY="..."
+export TWITTER_CONF_SECRET="..."
+export TWITTER_TOKEN_KEY="..."
+export TWITTER_TOKEN_SECRET="..."
 
-export FLICKR_API_KEY="8fc6692d7f7390de4114ee4b84272d1a"
-export FLICKR_API_SECRET="be8f0d8370f8ce2e"
+export FLICKR_API_KEY="..."
+export FLICKR_API_SECRET="..."
 
 export SLACK_API_TOKEN="...."
 
 # Only change the following if you changed the defaults
 export FUNC_SERVER_URL=http://${DOCKER_LOCALHOST}:8080
 export MINIO_SERVER_URL=http://${DOCKER_LOCALHOST}:9000
-export STORAGE_ACCESS_KEY=DEMOACCESSKEY
-export STORAGE_SECRET_KEY=DEMOSECRETKEY
+export STORAGE_ACCESS_KEY="DEMOACCESSKEY"
+export STORAGE_SECRET_KEY="DEMOSECRETKEY"
+export STORAGE_BUCKET="oracle-vista-out"
+export S3_REGION="us-east-1"
 
 # change this to deploy to a different app  other than "vista"
 # export APP=vista

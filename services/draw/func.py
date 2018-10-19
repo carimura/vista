@@ -17,7 +17,7 @@ s3 = boto3.resource(
     's3',
     aws_access_key_id=os.environ.get("STORAGE_ACCESS_KEY"),
     aws_secret_access_key=os.environ.get("STORAGE_SECRET_KEY"),
-    region_name=os.environ.get("S3_REGION", "us-phoenix-1"),
+    region_name=os.environ.get("S3_REGION", "us-east-1"),
     endpoint_url=os.environ.get("MINIO_SERVER_URL")
 )
 
@@ -34,13 +34,13 @@ async def test_override_content_type(aiohttp_client):
 def upload_file(file_name):
     """Upload a file to s3 compatible storage."""
     s3.meta.client.upload_file(
-        file_name, os.environ.get("STORAGE_BUCKET"),
+        file_name, os.environ.get("STORAGE_BUCKET", "oracle-vista-out"),
         os.path.basename(file_name))
 
 
 def download_image(image_url, id):
     """Download an image from an http url."""
-    file_name = "temp_image"+id+".jpg"
+    file_name = "/tmp/temp_image"+id+".jpg"
     request.urlretrieve(image_url, file_name)
     return file_name
 
@@ -78,4 +78,4 @@ def handle(ctx, data=None, **kwargs):
 
 
 if __name__ == "__main__":
-    fdk.handle()
+    fdk.handle(handle)
