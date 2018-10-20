@@ -32,5 +32,4 @@ public class VistaFlowTest {
         FnResult result = fn.getOnlyResult();
         Assert.assertEquals("", result.getBodyAsString());
     }
-
 }
