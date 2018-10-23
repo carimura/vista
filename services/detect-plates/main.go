@@ -27,11 +27,6 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 		return err
 	}
 
-	_, noChain := os.LookupEnv("NO_CHAIN")
-	if noChain {
-		os.Stderr.WriteString("running without chaining")
-	}
-
 	results, err := misc.SetupALRPResults(p)
 	if err != nil {
 		return err
@@ -42,18 +37,22 @@ func myHandler(_ context.Context, in io.Reader, out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		misc.SaveResults(out, pout, noChain)
-	} else {
-		os.Stderr.WriteString("No Plates Found!")
-		if noChain {
-			err := json.NewEncoder(out).Encode(&misc.PayloadOut{
-				GotPlate: false,
-			})
-			if err != nil {
-				return err
-			}
-		}
 
+		if err := misc.SaveResults(out, pout); err != nil {
+			return err
+		}
+	} else {
+		err := json.NewEncoder(out).Encode(&misc.PayloadOut{
+			GotPlate: false,
+			Rectangles: []misc.Rectangle{},
+		})
+		if err != nil {
+			return err
+		}
+		json.NewEncoder(os.Stderr).Encode(&misc.PayloadOut{
+			GotPlate: false,
+			Rectangles: []misc.Rectangle{},
+		})
 	}
 	return nil
 }

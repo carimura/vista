@@ -1,7 +1,6 @@
 package misc
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -22,19 +21,16 @@ type PayloadOut struct {
 	GotPlate   bool        `json:"got_plate"`
 	ID         string      `json:"id"`
 	ImageURL   string      `json:"image_url"`
-	Rectangles []rectangle `json:"rectangles"`
+	Rectangles []Rectangle `json:"rectangles"`
 	Plate      string      `json:"plate"`
 }
 
-type rectangle struct {
+type Rectangle struct {
 	StartX int `json:"startx"`
 	StartY int `json:"starty"`
 	EndX   int `json:"endx"`
 	EndY   int `json:"endy"`
 }
-
-var nextFunc = "draw"
-var fnAPIURL = os.Getenv("FUNC_SERVER_URL")
 
 func SetupALRPResults(p *PayloadIn) (*openalpr.AlprResults, error) {
 	alpr := openalpr.NewAlpr(p.CountryCode, "", "runtime_data")
@@ -77,7 +73,7 @@ func ProcessALRPResulsts(results *openalpr.AlprResults, p *PayloadIn) (*PayloadO
 		GotPlate: true,
 		ID:       p.ID,
 		ImageURL: p.URL,
-		Rectangles: []rectangle{
+		Rectangles: []Rectangle{
 			{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y,
 				EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
 
@@ -87,27 +83,11 @@ func ProcessALRPResulsts(results *openalpr.AlprResults, p *PayloadIn) (*PayloadO
 	return pout, nil
 }
 
-func SaveResults(out io.Writer, pout *PayloadOut, noChain bool) error {
-	b := new(bytes.Buffer)
-	err := json.NewEncoder(b).Encode(pout)
+func SaveResults(out io.Writer, pout *PayloadOut) error {
+	err := json.NewEncoder(out).Encode(pout)
 	if err != nil {
 		return err
 	}
-
-	if noChain {
-		out.Write(b.Bytes())
-		return nil
-	} else {
-		postURL := fmt.Sprintf("%s/%s", fnAPIURL, nextFunc)
-		os.Stderr.WriteString(
-			fmt.Sprintf("Sending %s to %s",
-				string(b.Bytes()), postURL))
-		res, err := http.Post(postURL, "application/json", b)
-		if err != nil {
-			return err
-		}
-		io.Copy(os.Stderr, res.Body)
-		defer res.Body.Close()
-	}
+	json.NewEncoder(os.Stderr).Encode(pout)
 	return nil
 }

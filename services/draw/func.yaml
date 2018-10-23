@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: draw
-version: 0.1.318
+version: 0.1.325
 runtime: python3.7
 entrypoint: python3 func.py
 format: http-stream

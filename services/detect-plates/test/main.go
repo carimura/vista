@@ -28,6 +28,12 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		misc.SaveResults(os.Stderr, pout, true)
+		misc.SaveResults(os.Stderr, pout)
+	} else {
+		os.Stderr.WriteString("\nNo Plates Found!\n")
+		json.NewEncoder(os.Stderr).Encode(&misc.PayloadOut{
+			GotPlate: false,
+			Rectangles: []misc.Rectangle{},
+		})
 	}
 }

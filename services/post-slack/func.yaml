@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: post-slack
-version: 0.0.154
+version: 0.0.155
 runtime: java9
 build_image: fnproject/fn-java-fdk-build:jdk9-1.0.75
 run_image: fnproject/fn-java-fdk:jdk9-1.0.75

@@ -21,22 +21,37 @@ s3 = boto3.resource(
     endpoint_url=os.environ.get("MINIO_SERVER_URL")
 )
 
+service_s3 = boto3.client('s3',
+  aws_access_key_id=os.environ.get("STORAGE_ACCESS_KEY"),
+  aws_secret_access_key=os.environ.get("STORAGE_SECRET_KEY"),
+  region_name=os.environ.get("S3_REGION", "us-east-1"),
+  endpoint_url=os.environ.get("MINIO_SERVER_URL")
+)
+
 
 async def test_override_content_type(aiohttp_client):
     with open("payload.json", "r") as payload_file:
         call = await fixtures.setup_fn_call(
             aiohttp_client, handle, json=ujson.load(payload_file))
         content, status, headers = await call
-
         assert 200 == status
+        assert "image_url" in ujson.loads(content)
 
 
 def upload_file(file_name):
     """Upload a file to s3 compatible storage."""
-    s3.meta.client.upload_file(
-        file_name, os.environ.get("STORAGE_BUCKET", "oracle-vista-out"),
-        os.path.basename(file_name))
+    bucket = os.environ.get("STORAGE_BUCKET", "oracle-vista-out")
+    key = os.path.basename(file_name)
+    with open(file_name, 'rb') as f:
+        s3.Bucket(bucket).put_object(Key=key, Body=f)
 
+    return service_s3.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={
+            'Bucket': bucket,
+            'Key': key
+        }
+    )
 
 def download_image(image_url, id):
     """Download an image from an http url."""
@@ -74,7 +89,12 @@ def handle(ctx, data=None, **kwargs):
         payload = ujson.loads(data)
         file_name = download_image(payload.get("image_url"), payload.get("id"))
         draw_rects(payload["rectangles"], file_name)
-        upload_file(file_name)
+        file_url = upload_file(file_name)
+        return {
+            "id": payload.get("id"),
+            "image_url": file_url,
+            "plate": payload.get("plate")
+        }
 
 
 if __name__ == "__main__":

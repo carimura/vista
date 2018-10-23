@@ -43,8 +43,6 @@ sleep 5
 docker run --rm -v $PWD:/mc -w /mc --entrypoint=/bin/sh  -e DEMOACCESSKEY=$STORAGE_ACCESS_KEY -e DEMOSECRETKEY=$STORAGE_SECRET_KEY -e DOCKER_LOCALHOST -e VISTA_MODE minio/mc scripts/setup_minio.sh
 
 pushd scripts
-  ./setenv.sh
-
   if [ $VISTA_MODE = flow ]; then
       ./setup_flow.sh
   fi
@@ -81,6 +79,10 @@ else
 
 fi
 cd ..
+
+pushd scripts
+  ./setenv.sh
+popd
 
 
 docker run --rm -v $PWD:/tmp -w /tmp -e PUBNUB_SUBSCRIBE_KEY treeder/temple public/vista.erb public/vista.html

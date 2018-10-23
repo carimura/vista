@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: detect-plates
-version: 0.1.218
+version: 0.1.229
 runtime: docker
 format: http-stream
 timeout: 120
