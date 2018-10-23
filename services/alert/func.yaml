@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: alert
-version: 0.1.233
+version: 0.1.234
 runtime: go
 entrypoint: ./func
 format: http-stream

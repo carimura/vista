@@ -13,7 +13,6 @@ public class VistaFlowTest {
 
     @Test
     public void shouldFindImages() {
-
         flow.givenFn("./scraper").withResult(("{\"result\":[{\"id\":\"34053257076\",\"image_url\":\"https://farm3.staticflickr.com/2883/34053257076_2911069a6d_c.jpg\"}]}").getBytes());
         flow.givenFn("./detect-plates").withResult(("{\"got_plate\":true,\"rectangles\":[{\"startx\":834,\"starty\":702,\"endx\":1022,\"endy\":783}],\"plate\":\"D33M016\"}").getBytes());
         flow.givenFn("./draw").withAction((b)->{
@@ -32,4 +31,5 @@ public class VistaFlowTest {
         FnResult result = fn.getOnlyResult();
         Assert.assertEquals("", result.getBodyAsString());
     }
+
 }

@@ -1,13 +1,13 @@
 schema_version: 20180708
 name: post-slack
-version: 0.0.153
+version: 0.0.154
 runtime: java9
 build_image: fnproject/fn-java-fdk-build:jdk9-1.0.75
 run_image: fnproject/fn-java-fdk:jdk9-1.0.75
 cmd: com.example.vista.PostToSlack::postToSlack
 format: http-stream
 memory: 256
-timeout: 30
+timeout: 300
 idle_timeout: 60
 triggers:
 - name: post-slack

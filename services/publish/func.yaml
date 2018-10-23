@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: publish
-version: 0.1.210
+version: 0.1.211
 runtime: python3.7
 entrypoint: python3 func.py
 format: http-stream

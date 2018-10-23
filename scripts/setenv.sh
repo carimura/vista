@@ -31,11 +31,11 @@ cd ../post-slack
 fn config fn ${APP} post-slack SLACK_API_TOKEN $SLACK_API_TOKEN
 
 cd ../flow
-fn config fn ${APP} flow ALERT_FUNC_ID `fn inspect fn ${APP} alert id`
-fn config fn ${APP} flow SCRAPER_FUNC_ID `fn inspect fn ${APP} scraper id`
-fn config fn ${APP} flow POST_SLACK_FUNC_ID `fn inspect fn ${APP} post-slack id`
-fn config fn ${APP} flow DETECT_PLATES_FUNC_ID `fn inspect fn ${APP} detect-plates id`
-fn config fn ${APP} flow DRAW_FUNC_ID `fn inspect fn ${APP} draw id`
+fn config fn ${APP} flow POST_SLACK_FUNC_ID $(fn inspect fn ${APP} post-slack id | xargs)
+fn config fn ${APP} flow SCRAPER_FUNC_ID $(fn inspect fn ${APP} scraper id | xargs)
+fn config fn ${APP} flow DETECT_PLATES_FUNC_ID $(fn inspect fn ${APP} detect-plates id | xargs)
+fn config fn ${APP} flow ALERT_FUNC_ID $(fn inspect fn ${APP} alert id | xargs)
+fn config fn ${APP} flow DRAW_FUNC_ID $(fn inspect fn ${APP} draw id | xargs)
 
 ############################################################
 # async doesn't work for now,

@@ -25,12 +25,28 @@ public class VistaFlow implements Serializable {
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
   }
 
+  String slackFuncID;
+  String alertFuncID;
+  String scraperFuncID;
+  String detectPlatesFuncID;
+  String drawFuncID;
+
+  @FnConfiguration
+  public void configure(RuntimeContext ctx) {
+        ctx.getConfigurationByKey("SLACK_CHANNEL").ifPresent((c) -> slackChannel = c);
+        // func IDs are really necessary
+        slackFuncID = ctx.getConfigurationByKey("POST_SLACK_FUNC_ID").orElseThrow(() -> new RuntimeException("Missing FunctionId"));
+        scraperFuncID = ctx.getConfigurationByKey("SCRAPER_FUNC_ID").orElseThrow(() -> new RuntimeException("Missing FunctionId"));
+        detectPlatesFuncID = ctx.getConfigurationByKey("DETECT_PLATES_FUNC_ID").orElseThrow(() -> new RuntimeException("Missing FunctionId"));
+        alertFuncID = ctx.getConfigurationByKey("ALERT_FUNC_ID").orElseThrow(() -> new RuntimeException("Missing FunctionId"));
+        drawFuncID = ctx.getConfigurationByKey("DRAW_FUNC_ID").orElseThrow(() -> new RuntimeException("Missing FunctionId"));
+    }
+
   public void handleRequest(ScrapeReq input) throws Exception {
 
     log.info("Got request {} {}", input.query, input.num);
     postMessageToSlack(slackFuncID, slackChannel, String.format("About to start scraping for images containing \"%s\"", input.query)).get();
     FlowFuture<ScrapeResp> scrapes = currentFlow().invokeFunction(scraperFuncID, input, ScrapeResp.class);
-
     scrapes.thenCompose(resp -> {
 
       List<ScrapeResp.ScrapeResult> results = resp.result;
@@ -88,21 +104,4 @@ public class VistaFlow implements Serializable {
 
   private static final Logger log = LoggerFactory.getLogger(VistaFlow.class);
   private static String slackChannel = "demostream";
-  // func IDs are necessary
-  private static String slackFuncID = null;
-  private static String alertFuncID = null;
-  private static String scraperFuncID = null;
-  private static String detectPlatesFuncID = null;
-  private static String drawFuncID = null;
-
-  @FnConfiguration
-  private static void configure(RuntimeContext ctx) {
-    ctx.getConfigurationByKey("SLACK_CHANNEL").ifPresent((c) -> slackChannel = c);
-    // func IDs are really necessary
-    ctx.getConfigurationByKey("POST_SLACK_FUNC_ID").ifPresent((c) -> slackFuncID = c);
-    ctx.getConfigurationByKey("SCRAPER_FUNC_ID").ifPresent((c) -> scraperFuncID = c);
-    ctx.getConfigurationByKey("DETECT_PLATES_FUNC_ID").ifPresent((c) -> detectPlatesFuncID = c);
-    ctx.getConfigurationByKey("ALERT_FUNC_ID").ifPresent((c) -> alertFuncID = c);
-    ctx.getConfigurationByKey("DRAW_FUNC_ID").ifPresent((c) -> drawFuncID = c);
-  }
 }
