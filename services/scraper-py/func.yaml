@@ -1,0 +1,11 @@
+schema_version: 20180708
+name: scraper-py
+version: 0.0.12
+runtime: python3.7
+entrypoint: python3 func.py
+format: http-stream
+timeout: 120
+triggers:
+- name: scraper
+  type: http
+  source: /scraper-py

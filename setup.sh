@@ -63,7 +63,10 @@ if [[ "$1" == "local" ]]; then
   --build-arg MINIO_SERVER_URL=${MINIO_SERVER_URL} \
   --build-arg PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} \
   --build-arg PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY} \
-  --build-arg STORAGE_BUCKET=${STORAGE_BUCKET}
+  --build-arg STORAGE_BUCKET=${STORAGE_BUCKET} \
+  --build-arg FLICKR_API_KEY=${FLICKR_API_KEY} \
+  --build-arg FLICKR_API_SECRET=${FLICKR_API_SECRET}
+
 else
   fn --verbose deploy --all --app vista \
   --build-arg TWITTER_CONF_KEY=${TWITTER_CONF_KEY} \
@@ -75,7 +78,9 @@ else
   --build-arg MINIO_SERVER_URL=${MINIO_SERVER_URL}\
   --build-arg PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} \
   --build-arg PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY} \
-  --build-arg STORAGE_BUCKET=${STORAGE_BUCKET}
+  --build-arg STORAGE_BUCKET=${STORAGE_BUCKET} \
+  --build-arg FLICKR_API_KEY=${FLICKR_API_KEY} \
+  --build-arg FLICKR_API_SECRET=${FLICKR_API_SECRET}
 
 fi
 cd ..
