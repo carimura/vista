@@ -1,268 +1,267 @@
-# maybe-base is mostly a noop so that we can decide whether to
-# rebuild base boxes as a chain to this
-maybe-base:
-  box: alpine
-  steps:
-    - script:
-        name: noop
-        code: echo "hello world"
-
-# build is also a noop right now, mostly so that we get the
-# pretty looking fan out ui
-build:
-  box: alpine
-  steps:
-    - script:
-        name: picture me rollin
-        code: echo "i ain't mad atcha"
-
-detect-plates-base:
-  box: golang:latest
-  steps:
-    - install-packages:
-        packages: build-essential cmake curl git libcurl3-dev libleptonica-dev liblog4cplus-dev libopencv-dev libtesseract-dev wget
-        #- script:
-        # name: move source
-        # code: cp -r services/detect-plates /srv/openalpr
-    - script:
-        name: mkdir
-        cwd: services/detect-plates
-        code: mkdir ./src/build
-    - script:
-        name: build all
-        cwd: services/detect-plates
-        code: cd ./src/build; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && make -j2 && make install
-    - script:
-        name: prune
-        code: rm -rf /pipeline
-    - internal/docker-push:
-        repository: $FN_REGISTRY/detect-plates
-        tag: master-base
-
-detect-plates-test:
-  box: iron/detect-plates:master-base
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/detect-plates /srv/openalpr
-    - script:
-        name: go get
-        cwd: services/detect-plates
-        code: |
-          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-    - script:
-        name: go build
-        cwd: services/detect-plates
-        code: go build -o func
-    - script:
-        name: go test
-        cwd: services/detect-plates
-        code: go test
-
-
-detect-plates-gobuild:
-  box: iron/detect-plates:master-base
-  steps:
-    - script:
-        name: go get
-        cwd: services/detect-plates
-        code: |
-          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
-    - script:
-        name: go build
-        cwd: services/detect-plates
-        code: go build -o func
-    - script:
-        name: move source
-        code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
-    - internal/docker-push:
-        repository: $FN_REGISTRY/detect-plates
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        working-dir: /srv/detect-plates
-        entrypoint: ./func
-
-
-detect-plates-deploy:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: fn routes update
-        code: |
-          cp fn services/detect-plates
-          cd services/detect-plates
-          ./fn routes update --type async --timeout 60 --image iron/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
-
-alert-gobuild:
-  box: golang:latest
-  steps:
-    - script:
-        name: move code over
-        code: mkdir /src; cp services/alert/* /src; cp fn /src
-    - script:
-        name: go get
-        cwd: /src
-        code: go get github.com/ChimeraCoder/anaconda
-    - script:
-        name: go build
-        cwd: /src
-        code: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func
-    - script:
-        name: cp all to next step
-        cwd: /src
-        code: cp * $WERCKER_OUTPUT_DIR
-
-
-alert-push:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: move source
-        code: mkdir /func; cp * /func; cd /func; ls;
-    - script:
-        name: add certificates
-        code: apk --no-cache add ca-certificates
-    - internal/docker-push:
-        repository: $FN_REGISTRY/alert
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        working-dir: /func
-        entrypoint: ./func
-
-
-alert-deploy:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: fn routes update
-        code: ./fn routes update --type async --timeout 60 --image iron/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
-
-
-# draw has a bunch of deps so we don't want to build them very often
-draw-base:
-  box:
-    id: ruby:2.4.0-alpine
-    cmd: /bin/sh
-
-  steps:
-    - script:
-        name: install dependencies
-        code: |
-          apk add --update alpine-sdk ca-certificates imagemagick-dev imagemagick
-          rm -rf /var/cache/apk/*
-    - bundle-install:
-        cwd: services/draw
-        path: /usr/local/bundle
-    - script:
-        name: prune
-        code: rm -rf /pipeline
-    - internal/docker-push:
-        repository: $FN_REGISTRY/draw
-        tag: master-base
-
-draw-test:
-  box:
-    id: iron/draw:master-base
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/draw /func
-    - script:
-        name: run tests
-        code: |
-          cd services/draw
-          ruby func_test.rb
-
-
-draw-push:
-  box:
-    id: iron/draw:master-base
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/draw /func
-    - internal/docker-push:
-        repository: $FN_REGISTRY/draw
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        working-dir: /func
-        entrypoint: ruby func.rb
-
-draw-deploy:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: fn routes update
-        code: |
-          pwd; ls;
-          cp fn services/draw
-          cd services/draw
-          ./fn routes update --type async --timeout 60 --image iron/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
-
-
-publish-base:
-  box:
-    id: python:2.7.13-alpine
-    cmd: /bin/sh
-
-  steps:
-    - script:
-        name: install dependencies
-        code: |
-          apk add --update python-dev py-pip alpine-sdk
-          rm -Rf /var/cache/apk/*
-          pip install 'pubnub>=4.0.12'
-    - script:
-        name: prune
-        code: rm -rf /pipeline
-    - internal/docker-push:
-        repository: $FN_REGISTRY/publish
-        tag: master-base
-
-publish-test:
-  box:
-    id: iron/publish:master-base
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/publish /func
-    - script:
-        name: run tests
-        code: |
-          cd services/publish
-          python func_test.py
-
-
-publish-push:
-  box:
-    id: iron/publish:master-base
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: move source
-        code: cp -r services/publish /func
-    - internal/docker-push:
-        repository: $FN_REGISTRY/publish
-        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        working-dir: /func
-        entrypoint: python func.py
-
-publish-deploy:
-  box:
-    id: alpine
-    cmd: /bin/sh
-  steps:
-    - script:
-        name: fn routes update
-        code: |
-          cp fn services/publish
-          cd services/publish
-          ./fn routes update --type async --timeout 60 --image iron/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish
-
-
+## maybe-base is mostly a noop so that we can decide whether to
+## rebuild base boxes as a chain to this
+#maybe-base:
+#  box: alpine
+#  steps:
+#    - script:
+#        name: noop
+#        code: echo "hello world"
+#
+## build is also a noop right now, mostly so that we get the
+## pretty looking fan out ui
+#build:
+#  box: alpine
+#  steps:
+#    - script:
+#        name: picture me rollin
+#        code: echo "i ain't mad atcha"
+#
+#detect-plates-base:
+#  box: golang:latest
+#  steps:
+#    - install-packages:
+#        packages: build-essential cmake curl git libcurl3-dev libleptonica-dev liblog4cplus-dev libopencv-dev libtesseract-dev wget
+#        #- script:
+#        # name: move source
+#        # code: cp -r services/detect-plates /srv/openalpr
+#    - script:
+#        name: mkdir
+#        cwd: services/detect-plates
+#        code: mkdir ./src/build
+#    - script:
+#        name: build all
+#        cwd: services/detect-plates
+#        code: cd ./src/build; cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && make -j2 && make install
+#    - script:
+#        name: prune
+#        code: rm -rf /pipeline
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/detect-plates
+#        tag: master-base
+#
+#detect-plates-test:
+#  box: iron/detect-plates:master-base
+#  steps:
+#    - script:
+#        name: move source
+#        code: cp -r services/detect-plates /srv/openalpr
+#    - script:
+#        name: go get
+#        cwd: services/detect-plates
+#        code: |
+#          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+#    - script:
+#        name: go build
+#        cwd: services/detect-plates
+#        code: go build -o func
+#    - script:
+#        name: go test
+#        cwd: services/detect-plates
+#        code: go test
+#
+#
+#detect-plates-gobuild:
+#  box: iron/detect-plates:master-base
+#  steps:
+#    - script:
+#        name: go get
+#        cwd: services/detect-plates
+#        code: |
+#          go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+#    - script:
+#        name: go build
+#        cwd: services/detect-plates
+#        code: go build -o func
+#    - script:
+#        name: move source
+#        code: mkdir -p /srv && cp -R services/detect-plates /srv/detect-plates
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/detect-plates
+#        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+#        working-dir: /srv/detect-plates
+#        entrypoint: ./func
+#
+#
+#detect-plates-deploy:
+#  box:
+#    id: alpine
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: fn routes update
+#        code: |
+#          cp fn services/detect-plates
+#          cd services/detect-plates
+#          ./fn routes update --type async --timeout 60 --image iron/detect-plates:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /detect-plates
+#
+#alert-gobuild:
+#  box: golang:latest
+#  steps:
+#    - script:
+#        name: move code over
+#        code: mkdir /src; cp services/alert/* /src; cp fn /src
+#    - script:
+#        name: go get
+#        cwd: /src
+#        code: go get github.com/ChimeraCoder/anaconda
+#    - script:
+#        name: go build
+#        cwd: /src
+#        code: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func
+#    - script:
+#        name: cp all to next step
+#        cwd: /src
+#        code: cp * $WERCKER_OUTPUT_DIR
+#
+#
+#alert-push:
+#  box:
+#    id: alpine
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: move source
+#        code: mkdir /func; cp * /func; cd /func; ls;
+#    - script:
+#        name: add certificates
+#        code: apk --no-cache add ca-certificates
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/alert
+#        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+#        working-dir: /func
+#        entrypoint: ./func
+#
+#
+#alert-deploy:
+#  box:
+#    id: alpine
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: fn routes update
+#        code: ./fn routes update --type async --timeout 60 --image iron/alert:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /alert
+#
+#
+## draw has a bunch of deps so we don't want to build them very often
+#draw-base:
+#  box:
+#    id: ruby:2.4.0-alpine
+#    cmd: /bin/sh
+#
+#  steps:
+#    - script:
+#        name: install dependencies
+#        code: |
+#          apk add --update alpine-sdk ca-certificates imagemagick-dev imagemagick
+#          rm -rf /var/cache/apk/*
+#    - bundle-install:
+#        cwd: services/draw
+#        path: /usr/local/bundle
+#    - script:
+#        name: prune
+#        code: rm -rf /pipeline
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/draw
+#        tag: master-base
+#
+#draw-test:
+#  box:
+#    id: iron/draw:master-base
+#  steps:
+#    - script:
+#        name: move source
+#        code: cp -r services/draw /func
+#    - script:
+#        name: run tests
+#        code: |
+#          cd services/draw
+#          ruby func_test.rb
+#
+#
+#draw-push:
+#  box:
+#    id: iron/draw:master-base
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: move source
+#        code: cp -r services/draw /func
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/draw
+#        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+#        working-dir: /func
+#        entrypoint: ruby func.rb
+#
+#draw-deploy:
+#  box:
+#    id: alpine
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: fn routes update
+#        code: |
+#          pwd; ls;
+#          cp fn services/draw
+#          cd services/draw
+#          ./fn routes update --type async --timeout 60 --image iron/draw:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /draw
+#
+#
+#publish-base:
+#  box:
+#    id: python:3.7.0-stretch
+#    cmd: /bin/sh
+#
+#  steps:
+#    - script:
+#        name: install dependencies
+#        code: |
+#          apk add --update python-dev py-pip alpine-sdk
+#          rm -Rf /var/cache/apk/*
+#          pip install fdk
+#          pip install 'pubnub>=4.0.12'
+#    - script:
+#        name: prune
+#        code: rm -rf /pipeline
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/publish
+#        tag: master-base
+#
+#publish-test:
+#  box:
+#    id: iron/publish:master-base
+#  steps:
+#    - script:
+#        name: move source
+#        code: cp -r services/publish /func
+#    - script:
+#        name: run tests
+#        code: |
+#          cd services/publish
+#          TEST_MODE=true pytest -v -s --tb=long func.py
+#
+#
+#publish-push:
+#  box:
+#    id: iron/publish:master-base
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: move source
+#        code: cp -r services/publish /func
+#    - internal/docker-push:
+#        repository: $FN_REGISTRY/publish
+#        tag: $WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
+#        working-dir: /func
+#        entrypoint: TEST_MODE=true pytest -v -s --tb=long func.py
+#
+#publish-deploy:
+#  box:
+#    id: alpine
+#    cmd: /bin/sh
+#  steps:
+#    - script:
+#        name: fn routes update
+#        code: |
+#          cp fn services/publish
+#          cd services/publish
+#          ./fn routes update --type async --timeout 60 --image iron/publish:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT vista /publish

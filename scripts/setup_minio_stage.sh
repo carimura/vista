@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+set -ex
+
 mc mb fnstage/oracle-vista-out
 mc mb fnstage/videoimages
 mc policy public fnstage/oracle-vista-out

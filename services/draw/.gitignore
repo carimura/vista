@@ -1,0 +1,3 @@
+temp_*.jpg
+.pytest_cache
+.venv

@@ -1,32 +1,52 @@
-import json
-import sys, os
+import fdk
+import ujson
+import os
+
+from fdk import fixtures
+
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 
+
 pnconfig = PNConfiguration()
-pnconfig.subscribe_key = os.environ["PUBNUB_SUBSCRIBE_KEY"]
-pnconfig.publish_key = os.environ["PUBNUB_PUBLISH_KEY"]
+pnconfig.subscribe_key = os.environ.get("PUBNUB_SUBSCRIBE_KEY")
+pnconfig.publish_key = os.environ.get("PUBNUB_PUBLISH_KEY")
 pnconfig.ssl = False
 pn = PubNub(pnconfig)
 
-def getPayload():
-    std_in = sys.stdin.read()
-    return json.loads(std_in)
 
-def callback(message):
-     print message
+async def test_override_content_type(aiohttp_client):
+    with open("payload.json", "r") as payload_file:
+        call = await fixtures.setup_fn_call(
+            aiohttp_client, handle, json=ujson.load(payload_file))
+        content, status, headers = await call
 
-def main():
-    payload = getPayload()
+        assert 200 == status
 
-    bucket_name = payload["Records"][0]["s3"]["bucket"]["name"]
-    image_key = payload["Records"][0]["s3"]["object"]["key"]
-    url = os.environ["MINIO_SERVER_URL"] + "/" + bucket_name + "/" + image_key
 
-    message = {'url': url, 'id': image_key}
-    message_json = json.dumps(message)
+def handle(ctx, data=None, **kwargs):
+    payload = None
+    if data and len(data) > 0:
+        payload = ujson.loads(data)
 
-    pn.publish().channel(bucket_name).message([message_json]).use_post(True).sync()
+    records = payload.get("Records", [])
+
+    for record in records:
+        s3 = record.get("s3", {})
+        obj, bucket = s3.get("object", {}), s3.get("bucket", {})
+        bucket_name = bucket.get("name")
+        image_key = obj.get("key")
+        if all((bucket_name, image_key)):
+            url = "{0}/{1}/{2}".format(
+                os.environ.get("MINIO_SERVER_URL"),
+                bucket_name, image_key)
+
+            message = {'url': url, 'id': image_key}
+            message_json = ujson.dumps(message)
+
+            (pn.publish().channel(bucket_name).
+             message([message_json]).use_post(True).sync())
+
 
 if __name__ == "__main__":
-    main()
+    fdk.handle(handle)

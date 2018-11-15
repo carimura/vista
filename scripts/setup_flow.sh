@@ -1,10 +1,12 @@
 #!/bin/bash
 
+set -ex
+
 echo running flow-service
 docker rm -f flow || true 
 docker run --rm  -d -p 8081:8081 \
        -e DB_URL=inmem: \
-       -e API_URL="http://$DOCKER_LOCALHOST:8080/r" \
+       -e API_URL="http://$DOCKER_LOCALHOST:8080/invoke" \
        --name flow \
        fnproject/flow:latest
 

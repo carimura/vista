@@ -1,13 +1,20 @@
-FROM python:2.7.13-alpine
+FROM fnproject/python:3.7-dev as build-stage
 
-RUN apk add --update python-dev
-RUN apk add --update py-pip
-RUN apk add --update alpine-sdk
+ARG PUBNUB_SUBSCRIBE_KEY
+ARG PUBNUB_PUBLISH_KEY
+ARG MINIO_SERVER_URL
 
-RUN pip install 'pubnub>=4.0.12'
+WORKDIR /function
+ADD . /function/
 
-WORKDIR /func
-ADD . /func/
+RUN pip3 install --target /python/  --no-cache --no-cache-dir -r requirements.txt pytest
 
-ENTRYPOINT ["python", "func.py"]
+RUN pip3 install --no-cache --no-cache-dir -r requirements.txt && \
+    PUBNUB_SUBSCRIBE_KEY=${PUBNUB_SUBSCRIBE_KEY} PUBNUB_PUBLISH_KEY=${PUBNUB_PUBLISH_KEY} MINIO_SERVER_URL=${MINIO_SERVER_URL} pytest -v -s --tb=long func.py
 
+FROM fnproject/python:3.7
+WORKDIR /function
+COPY --from=build-stage /function /function
+COPY --from=build-stage /python /python
+ENV PYTHONPATH=/python
+ENTRYPOINT ["python3", "func.py"]

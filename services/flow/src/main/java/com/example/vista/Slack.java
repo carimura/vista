@@ -19,16 +19,15 @@ import com.fnproject.fn.api.flow.HttpResponse;
 public class Slack {
 
 
-    public static FlowFuture<HttpResponse> postMessageToSlack(String channel, String message) {
+    public static FlowFuture<HttpResponse> postMessageToSlack(String slackFuncID, String channel, String message) {
         SlackRequest req = new SlackRequest();
         req.message = new SlackMessage(message);
         req.channel = channel;
-        return Flows.currentFlow().invokeFunction("./post-slack", req);
-
+        return Flows.currentFlow().invokeFunction(slackFuncID, req);
     }
 
 
-    public static FlowFuture<HttpResponse> postImageToSlack(String channel, String url, String filename, String title, String initial_comment) {
+    public static FlowFuture<HttpResponse> postImageToSlack(String slackFuncID, String channel, String url, String filename, String title, String initial_comment) {
         SlackRequest req = new SlackRequest();
         SlackUpload upload = new SlackUpload();
         upload.filename = filename;
@@ -37,9 +36,6 @@ public class Slack {
         upload.url = url;
         req.upload = upload;
         req.channel = channel;
-        return Flows.currentFlow().invokeFunction("./post-slack", req);
-
+        return Flows.currentFlow().invokeFunction(slackFuncID, req);
     }
-
-
 }

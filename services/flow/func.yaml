@@ -1,6 +1,13 @@
+schema_version: 20180708
 name: flow
-version: 0.0.164
-runtime: java8
+version: 0.0.188
+runtime: java9
+build_image: fnproject/fn-java-fdk-build:jdk9-1.0.75
+run_image: fnproject/fn-java-fdk:jdk9-1.0.75
 cmd: com.example.vista.VistaFlow::handleRequest
-format: http
+format: http-stream
 timeout: 120
+triggers:
+- name: flow
+  type: http
+  source: /flow

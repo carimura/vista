@@ -1,4 +1,11 @@
+schema_version: 20180708
 name: alert
-version: 0.1.207
+version: 0.1.238
+runtime: go
+entrypoint: ./func
+format: http-stream
 timeout: 60
-path: /alert
+triggers:
+- name: alert
+  type: http
+  source: /alert

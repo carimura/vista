@@ -1,5 +1,0 @@
-source 'https://rubygems.org'
-
-gem 'flickraw'
-gem 'json'
-gem 'rest-client'

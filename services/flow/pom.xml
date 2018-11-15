@@ -5,7 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <fdk-java.version>1.0.56</fdk-java.version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <fdk-java.version>1.0.75</fdk-java.version>
+        <jackson.version>2.9.7</jackson.version>
     </properties>
     <groupId>com.example.vista</groupId>
     <artifactId>flow</artifactId>
@@ -33,12 +36,34 @@
         </dependency>
         <dependency>
             <groupId>com.fnproject.fn</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>flow-runtime</artifactId>
             <version>${fdk-java.version}</version>
         </dependency>
         <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.fnproject.fn</groupId>
-            <artifactId>testing</artifactId>
+            <artifactId>testing-core</artifactId>
+            <version>${fdk-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fnproject.fn</groupId>
+            <artifactId>flow-testing</artifactId>
+            <version>${fdk-java.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fnproject.fn</groupId>
+            <artifactId>testing-junit4</artifactId>
             <version>${fdk-java.version}</version>
             <scope>test</scope>
         </dependency>

@@ -26,13 +26,13 @@ Ensure Docker is running. Ensure you are logged in with docker login.
 
 Install `fn` CLI:
 
-```sh
+```bash
 curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 ```
 
 Then start `fn` server:
 
-```sh
+```bash
 fn start
 ```
 
@@ -42,7 +42,7 @@ fn start
 
 Use the `local` arg to do everything locally (ie: doesn't push to docker registry).
 
-```sh
+```bash
 ./setup.sh [local]
 ```
 
@@ -50,7 +50,7 @@ Use the `local` arg to do everything locally (ie: doesn't push to docker registr
 
 When running in non-flow mode, you can do
 
-```sh
+```bash
 ./run.sh
 ```
 This will open a browser window to view the results. 
@@ -63,7 +63,7 @@ vista.html screen. As the draw function finishes, the final images will
 push to the screen. Plate detection will also Tweet out from the alert
 function.
 
-```sh
+```bash
 cat payload.json | fn call vista flow
 ```
 
@@ -99,15 +99,19 @@ secrets vital to the success of the demo.
 
 After this completes, you can do
 
-    fn routes list vista
-    path  image     endpoint
-    /alert  <dockerid>/alert:0.1.18  localhost:8080/r/vista/alert
-    /detect-plates <dockerid>/detect-plates:0.1.15 localhost:8080/r/vista/detect-plates
-    /draw  <dockerid>/draw:0.1.20  localhost:8080/r/vista/draw
-    /publish <dockerid>/publish:0.1.13  localhost:8080/r/vista/publish
-    /scraper <dockerid>/scraper:0.1.13  localhost:8080/r/vista/scraper
+```bash
+$ fn list triggers vista
+    FUNCTION        NAME            TYPE    SOURCE          ENDPOINT
+    alert           alert           http    /alert          http://localhost:8080/t/vista/alert
+    detect-plates   detect-plates   http    /detect-plates  http://localhost:8080/t/vista/detect-plates
+    draw            draw            http    /draw           http://localhost:8080/t/vista/draw
+    flow            flow            http    /flow           http://localhost:8080/t/vista/flow
+    post-slack      post-slack      http    /post-slack     http://localhost:8080/t/vista/post-slack
+    publish         publish         http    /publish        http://localhost:8080/t/vista/publish
+    scraper         scraper         http    /scraper        http://localhost:8080/t/vista/scraper
+```
 
-Finally, the minio wiring. I'm a bit foggy on this, but it basically
+Finally, the Minio wiring. I'm a bit foggy on this, but it basically
 sets up something that looks like an Amazon S3 bucket. 
 
 ### Services
@@ -124,15 +128,17 @@ Dockerfile lists func.rb as the entrypoint.
 Looking at func.rb, it pulls in the "payload" from stdin, expecting it
 to be JSON that looks like
 
+```json
     {
       "query": "license plate car usa",
       "num": "20",
       "countrycode": "us",
       "service_to_call": "detect-plates"
-      }
-
+    }
+```
 The function does the secret sauce call here:
 
+```
     photos = flickr.photos.search(
         :text => search_text,
         :per_page => num_results,
@@ -141,15 +147,18 @@ The function does the secret sauce call here:
         :safe_search => 1,
         :content_type => 1
     )
+```
 
 For each photo in the result set, do a POST to
 FUNC_SERVER_URL/detect-plates. Post data is the following:
 
+```
     payload = {:id => photo.id, 
                :image_url => image_url,
                :countrycode => payload_in["countrycode"],
                :bucket => payload_in["bucket"]
     }
+```
 
 
 #### detect-plates
@@ -169,25 +178,33 @@ Simply appears to fob the request off to pubnub. I think this may be a
 way to allow other services to asynchronously consume the result of this
 service's plate detection. The secret sauce function is here:
 
-    results, err := alpr.RecognizeByBlob(imageBytes)
+```go
+results, err := alpr.RecognizeByBlob(imageBytes)
+```
 
 For each entry in results, build another payload, adding a "rectangles"
 array and the text of the plate number. The payload looks like:
 
+```go
     pout := &payloadOut{
         ID:         p.ID,
         ImageURL:   p.URL,
         Rectangles: []rectangle{{StartX: plate.PlatePoints[0].X, StartY: plate.PlatePoints[0].Y, EndX: plate.PlatePoints[2].X, EndY: plate.PlatePoints[2].Y}},
         Plate:      plate.BestPlate,
     }
+```
 
 This is posted further downstream to the draw function at
 
-    postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+```go
+postURL := os.Getenv("FUNC_SERVER_URL") + "/draw"
+```
 
 and also a copy of the same payload is posted to the alert service.
 
-    alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
+```go
+alertPostURL := os.Getenv("FUNC_SERVER_URL") + "/alert"
+```
 
 #### Draw service
 

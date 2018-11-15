@@ -33,8 +33,13 @@ FROM carimura/detect-plates:master-base
 WORKDIR /srv/openalpr
 
 RUN go get github.com/openalpr/openalpr/src/bindings/go/openalpr
+RUN go get github.com/fnproject/fdk-go
 
 COPY . /srv/openalpr
+
+# this is for the test, unfortunately cgo + gotest != <3
+# just a workaround
+RUN go run test/main.go
 
 RUN go build -o myapp
 ENTRYPOINT ["./myapp"]

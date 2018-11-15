@@ -1,4 +1,8 @@
-mc config host add local http://docker.for.mac.localhost:9000  DEMOACCESSKEY DEMOSECRETKEY
+#!/usr/bin/env bash
+
+set -ex
+
+mc config host add local http://docker.for.mac.localhost:9000  $DEMOACCESSKEY $DEMOSECRETKEY
 
 mc mb local/oracle-vista-out
 mc mb local/videoimages

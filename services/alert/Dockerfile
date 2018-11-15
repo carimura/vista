@@ -1,12 +1,21 @@
-FROM golang:latest as build-stage
-WORKDIR /src
-RUN go get github.com/ChimeraCoder/anaconda
+FROM fnproject/go:dev as build-stage
 
-ADD . /src
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o func .
+ARG TWITTER_CONF_KEY
+ARG TWITTER_CONF_SECRET
+ARG TWITTER_TOKEN_KEY
+ARG TWITTER_TOKEN_SECRET
 
-FROM alpine
-RUN apk --no-cache add ca-certificates
-WORKDIR /func
-COPY --from=build-stage /src/* /func/
+WORKDIR /function
+ADD . /go/src/func/
+WORKDIR /go/src/func/
+
+RUN TWITTER_CONF_KEY=${TWITTER_CONF_KEY} \
+    TWITTER_CONF_SECRET=${TWITTER_CONF_SECRET} \
+    TWITTER_TOKEN_KEY=${TWITTER_TOKEN_KEY} \
+    TWITTER_TOKEN_SECRET=${TWITTER_TOKEN_SECRET} go test -v ./...
+RUN go build -o func
+
+FROM fnproject/go
+WORKDIR /function
+COPY --from=build-stage /go/src/func/func /function/
 ENTRYPOINT ["./func"]

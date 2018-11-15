@@ -1,4 +1,10 @@
+schema_version: 20180708
 name: publish
-version: 0.1.196
-type: sync
-path: /publish
+version: 0.1.212
+runtime: python3.7
+entrypoint: python3 func.py
+format: http-stream
+triggers:
+- name: publish
+  type: http
+  source: /publish

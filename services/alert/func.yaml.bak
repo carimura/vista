@@ -1,0 +1,4 @@
+name: alert
+path: /alert
+timeout: 60
+version: 0.1.207
