@@ -15,22 +15,16 @@ fn config app ${APP} STORAGE_BUCKET oracle-vista-out
 fn config app ${APP} STORAGE_BUCKET ${STORAGE_BUCKET:-oracle-vista-out}
 fn config app ${APP} S3_REGION ${S3_REGION:-us-phoenix-1}
 
-
-
-cd ../services/alert
 fn config fn ${APP} alert TWITTER_CONF_KEY $TWITTER_CONF_KEY
 fn config fn ${APP} alert TWITTER_CONF_SECRET $TWITTER_CONF_SECRET
 fn config fn ${APP} alert TWITTER_TOKEN_KEY $TWITTER_TOKEN_KEY
 fn config fn ${APP} alert TWITTER_TOKEN_SECRET $TWITTER_TOKEN_SECRET
 
-cd ../scraper
-fn config f ${APP} scraper FLICKR_API_KEY $FLICKR_API_KEY
-fn config fn ${APP} scraper FLICKR_API_SECRET $FLICKR_API_SECRET
+fn config f ${APP} scraper-py FLICKR_API_KEY $FLICKR_API_KEY
+fn config fn ${APP} scraper-py FLICKR_API_SECRET $FLICKR_API_SECRET
 
-cd ../post-slack
 fn config fn ${APP} post-slack SLACK_API_TOKEN $SLACK_API_TOKEN
 
-cd ../flow
 fn config fn ${APP} flow POST_SLACK_FUNC_ID $(fn inspect fn ${APP} post-slack id | xargs)
 fn config fn ${APP} flow SCRAPER_FUNC_ID $(fn inspect fn ${APP} scraper-py id | xargs)
 fn config fn ${APP} flow DETECT_PLATES_FUNC_ID $(fn inspect fn ${APP} detect-plates id | xargs)
