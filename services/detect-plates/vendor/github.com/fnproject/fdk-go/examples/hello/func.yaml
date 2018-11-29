@@ -1,6 +1,6 @@
 schema_version: 20180708
 name: hello
-version: 0.0.20
+version: 0.0.21
 runtime: go
 entrypoint: ./func
 format: http-stream

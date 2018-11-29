@@ -53,7 +53,7 @@ popd
 cd services
 if [[ "$1" == "local" ]]; then
   echo "Deploying local only"
-  fn --verbose deploy --all --app vista --local \
+  fn --verbose deploy --all --app vista --local --no-bump \
   --build-arg TWITTER_CONF_KEY=${TWITTER_CONF_KEY} \
   --build-arg TWITTER_CONF_SECRET=${TWITTER_CONF_SECRET} \
   --build-arg TWITTER_TOKEN_KEY=${TWITTER_TOKEN_KEY} \
