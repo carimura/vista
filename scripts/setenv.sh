@@ -34,26 +34,4 @@ fn config fn ${APP} flow DRAW_FUNC_ID $(fn inspect fn ${APP} draw id | xargs)
 ############################################################
 # async doesn't work for now,
 ############################################################
-# the flow version requires some functions to be sync
-# the normal version requires them to be async
-#
-# sync_async_fns="alert detect-plates draw"
-if [[ ${VISTA_MODE} == "flow" ]]
-then
-   echo "-------- Configuring App for Fn Flow ---------"
-   # just the flow  version
-   fn config app ${APP} NO_CHAIN true
-
-#   for func in $sync_async_fns ; do
-#     cd ../$func
-#     fn update route ${APP} $func --type sync
-#   done
-#else
-#   echo "------- Configuring App for Async --------"
-#   fn config app ${APP} NO_CHAIN ""
-#
-#  for func in $sync_async_fns ; do
-#    cd ../$func
-#    fn update route ${APP} ${func} --type async
-#  done
-fi
+fn config app ${APP} NO_CHAIN true
